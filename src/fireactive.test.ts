@@ -35,6 +35,24 @@ describe('schematise', () => {
       }
     })
   })
+
+  it("handles nested sub-schemas", () => {
+    const schema = {
+      name: {
+        first: String,
+        last: {
+          type: String
+        }
+      }
+    }
+
+    expect(schematise(schema)).toEqual({
+      name: {
+        first: { type: String },
+        last: { type: String }
+      }
+    })
+  })
 })
 
 describe('createORM', () => {
