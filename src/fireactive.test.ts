@@ -17,6 +17,24 @@ describe('schematise', () => {
       }
     })
   })
+
+  it("converts partial shorthand into longhand", () => {
+    const schema = {
+      name: {
+        type: String
+      },
+      isHost: Boolean
+    }
+
+    expect(schematise(schema)).toEqual({
+      name: {
+        type: String
+      },
+      isHost: {
+        type: Boolean
+      }
+    })
+  })
 })
 
 describe('createORM', () => {

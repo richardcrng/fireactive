@@ -23,9 +23,11 @@ type Entity<Shorthand> = Schema<Shorthand> & {
 
 export function schematise(schema: SchemaShorthand) {
   Object.entries(schema).forEach(([key, val]) => {
-    schema[key] = [String, Number, Boolean].includes(val)
-      ? { type: val }
-      : schematise(val)
+    if ([String, Number, Boolean].includes(val)) {
+      if (key !== 'type') schema[key] = { type: val }
+    } else {
+      schematise(schema[key])
+    }
   })
 
   return schema
