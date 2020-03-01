@@ -28,13 +28,13 @@ export interface FieldTypeOptions<T extends Primitive | object> {
   optional?: boolean
 }
 
-export type OnlyIfRequiredField<FTO> = FTO extends { optional: true }
-  ? never
-  : FTO
+export type OnlyIfRequiredField<T> = T extends { optional: true }
+  ? unknown
+  : T extends { type: infer U } ? U : T
 
-export type OnlyIfOptionalField<FTO> = OnlyIfRequiredField<FTO> extends never
-  ? FTO
-  : never
+export type OnlyIfOptionalField<T> = T extends { type: infer U, optional: true }
+  ? U
+  : unknown
 
 export type FieldType<T = any> = T extends PrimitiveConstructor ? T | FieldTypeOptions<T> : T
 
@@ -48,12 +48,17 @@ export type SchemaLonghand<Shorthand extends SchemaShorthand> = {
     : FieldTypeOptionsFromConstructor<Shorthand[K]>
 }
 
-export type SchemaRequired<Shorthand extends SchemaShorthand> = {
-  [K in keyof SchemaLonghand<Shorthand>]: OnlyIfRequiredField<SchemaLonghand<Shorthand>[K]>
+export type RequiredFields<T extends {}> = {
+  [K in keyof T]: OnlyIfRequiredField<T[K]>
 }
 
-export type SchemaOptional<Shorthand extends SchemaShorthand> = {
-  [K in keyof SchemaLonghand<Shorthand>]?: OnlyIfOptionalField<SchemaLonghand<Shorthand>[K]>
+const obj: Schema<{ foo: { optional: true, type: String }, bar: String }> = {
+  foo: 'hello',
+  bar: 'hi'
 }
 
-export type Schema<Shorthand extends SchemaShorthand> = SchemaRequired<Shorthand> & SchemaOptional<Shorthand>
+export type OptionalFields<T extends {}> = {
+  [K in keyof T]?: OnlyIfOptionalField<T[K]>
+}
+
+export type Schema<T extends {}> = RequiredFields<T> & OptionalFields<T>
