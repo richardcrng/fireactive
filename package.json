@@ -2,16 +2,21 @@
   "name": "fireactive",
   "version": "0.0.1",
   "description": "An ORM for Firebase Real-Time Database",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watch"
   },
   "author": "Richard Ng",
   "license": "ISC",
   "devDependencies": {
+    "@types/dotenv": "^8.2.0",
     "@types/jest": "^25.1.3",
     "jest": "^25.1.0",
     "ts-jest": "^25.2.1",
     "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "firebase": "^7.9.3",
+    "utility-types": "^3.10.0"
   }
 }
