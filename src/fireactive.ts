@@ -1,7 +1,7 @@
 import * as firebase from 'firebase'
 import dotenv from 'dotenv'
 import { FirebaseConfig } from './types/firebase.types'
-import { RecordObject, RecordPropsSchema } from './types/schema.types';
+import { RecordObject, ToCreateRecord } from './types/schema.types';
 import Schema from './Schema';
 
 dotenv.config()
@@ -33,12 +33,12 @@ export function createORM<Schema>(tableName: string, schema: Schema) {
 
   // our JavaScript `Record` variable, with a constructor type
   let Record: {
-    new(props: RecordPropsSchema<Schema> & { _id?: string }): Record<Schema>;
+    new(props: ToCreateRecord<Schema> & { _id?: string }): Record<Schema>;
     prototype: Record<Schema>;
 
     // static class properties and methods are actually part
     // of the constructor type!
-    create(props: RecordPropsSchema<Schema> & { _id?: string }): Promise<Record<Schema>>;
+    create(props: ToCreateRecord<Schema> & { _id?: string }): Promise<Record<Schema>>;
   };
 
   // `Function` does not fulfill the defined type so
@@ -48,7 +48,7 @@ export function createORM<Schema>(tableName: string, schema: Schema) {
   };
 
   // static properties/methods go on the JavaScript variable...
-  Record.create = async function (props: RecordPropsSchema<Schema> & { _id?: string }): Promise<Record<Schema>> {
+  Record.create = async function (props: ToCreateRecord<Schema> & { _id?: string }): Promise<Record<Schema>> {
     let _id: string
     if (props._id) {
       _id = props._id

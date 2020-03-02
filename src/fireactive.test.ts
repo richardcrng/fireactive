@@ -8,7 +8,8 @@ describe('createORM', () => {
     const schema = {
       name: Schema.string,
       age: Schema.number,
-      friends: Schema.number(),
+      isCool: Schema.boolean(),
+      friends: Schema.number({ required: false }),
       children: Schema.number({ default: 4 }),
       parents: Schema.number({ optional: true })
     }
@@ -17,7 +18,7 @@ describe('createORM', () => {
       const PlayerBase = createORM(tableName, schema)
 
       test("THEN the result is a class that can create new instances", () => {
-        const player = new PlayerBase({ name: 'Pedro', age: 3, friends: 4 })
+        const player = new PlayerBase({ name: 'Pedro', age: 3, isCool: true })
         expect(player.name).toBe('Pedro')
       })
     })
