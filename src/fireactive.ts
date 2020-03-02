@@ -1,7 +1,7 @@
 import * as firebase from 'firebase'
 import dotenv from 'dotenv'
 import { FirebaseConfig } from './types/firebase.types'
-import { RecordObject, ToCreateRecord } from './types/record.types';
+import { ObjectFromRecord, ToCreateRecord, RecordSchema, ActiveRecord } from './types/record.types';
 import Schema from './Schema';
 
 dotenv.config()
@@ -18,37 +18,32 @@ const config: FirebaseConfig = {
 const app = firebase.initializeApp(config)
 const db = firebase.database()
 
-type Record<T> = RecordObject<T> & {
-  save(): Promise<void>,
-  toObject(): RecordObject<T>
-}
-
 const schema = {
   name: Schema.string,
   isHost: Schema.boolean,
   age: Schema.number({ optional: true })
 }
 
-export function createORM<Schema>(tableName: string, schema: Schema) {
+export function createORM<Schema extends RecordSchema>(tableName: string, schema: Schema) {
 
   // our JavaScript `Record` variable, with a constructor type
   let Record: {
-    new(props: ToCreateRecord<Schema> & { _id?: string }): Record<Schema>;
-    prototype: Record<Schema>;
+    new(props: ToCreateRecord<Schema> & { _id?: string }): ActiveRecord<Schema>;
+    prototype: ActiveRecord<Schema>;
 
     // static class properties and methods are actually part
     // of the constructor type!
-    create(props: ToCreateRecord<Schema> & { _id?: string }): Promise<Record<Schema>>;
+    create(props: ToCreateRecord<Schema> & { _id?: string }): Promise<ActiveRecord<Schema>>;
   };
 
   // `Function` does not fulfill the defined type so
   // it needs to be cast to <any>
-  Record = <any>function (this: Record<Schema>, props: Schema): void {
+  Record = <any>function (this: ActiveRecord<Schema>, props: Schema): void {
     // ...
   };
 
   // static properties/methods go on the JavaScript variable...
-  Record.create = async function (props: ToCreateRecord<Schema> & { _id?: string }): Promise<Record<Schema>> {
+  Record.create = async function (props: ToCreateRecord<Schema> & { _id?: string }): Promise<ActiveRecord<Schema>> {
     let _id: string
     if (props._id) {
       _id = props._id
@@ -69,12 +64,12 @@ export function createORM<Schema>(tableName: string, schema: Schema) {
     }
   };
 
-  Record.prototype.toObject = function(): RecordObject<Schema> {
+  Record.prototype.toObject = function(): ObjectFromRecord<Schema> {
     return [...Object.keys(schema), "_id"].reduce((acc, key) => {
       // @ts-ignore
       acc[key] = this[key]
       return acc
-    }, {}) as RecordObject<Schema>
+    }, {}) as ObjectFromRecord<Schema>
   }
 
   return Record
