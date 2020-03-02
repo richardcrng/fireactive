@@ -1,4 +1,4 @@
-import { createORM, Types } from './fireactive'
+import { createORM, Types, FieldIdentifier } from './fireactive'
 import { SchemaShorthand } from './types/schema.types'
 
 // describe('schematise', () => {
@@ -63,7 +63,7 @@ describe('createORM', () => {
     const schema = {
       name: Types.string,
       isHost: Types.boolean({ default: false }),
-      isReady: Types.boolean({ required: false })
+      isReady: Types.number({ required: false })
     }
 
     describe("WHEN the table name and schema are passed to createORM", () => {
