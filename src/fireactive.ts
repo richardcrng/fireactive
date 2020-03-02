@@ -1,7 +1,7 @@
 import * as firebase from 'firebase'
 import dotenv from 'dotenv'
 import { FirebaseConfig } from './types/firebase.types'
-import { RecordObject } from './types/schema.types';
+import { RecordObject, RecordPropsSchema } from './types/schema.types';
 import Schema from './Schema';
 
 dotenv.config()
@@ -33,12 +33,12 @@ export function createORM<Schema>(tableName: string, schema: Schema) {
 
   // our JavaScript `Record` variable, with a constructor type
   let Record: {
-    new(props: RecordObject<Schema>): Record<Schema>;
+    new(props: RecordPropsSchema<Schema> & { _id?: string }): Record<Schema>;
     prototype: Record<Schema>;
 
     // static class properties and methods are actually part
     // of the constructor type!
-    create(props: RecordObject<Schema>): Promise<Record<Schema>>;
+    create(props: RecordPropsSchema<Schema> & { _id?: string }): Promise<Record<Schema>>;
   };
 
   // `Function` does not fulfill the defined type so
@@ -48,9 +48,15 @@ export function createORM<Schema>(tableName: string, schema: Schema) {
   };
 
   // static properties/methods go on the JavaScript variable...
-  Record.create = async function (props: RecordObject<Schema>): Promise<Record<Schema>> {
-    const ref = await db.ref(tableName).push()
-    const _id = ref.key as string
+  Record.create = async function (props: RecordPropsSchema<Schema> & { _id?: string }): Promise<Record<Schema>> {
+    let _id: string
+    if (props._id) {
+      _id = props._id
+    } else {
+      const ref = await db.ref(tableName).push()
+      _id = ref.key as string
+    }
+    // @ts-ignore
     const record = new Record({ ...props, _id })
     await db.ref(tableName).child(_id).set({ ...props, _id })
     return record

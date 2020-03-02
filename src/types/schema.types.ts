@@ -11,14 +11,14 @@ type FieldFunction<Identifier = any> = Identifier extends string ? FieldConstruc
   : Identifier extends boolean ? FieldConstructor<boolean> & { _fieldIdentifier: FieldIdentifier.boolean }
   : FieldConstructor & FieldIdentifier
 
-export type FieldConfiguration<T = any, R extends boolean = boolean> = FieldOptions<T> & {
+export type FieldConfiguration<T = any, R extends boolean = boolean, D extends boolean = boolean> = FieldOptions<T> & {
   _fieldIdentifier: T extends string ? FieldIdentifier.string
   : T extends number ? FieldIdentifier.number
   : T extends boolean ? FieldIdentifier.boolean
   : unknown
 } & {
   required: R
-}
+} & (D extends true ? { _hasDefault: true } : {})
 
 export type FieldDefinition = FieldFunction | FieldConfiguration
 
@@ -41,8 +41,9 @@ type RecordField<FD> =
   : unknown
 
 type PropsField<FD> =
-  FD extends { _fieldIdentifier: infer C, default: infer D } ? TypeFromIdentifier<C> | undefined
+  FD extends { _fieldIdentifier: infer C, _hasDefault: true } ? TypeFromIdentifier<C> | undefined
   : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
+  : FD extends { _fieldIdentifier: infer C, _hasDefault: true, required: true } ? TypeFromIdentifier<C> | undefined
   : FD extends { _fieldIdentifier: infer C, required: true } ? TypeFromIdentifier<C>
   : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
   : unknown

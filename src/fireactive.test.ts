@@ -62,7 +62,7 @@ describe('createORM', () => {
     const tableName = 'players'
     const schema = {
       name: Schema.string,
-      isHost: Schema.boolean({ default: false }),
+      isHost: Schema.boolean({ default: false}),
       isReady: Schema.number({ required: false })
     }
 
