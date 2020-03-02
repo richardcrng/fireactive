@@ -1,5 +1,6 @@
 import * as firebase from 'firebase'
 import dotenv from 'dotenv'
+import * as pluralize from 'pluralize'
 import { FirebaseConfig } from './types/firebase.types'
 import { ObjectFromRecord, ToCreateRecord, RecordSchema, ActiveRecord, RecordModel } from './types/record.types';
 
@@ -24,9 +25,11 @@ export function initialize(config: FirebaseConfig) {
   // hasInitialised = true
 }
 
-export function modelRecord<Schema extends RecordSchema>(tableName: string, schema: Schema) {
+export function modelRecord<Schema extends RecordSchema>(modelName: string, schema: Schema) {
   // our JavaScript `Record` variable, with a constructor type
   let Record: RecordModel<Schema>;
+
+  const tableName = pluralize.plural(modelName)
 
   // `Function` does not fulfill the defined type so
   // it needs to be cast to <any>
@@ -38,10 +41,16 @@ export function modelRecord<Schema extends RecordSchema>(tableName: string, sche
     Object.keys(schema).forEach((schemaKey) => {
       // @ts-ignore : create it from props
       this[schemaKey] = props[schemaKey]
+      
       // @ts-ignore : check if schema specifies default and if it's currently undefined
       if (schema[schemaKey]._hasDefault && typeof this[schemaKey] === 'undefined') {
         // @ts-ignore : use the schema's default
         this[schemaKey] = schema[schemaKey].default
+      }
+
+      // @ts-ignore : check if schema requires property but it's undefined
+      if (schema[schemaKey].required && typeof this[schemaKey] === 'undefined') {
+        throw new Error(`Failed to create ${modelName}: missing the required property ${schemaKey}`)
       }
     })
   };
