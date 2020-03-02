@@ -43,3 +43,5 @@ type FieldType<FD> =
 export type TypedSchema<S> = UndefinedToOptional<{
   [K in keyof S]: FieldType<S[K]>
 }>
+
+export type RecordObject<S> = TypedSchema<S> & { _id?: string }

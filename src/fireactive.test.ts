@@ -1,5 +1,5 @@
-import { createORM, Types, FieldIdentifier } from './fireactive'
-import { SchemaShorthand } from './types/schema.types'
+import { createORM } from './fireactive'
+import Schema from './Schema'
 
 // describe('schematise', () => {
 //   it("converts shorthand into longhand", () => {
@@ -61,16 +61,16 @@ describe('createORM', () => {
   describe("GIVEN a table name of 'players' and a schema", () => {
     const tableName = 'players'
     const schema = {
-      name: Types.string,
-      isHost: Types.boolean({ default: false }),
-      isReady: Types.number({ required: false })
+      name: Schema.string,
+      isHost: Schema.boolean({ default: false }),
+      isReady: Schema.number({ required: false })
     }
 
     describe("WHEN the table name and schema are passed to createORM", () => {
       const PlayerBase = createORM(tableName, schema)
 
       test("THEN the result is a class that can create new instances", () => {
-        const player = PlayerBase.new({ name: 'Pedro' })
+        const player = new PlayerBase({ name: 'Pedro' })
         expect(player.name).toBe('Pedro')
         expect(player.isHost).toBe(false)
         expect(player.isReady).toBeUndefined()

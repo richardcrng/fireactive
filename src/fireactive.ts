@@ -1,7 +1,7 @@
 import * as firebase from 'firebase'
 import dotenv from 'dotenv'
 import { FirebaseConfig } from './types/firebase.types'
-import { TypedSchema } from './types/schema.types';
+import { RecordObject, TypedSchema } from './types/schema.types';
 import Schema from './Schema';
 
 dotenv.config()
@@ -18,8 +18,9 @@ const config: FirebaseConfig = {
 const app = firebase.initializeApp(config)
 const db = firebase.database()
 
-type Entity<T> = Schema<T> & {
-  save(): void
+type Record<T> = RecordObject<T> & {
+  save(): Promise<void>,
+  toObject(): RecordObject<T>
 }
 
 const schema = {
@@ -28,10 +29,47 @@ const schema = {
   age: Schema.number({ optional: true })
 }
 
-type MyType = TypedSchema<typeof schema>
+export function createORM<Schema>(tableName: string, schema: Schema) {
 
-const myType: MyType = {
-  name: 'hello',
-  isHost: true
+  // our JavaScript `Record` variable, with a constructor type
+  let Record: {
+    new(props: RecordObject<Schema>): Record<Schema>;
+    prototype: Record<Schema>;
+
+    // static class properties and methods are actually part
+    // of the constructor type!
+    create(props: RecordObject<Schema>): Promise<Record<Schema>>;
+  };
+
+  // `Function` does not fulfill the defined type so
+  // it needs to be cast to <any>
+  Record = <any>function (this: Record<Schema>, props: Schema): void {
+    // ...
+  };
+
+  // static properties/methods go on the JavaScript variable...
+  Record.create = async function (props: RecordObject<Schema>): Promise<Record<Schema>> {
+    const ref = await db.ref(tableName).push()
+    const _id = ref.key as string
+    const record = new Record({ ...props, _id })
+    await db.ref(tableName).child(_id).set({ ...props, _id })
+    return record
+  };
+
+  // instance properties/methods go on the prototype
+  Record.prototype.save = async function (): Promise<void> {
+    if (this._id) {
+      await db.ref(tableName).child(this._id).set(this.toObject())
+    }
+  };
+
+  Record.prototype.toObject = function(): RecordObject<Schema> {
+    return [...Object.keys(schema), "_id"].reduce((acc, key) => {
+      // @ts-ignore
+      acc[key] = this[key]
+      return acc
+    }, {}) as RecordObject<Schema>
+  }
+
+  return Record
 }
-
