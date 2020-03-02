@@ -8,7 +8,7 @@ import { RecordSchema, ToCreateRecord } from "../../types/schema.types";
 const addRecordStatics = <Schema extends RecordSchema>(
   Record: RecordModel<Schema>,
   scoped: { tableName: string }
-) => {
+): void => {
   Record.create = async function (
     props: ToCreateRecord<Schema> & { _id?: string }
   ): Promise<ActiveRecord<Schema>> {
@@ -18,7 +18,7 @@ const addRecordStatics = <Schema extends RecordSchema>(
     if (props._id) {
       _id = props._id
     } else {
-      const ref = await db.ref(scoped.tableName).push()
+      const ref = db.ref(scoped.tableName).push()
       _id = ref.key as string
     }
     const record = new Record({ ...props, _id })

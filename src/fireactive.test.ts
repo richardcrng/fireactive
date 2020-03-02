@@ -1,8 +1,7 @@
 import { modelRecord } from './fireactive'
 import Schema from './Schema'
 
-
-describe('record', () => {
+describe('modelRecord', () => {
   describe("GIVEN a model name of 'players' and a schema", () => {
     const modelName = 'player'
     const schema = {
@@ -35,6 +34,10 @@ describe('record', () => {
       test("AND an error is thrown if a field is passed of the wrong type", () => {
         // @ts-ignore : checking for an error
         expect(() => new PlayerRecord({ name: 4, age: 3, isCool: true })).toThrow(/wrong type/)
+      })
+
+      test("AND using the model's create method throws an error without a database connection", () => {
+        expect(PlayerRecord.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
       })
     })
   })
