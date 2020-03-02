@@ -1,64 +1,45 @@
-import { Primitive } from 'utility-types'
+import { UndefinedToOptional } from "../types/util.types"
 
-export type PrimitiveConstructor = StringConstructor | BooleanConstructor | NumberConstructor
-
-export type Constructor<T extends Primitive | PrimitiveConstructor> = 
-  T extends string ? StringConstructor
-    : T extends number ? NumberConstructor
-    : T extends boolean ? BooleanConstructor
-    : T extends PrimitiveConstructor ? T
-    : never
-
-export type PrimitiveResolve<T> =
-  T extends Primitive ? T
-    : T extends BooleanConstructor ? boolean
-    : T extends NumberConstructor ? number
-    : T extends StringConstructor ? string
-    : never
-
-export type FieldTypeOptionsFromConstructor<PrimitiveConstructor> =
-  PrimitiveConstructor extends StringConstructor ? FieldTypeOptions<string>
-    : PrimitiveConstructor extends NumberConstructor ? FieldTypeOptions<number>
-    : PrimitiveConstructor extends BooleanConstructor ? FieldTypeOptions<boolean>
-    : never
-
-export interface FieldTypeOptions<T extends Primitive | object> {
-  type: FieldType<T>
-  default?: PrimitiveResolve<T>,
-  optional?: boolean
+export interface FieldOptions<T> {
+  default?: T,
 }
 
-export type OnlyIfRequiredField<T> = T extends { optional: true }
-  ? unknown
-  : T extends { type: infer U } ? U : T
+type FieldConstructor<T = any> = (opts?: FieldOptions<T>) => void
 
-export type OnlyIfOptionalField<T> = T extends { type: infer U, optional: true }
-  ? U
+type FieldFunction<Identifier = any> = Identifier extends string ? FieldConstructor<string> & { _fieldIdentifier: FieldIdentifier.string }
+  : Identifier extends number ? FieldConstructor<number> & { _fieldIdentifier: FieldIdentifier.number }
+  : Identifier extends boolean ? FieldConstructor<boolean> & { _fieldIdentifier: FieldIdentifier.boolean }
+  : FieldConstructor & FieldIdentifier
+
+export type FieldConfiguration<T = any, R extends boolean = boolean> = FieldOptions<T> & {
+  _fieldIdentifier: T extends string ? FieldIdentifier.string
+  : T extends number ? FieldIdentifier.number
+  : T extends boolean ? FieldIdentifier.boolean
+  : unknown
+} & {
+  required: R
+}
+
+export type FieldDefinition = FieldFunction | FieldConfiguration
+
+export enum FieldIdentifier {
+  string = 'STRING_FIELD_IDENTIFIER',
+  number = 'NUMBER_FIELD_IDENTIFIER',
+  boolean = 'BOOLEAN_FIELD_IDENTIFIER'
+}
+
+type TypeFromIdentifier<T> =
+  T extends FieldIdentifier.string ? string
+  : T extends FieldIdentifier.number ? number
+  : T extends FieldIdentifier.boolean ? boolean
   : unknown
 
-export type FieldType<T = any> = T extends PrimitiveConstructor ? T | FieldTypeOptions<T> : T
+type FieldType<FD> =
+  FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
+  : FD extends { _fieldIdentifier: infer C, required: true } ? TypeFromIdentifier<C>
+  : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
+  : unknown
 
-export interface SchemaShorthand {
-  [key: string]: FieldType
-}
-
-export type SchemaLonghand<Shorthand extends SchemaShorthand> = {
-  [K in keyof Shorthand]: Shorthand[K] extends FieldTypeOptions<infer T>
-    ? Shorthand[K]
-    : FieldTypeOptionsFromConstructor<Shorthand[K]>
-}
-
-export type RequiredFields<T extends {}> = {
-  [K in keyof T]: OnlyIfRequiredField<T[K]>
-}
-
-const obj: Schema<{ foo: { optional: true, type: String }, bar: String }> = {
-  foo: 'hello',
-  bar: 'hi'
-}
-
-export type OptionalFields<T extends {}> = {
-  [K in keyof T]?: OnlyIfOptionalField<T[K]>
-}
-
-export type Schema<T extends {}> = RequiredFields<T> & OptionalFields<T>
+export type TypedSchema<S> = UndefinedToOptional<{
+  [K in keyof S]: FieldType<S[K]>
+}>

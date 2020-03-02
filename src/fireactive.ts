@@ -100,6 +100,14 @@ function number(opts?: FieldOptions<number> & { required?: boolean }): any {
     }
   }
 }
+number.required = true
+number._fieldIdentifier = FieldIdentifier.Number
+
+type U = typeof number
+
+const thing: U = function() {
+  
+}
 
 export interface Schema {
   [key: string]: FieldDefinition
