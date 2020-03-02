@@ -1,6 +1,12 @@
 import { RecordSchema, ActiveRecord, ToCreateRecord, ObjectFromRecord } from "../types/record.types";
 import { FieldIdentifier } from "../types/field.types";
 
+/**
+ * Creates a constructor function for a `RecordModel<Schema>`
+ * 
+ * @param modelName - The name of the model, used as a basis for the Firebase table name
+ * @param schema - The schema that the model uses
+ */
 const makeRecordConstructor = <Schema extends RecordSchema>(modelName: string, schema: Schema) => {
   return function recordConstructor (
     this: ActiveRecord<Schema>,
