@@ -1,7 +1,7 @@
 import { RecordSchema, ObjectFromRecord, ToCreateRecord } from "./schema.types"
 
 /**
- * The default properties and instance methods on an ActiveRecord
+ * An ActiveRecord _instance_
  */
 export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
   constructor: RecordModel<S>
@@ -22,7 +22,7 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
 
 
 /**
- * A class to create ActiveRecord instances of `S`. 
+ * A _class_ to create ActiveRecord instances of `S`. 
  * This interface holds the static class methods and properties
  * 
  * @template S - a RecordSchema
