@@ -34,14 +34,25 @@ type TypeFromIdentifier<T> =
   : T extends FieldIdentifier.boolean ? boolean
   : unknown
 
-type FieldType<FD> =
+type RecordField<FD> =
   FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
   : FD extends { _fieldIdentifier: infer C, required: true } ? TypeFromIdentifier<C>
   : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
   : unknown
 
-export type TypedSchema<S> = UndefinedToOptional<{
-  [K in keyof S]: FieldType<S[K]>
+type PropsField<FD> =
+  FD extends { _fieldIdentifier: infer C, default: infer D } ? TypeFromIdentifier<C> | undefined
+  : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
+  : FD extends { _fieldIdentifier: infer C, required: true } ? TypeFromIdentifier<C>
+  : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
+  : unknown
+
+export type RecordPropsSchema<S> = UndefinedToOptional<{
+  [K in keyof S]: PropsField<S[K]>
 }>
 
-export type RecordObject<S> = TypedSchema<S> & { _id?: string }
+export type RecordSchema<S> = UndefinedToOptional<{
+  [K in keyof S]: RecordField<S[K]>
+}>
+
+export type RecordObject<S> = RecordSchema<S> & { _id?: string }

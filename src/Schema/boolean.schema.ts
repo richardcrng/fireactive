@@ -14,14 +14,14 @@ function boolean(opts?: FieldOptions<boolean> & { optional?: boolean, default?: 
 function boolean(opts?: FieldOptions<boolean> & { required?: boolean, default?: boolean }): FieldConfiguration<boolean>
 
 function boolean(opts?: FieldOptions<boolean> & { required?: boolean, optional?: boolean, default?: boolean }): any {
-  const schema = { ...opts, _fieldIdentifier: FieldIdentifier.boolean }
+  const schemaDef = { ...opts, _fieldIdentifier: FieldIdentifier.boolean }
 
   if (opts?.required) {
-    return { ...schema, required: true }
+    return { ...schemaDef, required: true }
   } else if (opts?.optional) {
-    return { ...schema, required: false }
+    return { ...schemaDef, required: false }
   } else {
-    return { ...schema, required: true }
+    return { ...schemaDef, required: true }
   }
 }
 
