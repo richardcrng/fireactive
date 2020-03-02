@@ -12,8 +12,17 @@ export type FieldDefinition<T = any, R extends boolean = boolean, D extends bool
   : T extends boolean ? FieldIdentifier.boolean
   : unknown
 } & {
-  required: R
+  required: R,
+  default?: T
 } & (D extends true ? { _hasDefault: true } : { _hasDefault: false })
+
+export type FieldType<FI> = FI extends FieldIdentifier.boolean ? boolean
+  : FI extends boolean ? boolean
+  : FI extends FieldIdentifier.number ? number
+  : FI extends number ? number
+  : FI extends FieldIdentifier.string ? string
+  : FI extends string ? string
+  : unknown
 
 export enum FieldIdentifier {
   string = 'STRING_FIELD_IDENTIFIER',

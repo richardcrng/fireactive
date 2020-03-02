@@ -1,8 +1,7 @@
 import * as firebase from 'firebase'
 import dotenv from 'dotenv'
 import { FirebaseConfig } from './types/firebase.types'
-import { ObjectFromRecord, ToCreateRecord, RecordSchema, ActiveRecord } from './types/record.types';
-import Schema from './Schema';
+import { ObjectFromRecord, ToCreateRecord, RecordSchema, ActiveRecord, RecordModel } from './types/record.types';
 
 dotenv.config()
 
@@ -15,35 +14,44 @@ const config: FirebaseConfig = {
   messagingSenderId: process.env.MESSAGING_SENDER_ID as string
 }
 
-const app = firebase.initializeApp(config)
-const db = firebase.database()
+let app: firebase.app.App
+let realtimeDatabase: firebase.database.Database
+// let hasInitialised: boolean = false
 
-const schema = {
-  name: Schema.string,
-  isHost: Schema.boolean,
-  age: Schema.number({ optional: true })
+export function initialize(config: FirebaseConfig) {
+  app = firebase.initializeApp(config)
+  realtimeDatabase = app.database()
+  // hasInitialised = true
 }
 
-export function createORM<Schema extends RecordSchema>(tableName: string, schema: Schema) {
-
+export function modelRecord<Schema extends RecordSchema>(tableName: string, schema: Schema) {
   // our JavaScript `Record` variable, with a constructor type
-  let Record: {
-    new(props: ToCreateRecord<Schema> & { _id?: string }): ActiveRecord<Schema>;
-    prototype: ActiveRecord<Schema>;
-
-    // static class properties and methods are actually part
-    // of the constructor type!
-    create(props: ToCreateRecord<Schema> & { _id?: string }): Promise<ActiveRecord<Schema>>;
-  };
+  let Record: RecordModel<Schema>;
 
   // `Function` does not fulfill the defined type so
   // it needs to be cast to <any>
-  Record = <any>function (this: ActiveRecord<Schema>, props: Schema): void {
-    // ...
+  Record = <any>function (
+    this: ActiveRecord<Schema>,
+    props: ToCreateRecord<Schema> & { _id?: string }
+  ): void {
+
+    Object.keys(schema).forEach((schemaKey) => {
+      // @ts-ignore : create it from props
+      this[schemaKey] = props[schemaKey]
+      // @ts-ignore : check if schema specifies default and if it's currently undefined
+      if (schema[schemaKey]._hasDefault && typeof this[schemaKey] === 'undefined') {
+        // @ts-ignore : use the schema's default
+        this[schemaKey] = schema[schemaKey].default
+      }
+    })
   };
 
   // static properties/methods go on the JavaScript variable...
-  Record.create = async function (props: ToCreateRecord<Schema> & { _id?: string }): Promise<ActiveRecord<Schema>> {
+  Record.create = async function (
+    props: ToCreateRecord<Schema> & { _id?: string }
+  ): Promise<ActiveRecord<Schema>> {
+    const db = this.getDb()
+
     let _id: string
     if (props._id) {
       _id = props._id
@@ -57,8 +65,17 @@ export function createORM<Schema extends RecordSchema>(tableName: string, schema
     return record
   };
 
-  // instance properties/methods go on the prototype
+  Record.getDb = function() {
+    if (!realtimeDatabase) {
+      throw new Error('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
+    }
+
+    return realtimeDatabase
+  }
+
+  // instance methods and properties
   Record.prototype.save = async function (): Promise<void> {
+    const db = this.constructor.getDb()
     if (this._id) {
       await db.ref(tableName).child(this._id).set(this.toObject())
     }

@@ -1,8 +1,8 @@
-import { createORM } from './fireactive'
+import { modelRecord } from './fireactive'
 import Schema from './Schema'
 
 
-describe('createORM', () => {
+describe('record', () => {
   describe("GIVEN a table name of 'players' and a schema", () => {
     const tableName = 'players'
     const schema = {
@@ -14,12 +14,17 @@ describe('createORM', () => {
       parents: Schema.number({ optional: true })
     }
 
-    describe("WHEN the table name and schema are passed to createORM", () => {
-      const PlayerBase = createORM(tableName, schema)
+    describe("WHEN the table name and schema are passed to record", () => {
+      const Player = modelRecord(tableName, schema)
 
       test("THEN the result is a class that can create new instances", () => {
-        const player = new PlayerBase({ name: 'Pedro', age: 3, isCool: true })
+        const player = new Player({ name: 'Pedro', age: 3, isCool: true })
         expect(player.name).toBe('Pedro')
+        expect(player.age).toBe(3)
+        expect(player.isCool).toBe(true)
+        expect(player.friends).toBeUndefined()
+        expect(player.children).toBe(4)
+        expect(player.parents).toBeUndefined()
       })
     })
   })

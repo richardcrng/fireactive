@@ -29,6 +29,7 @@ function string(opts?: FieldOptions<string> & { required?: boolean, optional?: b
 
   if (typeof defaultVal !== 'undefined') {
     fieldConfig._hasDefault = true
+    fieldConfig.default = defaultVal
   } else {
     fieldConfig._hasDefault = false
   }
