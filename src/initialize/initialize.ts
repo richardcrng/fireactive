@@ -4,7 +4,7 @@ import { FirebaseConfig } from "../types/firebase.types"
 let app: firebase.app.App
 let realtimeDatabase: firebase.database.Database
 
-export default function initialize(config: FirebaseConfig) {
+export default function initialize(config: Partial<FirebaseConfig>) {
   app = firebase.initializeApp(config)
   realtimeDatabase = app.database()
 }
