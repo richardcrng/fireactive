@@ -1,5 +1,6 @@
-import { RecordModel, RecordSchema, ToCreateRecord, ActiveRecord } from "../../types/record.types";
+import { RecordModel, ActiveRecord } from "../../types/record.types";
 import { getFirebaseDatabase } from "../../initialize/initialize";
+import { RecordSchema, ToCreateRecord } from "../../types/schema.types";
 
 /**
  * Adds class methods and properties onto the class

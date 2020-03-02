@@ -1,4 +1,5 @@
-import { RecordModel, RecordSchema, ObjectFromRecord } from "../../types/record.types";
+import { RecordModel } from "../../types/record.types";
+import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 
 /**
  * Adds instance methods and properties onto the Record's prototype

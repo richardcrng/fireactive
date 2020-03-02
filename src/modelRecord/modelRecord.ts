@@ -1,5 +1,6 @@
 import * as pluralize from 'pluralize'
-import { RecordSchema, RecordModel } from "../types/record.types";
+import { RecordModel } from "../types/record.types";
+import { RecordSchema } from '../types/schema.types';
 import makeRecordConstructor from './makeRecordConstructor';
 import addRecordStatics from './statics/addRecordStatics';
 import addRecordInstances from './instances/addRecordInstances';

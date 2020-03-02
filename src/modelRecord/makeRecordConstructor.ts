@@ -1,5 +1,6 @@
-import { RecordSchema, ActiveRecord, ToCreateRecord, ObjectFromRecord } from "../types/record.types";
+import { ActiveRecord } from "../types/record.types";
 import { FieldIdentifier } from "../types/field.types";
+import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../types/schema.types";
 
 /**
  * Creates a constructor function for a `RecordModel<Schema>`
