@@ -1,4 +1,4 @@
-import { FieldOptions, FieldDefinition, FieldIdentifier } from "../types/schema.types"
+import { FieldOptions, FieldDefinition, FieldIdentifier } from "../types/field.types"
 
 // Overloads for required with default: i.e. it exists on document but need not be passed in
 function number(opts: FieldOptions<number> & { required: true, default: number }): FieldDefinition<number, true, true>;

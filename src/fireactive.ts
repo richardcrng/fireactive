@@ -1,7 +1,7 @@
 import * as firebase from 'firebase'
 import dotenv from 'dotenv'
 import { FirebaseConfig } from './types/firebase.types'
-import { RecordObject, ToCreateRecord } from './types/schema.types';
+import { RecordObject, ToCreateRecord } from './types/record.types';
 import Schema from './Schema';
 
 dotenv.config()

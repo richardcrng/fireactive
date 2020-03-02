@@ -1,5 +1,3 @@
-import { UndefinedToOptional } from "../types/util.types"
-
 export interface FieldOptions<T> {
   // default?: T,
 }
@@ -23,7 +21,7 @@ export enum FieldIdentifier {
   boolean = 'BOOLEAN_FIELD_IDENTIFIER'
 }
 
-type TypeFromIdentifier<T> =
+export type TypeFromIdentifier<T> =
   T extends FieldIdentifier.string ? string
   : T extends FieldIdentifier.number ? number
   : T extends FieldIdentifier.boolean ? boolean
@@ -32,7 +30,7 @@ type TypeFromIdentifier<T> =
 /**
  * Converts a FieldDefinition to a value that the record holds
  */
-type RecordField<FD> =
+export type RecordField<FD> =
   FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
   : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
   : unknown
@@ -40,18 +38,8 @@ type RecordField<FD> =
 /**
  * Converts a FieldDefinition to a value taken by the record on initialisation
  */
-type CreateField<FD> =
+export type CreateField<FD> =
   FD extends { _fieldIdentifier: infer C, _hasDefault: true } ? TypeFromIdentifier<C> | undefined
   : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
   : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
   : unknown
-
-export type ToCreateRecord<S> = UndefinedToOptional<{
-  [K in keyof S]: CreateField<S[K]>
-}>
-
-export type RecordProps<S> = UndefinedToOptional<{
-  [K in keyof S]: RecordField<S[K]>
-}>
-
-export type RecordObject<S> = RecordProps<S> & { _id?: string }
