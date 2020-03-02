@@ -31,6 +31,11 @@ describe('record', () => {
         // @ts-ignore : checking for an error
         expect(() => new PlayerRecord({ age: 3 })).toThrow(/missing the required property/)
       })
+
+      test("AND an error is thrown if a field is passed of the wrong type", () => {
+        // @ts-ignore : checking for an error
+        expect(() => new PlayerRecord({ name: 4, age: 3, isCool: true })).toThrow(/wrong type/)
+      })
     })
   })
 })
