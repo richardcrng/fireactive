@@ -26,6 +26,20 @@ describe('modelRecord: integration test', () => {
       expect(player.children).toBe(4)
       expect(player.parents).toBeUndefined()
     })
+
+    test('nested schema', () => {
+      const modelName = 'venue'
+      const schema = {
+        name: Schema.string,
+        hours: {
+          openingTime: Schema.number,
+          closingTime: Schema.number
+        },
+      }
+
+      const VenueRecord = modelRecord(modelName, schema)
+      const venue = new VenueRecord({ name: 'WeWork' })
+    })
   })
 
   describe('integration with Schema and server', () => {
