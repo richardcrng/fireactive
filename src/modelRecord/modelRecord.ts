@@ -1,7 +1,7 @@
 import * as pluralize from 'pluralize'
 import { RecordModel } from "../types/record.types";
 import { RecordSchema } from '../types/schema.types';
-import makeRecordConstructor from './makeRecordConstructor';
+import makeRecordConstructor from './constructor/makeRecordConstructor';
 import addRecordStatics from './statics/addRecordStatics';
 import addRecordInstances from './instances/addRecordInstances';
 
@@ -11,14 +11,14 @@ function modelRecord<Schema extends RecordSchema>(modelName: string, schema: Sch
 
   const tableName = pluralize.plural(modelName)
 
-  // `Function` does not fulfill the defined type so
-  // it needs to be cast to <any>
+  // Constructor function does not satisfy the whole `Record` type
+  //  so it needs to be case to any
   Record = <any>makeRecordConstructor(modelName, schema);
 
-  // static properties/methods go on the JavaScript variable...
+  // adding static properties/methods onto `Record`
   addRecordStatics(Record, { tableName })
 
-  // instance methods and properties
+  // adding instance methods and properties onto `Record.prototype`
   addRecordInstances(Record, { schema, tableName })
 
   return Record
