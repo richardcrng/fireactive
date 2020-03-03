@@ -7,6 +7,14 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
   constructor: RecordModel<S>
 
   /**
+   * Returns the `ActiveRecord`'s `_id` property if it has one, or
+   *  generates one if one does not yet exist.
+   * 
+   * @returns The `ActiveRecord`'s `_id`, whether existing or generated
+   */
+  getId(): string,
+
+  /**
    * Save the instance to Firebase
    */
   save(): Promise<void>,

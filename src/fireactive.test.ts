@@ -1,8 +1,7 @@
-import { modelRecord } from './fireactive'
-import Schema from './Schema'
+import FirebaseServer from 'firebase-server'
+import { modelRecord, Schema, initialize } from './fireactive'
 
-
-describe('record', () => {
+describe('modelRecord', () => {
   describe("GIVEN a model name of 'players' and a schema", () => {
     const modelName = 'player'
     const schema = {
@@ -35,6 +34,36 @@ describe('record', () => {
       test("AND an error is thrown if a field is passed of the wrong type", () => {
         // @ts-ignore : checking for an error
         expect(() => new PlayerRecord({ name: 4, age: 3, isCool: true })).toThrow(/wrong type/)
+      })
+
+      test("AND using the model's create method throws an error without a database connection", () => {
+        expect(PlayerRecord.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
+      })
+
+      describe("AND a connection to a database is initialise", () => {
+        let server: FirebaseServer
+
+        beforeAll(async (done) => {
+          server = new FirebaseServer(5555, 'localhost')
+          initialize({
+            databaseURL: `ws://localhost:${server.getPort()}`
+          })
+          done()
+        })
+
+        afterAll(async (done) => {
+          await server.close()
+          done()
+        })
+
+        test("THEN a model's create method does not throw an error", () => {
+          expect(PlayerRecord.create({ name: 'Pedro', age: 3, isCool: true })).resolves.toMatchObject({
+            name: 'Pedro',
+            age: 3,
+            isCool: true
+          })
+        })
+
       })
     })
   })

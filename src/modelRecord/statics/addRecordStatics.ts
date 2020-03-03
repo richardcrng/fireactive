@@ -8,20 +8,15 @@ import { RecordSchema, ToCreateRecord } from "../../types/schema.types";
 const addRecordStatics = <Schema extends RecordSchema>(
   Record: RecordModel<Schema>,
   scoped: { tableName: string }
-) => {
+): void => {
+  
   Record.create = async function (
     props: ToCreateRecord<Schema> & { _id?: string }
   ): Promise<ActiveRecord<Schema>> {
     const db = this.getDb()
 
-    let _id: string
-    if (props._id) {
-      _id = props._id
-    } else {
-      const ref = await db.ref(scoped.tableName).push()
-      _id = ref.key as string
-    }
-    const record = new Record({ ...props, _id })
+    const record = new Record({ ...props })
+    const _id = record.getId()
     await db.ref(scoped.tableName).child(_id).set({ ...props, _id })
     return record
   };

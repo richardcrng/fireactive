@@ -1,6 +1,8 @@
 import dotenv from 'dotenv'
 import { FirebaseConfig } from './types/firebase.types'
 import modelRecord from './modelRecord/modelRecord'
+import initialize from './initialize';
+import Schema from './Schema';
 
 dotenv.config()
 
@@ -13,6 +15,16 @@ const config: FirebaseConfig = {
   messagingSenderId: process.env.MESSAGING_SENDER_ID as string
 }
 
-export {
-  modelRecord
+const Fireactive = {
+  initialize,
+  modelRecord,
+  Schema
 }
+
+export {
+  initialize,
+  modelRecord,
+  Schema
+}
+
+export default Fireactive
