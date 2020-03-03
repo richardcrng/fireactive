@@ -16,6 +16,7 @@ function modelRecord<Schema extends RecordSchema>(modelName: string, schema: Sch
   Record = <any>makeRecordConstructor(modelName, schema);
 
   // adding static properties/methods onto `Record`
+  // @ts-ignore : infinitely deep :(
   addRecordStatics(Record, { tableName })
 
   // adding instance methods and properties onto `Record.prototype`

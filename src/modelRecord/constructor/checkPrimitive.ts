@@ -1,42 +1,51 @@
+import { get, set, isUndefined } from 'lodash'
 import { ActiveRecord } from '../../types/record.types'
 import { RecordSchema, ObjectFromRecord } from '../../types/schema.types';
 import { FieldIdentifier } from '../../types/field.types';
 
 interface A<Schema extends RecordSchema> {
   schema: Schema,
-  schemaKey: keyof ObjectFromRecord<Schema>,
+  schemaKeyPath: string[],
   modelName: string
 }
 
 function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>, {
   schema,
-  schemaKey,
+  schemaKeyPath,
   modelName
 }: A<Schema>) {
-  // @ts-ignore : check if schema specifies default and if it's currently undefined
-  if (schema[schemaKey]._hasDefault && typeof this[schemaKey] === 'undefined') {
-    this[schemaKey] = schema[schemaKey].default
+  /**
+   * Check the current value at the current schema key path.
+   *  Wrap in a function as we don't want to only retrieve
+   *  the value right now - we want to 
+   */
+  const currentValAtPath = () => get(this, [...schemaKeyPath])
+  const schemaVal = get(schema, schemaKeyPath)
+
+  // check if the path has the `_hasDefault` property and is undefined
+  if (schemaVal?._hasDefault && typeof currentValAtPath() === 'undefined') {
+    const defaultVal = get(schema, [...schemaKeyPath, 'default'])
+    set(this, schemaKeyPath, defaultVal)
   }
 
-  // @ts-ignore : check if schema requires property but it's undefined
-  if (schema[schemaKey].required && typeof this[schemaKey] === 'undefined') {
-    throw new Error(`Failed to create ${modelName}: missing the required property ${schemaKey}`)
+  if (schemaVal?.required && typeof currentValAtPath() === 'undefined') {
+    throw new Error(`Failed to create ${modelName}: missing the required property ${schemaKeyPath.join('.')}`)
   }
 
   // @ts-ignore : check if field matches type if defined
-  if (!(typeof this[schemaKey] === 'undefined')) {
+  if (!(typeof currentValAtPath() === 'undefined')) {
     let doesMatch = true
-    switch (schema[schemaKey]._fieldIdentifier) {
+    switch (schemaVal?._fieldIdentifier) {
       case FieldIdentifier.string:
-        doesMatch = typeof this[schemaKey] === 'string'; break
+        doesMatch = typeof currentValAtPath() === 'string'; break
       case FieldIdentifier.number:
-        doesMatch = typeof this[schemaKey] === 'number'; break
+        doesMatch = typeof currentValAtPath() === 'number'; break
       case FieldIdentifier.boolean:
-        doesMatch = typeof this[schemaKey] === 'boolean'; break
+        doesMatch = typeof currentValAtPath() === 'boolean'; break
     }
 
     if (!doesMatch) {
-      throw new Error(`Failed to create ${modelName}: property ${schemaKey} is of the wrong type`)
+      throw new Error(`Failed to create ${modelName}: property ${schemaKeyPath.join('.')} is of the wrong type`)
     }
   }
 }
