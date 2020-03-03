@@ -51,4 +51,5 @@ export type CreateField<FD> =
   FD extends { _fieldIdentifier: infer C, _hasDefault: true } ? TypeFromIdentifier<C> | undefined
   : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
   : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
+  : FD extends {} ? { [K in keyof FD]: CreateField<FD[K]> }
   : unknown

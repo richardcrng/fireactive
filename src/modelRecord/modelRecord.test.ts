@@ -38,7 +38,7 @@ describe('modelRecord: integration test', () => {
       }
 
       const VenueRecord = modelRecord(modelName, schema)
-      const venue = new VenueRecord({ name: 'WeWork' })
+      const venue = new VenueRecord({ name: 'WeWork', hours: { openingTime: 4 } })
     })
   })
 
