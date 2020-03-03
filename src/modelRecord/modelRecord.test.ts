@@ -33,13 +33,19 @@ describe('modelRecord: integration test', () => {
         name: Schema.string,
         hours: {
           openingTime: Schema.number,
-          closingTime: Schema.number({ required: false })
+          closingTime: Schema.number({ default: 20 })
         },
+        status: {
+          isAccessible: Schema.boolean({ optional: true })
+        }
       }
 
       const VenueRecord = modelRecord(modelName, schema)
-      const venue = new VenueRecord({ name: 'WeWork', hours: { openingTime: 4 } })
-      venue.hours.closingTime
+      const venue = new VenueRecord({ name: 'WeWork', hours: { openingTime: 4 }, status: {} })
+      expect(venue.name).toBe('WeWork')
+      expect(venue.hours.openingTime).toBe(4)
+      expect(venue.hours.closingTime).toBe(20)
+      expect(venue.status.isAccessible).toBeUndefined()
     })
   })
 
