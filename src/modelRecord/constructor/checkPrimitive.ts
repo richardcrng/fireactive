@@ -32,7 +32,6 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
     throw new Error(`Failed to create ${modelName}: missing the required property ${schemaKeyPath.join('.')}`)
   }
 
-  // @ts-ignore : check if field matches type if defined
   if (!(typeof currentValAtPath() === 'undefined')) {
     let doesMatch = true
     switch (schemaVal?._fieldIdentifier) {
