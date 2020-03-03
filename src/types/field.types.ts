@@ -1,3 +1,5 @@
+import { UndefinedToOptional } from "./util.types"
+
 export interface FieldOptions<T> {
   // default?: T,
 }
@@ -42,6 +44,7 @@ export type TypeFromIdentifier<T> =
 export type RecordField<FD> =
   FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
   : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
+  : FD extends {} ? UndefinedToOptional<{ [K in keyof FD]: RecordField<FD[K]> }>
   : unknown
 
 /**
@@ -51,5 +54,5 @@ export type CreateField<FD> =
   FD extends { _fieldIdentifier: infer C, _hasDefault: true } ? TypeFromIdentifier<C> | undefined
   : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
   : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
-  : FD extends {} ? { [K in keyof FD]: CreateField<FD[K]> }
+  : FD extends {} ? UndefinedToOptional<{ [K in keyof FD]: CreateField<FD[K]> }>
   : unknown

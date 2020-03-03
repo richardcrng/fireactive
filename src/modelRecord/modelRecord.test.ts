@@ -33,12 +33,13 @@ describe('modelRecord: integration test', () => {
         name: Schema.string,
         hours: {
           openingTime: Schema.number,
-          closingTime: Schema.number
+          closingTime: Schema.number({ required: false })
         },
       }
 
       const VenueRecord = modelRecord(modelName, schema)
       const venue = new VenueRecord({ name: 'WeWork', hours: { openingTime: 4 } })
+      venue.hours.closingTime
     })
   })
 
