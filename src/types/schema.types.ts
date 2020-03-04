@@ -8,8 +8,12 @@ type SchemaField<FI extends FieldIdentifier = FieldIdentifier> = (FieldDefinitio
   default?: FieldType<FI>
 }
 
+type SchemaProperty = SchemaField | {
+  [key: string]: SchemaProperty
+}
+
 export interface RecordSchema {
-  [key: string]: SchemaField
+  [key: string]: SchemaProperty
 }
 
 /**
