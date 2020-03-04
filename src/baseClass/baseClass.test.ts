@@ -73,26 +73,43 @@ describe('baseClass: integration test', () => {
     })
 
     describe('nested schema', () => {
+      const modelName = 'Venue'
+      const schema = {
+        name: Schema.string,
+        hours: {
+          openingTime: Schema.number,
+          closingTime: Schema.number({ default: 20 })
+        },
+        status: {
+          isAccessible: Schema.boolean({ optional: true })
+        }
+      }
+
+      const Venue = baseClass(modelName, schema)
+
       describe('happy path', () => {
         it("allows new instances that follow the explicit and implied requirement and defaults", () => {
-          const modelName = 'Venue'
-          const schema = {
-            name: Schema.string,
-            hours: {
-              openingTime: Schema.number,
-              closingTime: Schema.number({ default: 20 })
-            },
-            status: {
-              isAccessible: Schema.boolean({ optional: true })
-            }
-          }
-
-          const Venue = baseClass(modelName, schema)
           const venue = new Venue({ name: 'WeWork', hours: { openingTime: 4 }, status: {} })
           expect(venue.name).toBe('WeWork')
           expect(venue.hours.openingTime).toBe(4)
           expect(venue.hours.closingTime).toBe(20)
           expect(venue.status.isAccessible).toBeUndefined()
+        })
+      })
+
+      describe('sad path', () => {
+        it('throws an error when a required nested property is not supplied', () => {
+          expect(() => {
+            // @ts-ignore : checking that static error -> thrown error
+            new Venue({ name: 'TechHub', hours: { closingTime: 20 } })
+          }).toThrow(/required/)
+        })
+
+        it('throws an error when a nested property does not fit the schema type', () => {
+          expect(() => {
+            // @ts-ignore : checking that static error -> thrown error
+            new Venue({ name: 'TechHub', hours: { openingTime: true } })
+          }).toThrow(/type/)
         })
       })
     })
