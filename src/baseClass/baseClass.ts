@@ -1,5 +1,5 @@
 import * as pluralize from 'pluralize'
-import { RecordModel } from "../types/record.types";
+import { BaseClass } from "../types/record.types";
 import { RecordSchema } from '../types/schema.types';
 import makeBaseClassConstructor from './constructor/makeBaseClassConstructor';
 import addBaseClassStatics from './statics/addBaseClassStatics';
@@ -7,7 +7,7 @@ import addBaseClassInstances from './instances/addBaseClassInstances';
 
 function baseClass<Schema extends RecordSchema>(className: string, schema: Schema) {
   // our JavaScript `Record` variable, with a constructor type
-  let Record: RecordModel<Schema>;
+  let Record: BaseClass<Schema>;
 
   const tableName = pluralize.plural(className)
 

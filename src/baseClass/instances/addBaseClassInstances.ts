@@ -1,4 +1,4 @@
-import { RecordModel } from "../../types/record.types";
+import { BaseClass } from "../../types/record.types";
 import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 import isNull from "../../utils/isNull";
 
@@ -6,7 +6,7 @@ import isNull from "../../utils/isNull";
  * Adds instance methods and properties onto the Record's prototype
  */
 const addBaseClassInstances = <Schema extends RecordSchema>(
-  Record: RecordModel<Schema>,
+  Record: BaseClass<Schema>,
   scoped: { schema: Schema, tableName: string }
 ): void => {
 

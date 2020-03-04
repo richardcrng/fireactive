@@ -1,4 +1,4 @@
-import { RecordModel, ActiveRecord } from "../../types/record.types";
+import { BaseClass, ActiveRecord } from "../../types/record.types";
 import { getFirebaseDatabase } from "../../initialize/initialize";
 import { RecordSchema, ToCreateRecord } from "../../types/schema.types";
 
@@ -6,7 +6,7 @@ import { RecordSchema, ToCreateRecord } from "../../types/schema.types";
  * Adds class methods and properties onto the class
  */
 const addBaseClassStatics = <Schema extends RecordSchema>(
-  Record: RecordModel<Schema>,
+  Record: BaseClass<Schema>,
   scoped: { tableName: string }
 ): void => {
   

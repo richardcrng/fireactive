@@ -1,10 +1,10 @@
 import { RecordSchema, ObjectFromRecord, ToCreateRecord } from "./schema.types"
 
 /**
- * An ActiveRecord _instance_
+ * An `ActiveRecord<S>` _instance_ of the `BaseClass<S>`
  */
 export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
-  constructor: RecordModel<S>
+  constructor: BaseClass<S>
 
   /**
    * Returns the `ActiveRecord`'s `_id` property if it has one, or
@@ -35,7 +35,7 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
  * 
  * @template S - a RecordSchema
  */
-export interface RecordModel<S extends RecordSchema> {
+export interface BaseClass<S extends RecordSchema> {
   /**
    * Create an instance of the ActiveRecord -
    *  not yet saved to the database
