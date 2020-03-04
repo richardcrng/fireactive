@@ -41,8 +41,10 @@ export interface BaseClass<S extends RecordSchema> {
    * Create an instance of the ActiveRecord -
    *  not yet saved to the database
    */
-  new(props: ToCreateRecord<S> & { _id?: string }): ActiveRecord<S>;
-  prototype: ActiveRecord<S>;
+  new(props: ToCreateRecord<S> & { _id?: string }): ActiveRecord<S>,
+  prototype: ActiveRecord<S>,
+
+  key: string,
 
   /**
    * Create a new model and save it to the database

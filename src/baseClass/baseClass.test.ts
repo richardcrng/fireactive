@@ -11,8 +11,12 @@ describe('baseClass: creating a BaseClass', () => {
   }
   const BaseCar = baseClass(className, schema)
 
-  it('creates a class which knows its name', () => {
+  it('created class knows its name', () => {
     expect(BaseCar.name).toBe(className)
+  })
+
+  it('created class knows its database key', () => {
+    expect(BaseCar.key).toBe(`${className}s`)
   })
 })
 

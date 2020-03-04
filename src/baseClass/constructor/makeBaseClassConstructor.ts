@@ -1,4 +1,5 @@
 import { get } from 'lodash'
+import { plural } from 'pluralize'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
@@ -6,11 +7,11 @@ import checkPrimitive from './checkPrimitive';
 /**
  * Creates a constructor function for a `RecordModel<Schema>`
  * 
- * @param modelName - The name of the model, used as a basis for the Firebase table name
+ * @param className - The name of the model, used as a basis for the Firebase table name
  * @param schema - The schema that the model uses
  */
 const makeBaseClassConstructor = <Schema extends RecordSchema>(
-  modelName: string,
+  className: string,
   schema: Schema
 ) => {
   function baseClassConstructor (
@@ -20,10 +21,18 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
 
     const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
 
+    /**
+     * Check whether the object conforms to the schema at a given path,
+     *  including iterating within child keys if it's an object at
+     *  that particular path
+     * 
+     * @param schemaKeyPath - The path from the object to the field
+     *  to be checked
+     */
     const iterativelyCheckAgainstSchema = (schemaKeyPath: string[]) => {
       if (schemaFieldIdentified(schemaKeyPath)) {
         // @ts-ignore : infinitely deep :(
-        checkPrimitive.bind(this)({ schema, schemaKeyPath, modelName })
+        checkPrimitive.bind(this)({ schema, schemaKeyPath, className })
       } else {
         // assume it's an object and iteratively check keys
         Object.keys(get(schema, schemaKeyPath)).forEach(childKey => {
@@ -41,7 +50,19 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     })
   }
 
-  Object.defineProperty(baseClassConstructor, 'name', { value: modelName })
+  /**
+   * Set the `name` property to be the className passed in,
+   *  and the `key` property to be the pluralised version of name.
+   *  (We're using a getter because `name` might get updated at some point?
+   *  Not sure why, but seems plausible that it might happen, e.g. to
+   *  deliberately change which database is used.
+   */
+  Object.defineProperty(baseClassConstructor, 'name', { value: className })
+  Object.defineProperty(baseClassConstructor, 'key', {
+    get(this: BaseClass<Schema>) {
+      return plural(this.name)
+    }
+  })
 
   return baseClassConstructor
 }
