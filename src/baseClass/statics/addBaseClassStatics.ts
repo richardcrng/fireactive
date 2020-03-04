@@ -1,27 +1,27 @@
-import { RecordModel, ActiveRecord } from "../../types/record.types";
+import { BaseClass, ActiveRecord } from "../../types/class.types";
 import { getFirebaseDatabase } from "../../initialize/initialize";
 import { RecordSchema, ToCreateRecord } from "../../types/schema.types";
 
 /**
- * Adds class methods and properties onto the class
+ * Adds default class methods and properties onto the `BaseClass`
  */
-const addRecordStatics = <Schema extends RecordSchema>(
-  Record: RecordModel<Schema>,
+const addBaseClassStatics = <Schema extends RecordSchema>(
+  BaseClass: BaseClass<Schema>,
   scoped: { tableName: string }
 ): void => {
   
-  Record.create = async function (
+  BaseClass.create = async function (
     props: ToCreateRecord<Schema> & { _id?: string }
   ): Promise<ActiveRecord<Schema>> {
     const db = this.getDb()
 
-    const record = new Record({ ...props })
+    const record = new BaseClass({ ...props })
     const _id = record.getId()
     await db.ref(scoped.tableName).child(_id).set({ ...props, _id })
     return record
   };
 
-  Record.getDb = function () {
+  BaseClass.getDb = function () {
     const database = getFirebaseDatabase()
     if (!database) {
       throw new Error('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
@@ -31,4 +31,4 @@ const addRecordStatics = <Schema extends RecordSchema>(
   }
 }
 
-export default addRecordStatics
+export default addBaseClassStatics

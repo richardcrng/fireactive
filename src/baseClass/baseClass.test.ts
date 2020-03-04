@@ -1,9 +1,26 @@
 import FirebaseServer from 'firebase-server'
-import modelRecord from './';
+import baseClass from '.';
 import Schema from '../Schema';
 import initialize from '../initialize';
 
-describe('modelRecord: integration test', () => {
+describe('baseClass: creating a BaseClass', () => {
+  const className = 'Car'
+  const schema = {
+    brand: Schema.string,
+    topSpeed: Schema.number
+  }
+  const BaseCar = baseClass(className, schema)
+
+  it('created class knows its name', () => {
+    expect(BaseCar.name).toBe(className)
+  })
+
+  it('created class knows its database key', () => {
+    expect(BaseCar.key).toBe(`${className}s`)
+  })
+})
+
+describe('baseClass: integration test', () => {
   describe('integration with Schema', () => {
     test('non-nested schema', () => {
       const modelName = 'player'
@@ -16,7 +33,7 @@ describe('modelRecord: integration test', () => {
         parents: Schema.number({ optional: true })
       }
 
-      const PlayerRecord = modelRecord(modelName, schema)
+      const PlayerRecord = baseClass(modelName, schema)
 
       const player = new PlayerRecord({ name: 'Pedro', age: 3, isCool: true })
       expect(player.name).toBe('Pedro')
@@ -40,7 +57,7 @@ describe('modelRecord: integration test', () => {
         }
       }
 
-      const VenueRecord = modelRecord(modelName, schema)
+      const VenueRecord = baseClass(modelName, schema)
       const venue = new VenueRecord({ name: 'WeWork', hours: { openingTime: 4 }, status: {} })
       expect(venue.name).toBe('WeWork')
       expect(venue.hours.openingTime).toBe(4)
@@ -62,7 +79,7 @@ describe('modelRecord: integration test', () => {
       }
 
       describe("WHEN the model name and schema are passed to record", () => {
-        const PlayerRecord = modelRecord(modelName, schema)
+        const PlayerRecord = baseClass(modelName, schema)
 
         test("THEN the result is a class that can create new instances", () => {
           const player = new PlayerRecord({ name: 'Pedro', age: 3, isCool: true })
