@@ -5,7 +5,7 @@ import { RecordSchema, ToCreateRecord } from "../../types/schema.types";
 /**
  * Adds class methods and properties onto the class
  */
-const addRecordStatics = <Schema extends RecordSchema>(
+const addBaseClassStatics = <Schema extends RecordSchema>(
   Record: RecordModel<Schema>,
   scoped: { tableName: string }
 ): void => {
@@ -31,4 +31,4 @@ const addRecordStatics = <Schema extends RecordSchema>(
   }
 }
 
-export default addRecordStatics
+export default addBaseClassStatics

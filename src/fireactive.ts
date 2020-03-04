@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import { FirebaseConfig } from './types/firebase.types'
-import modelRecord from './modelRecord/modelRecord'
+import baseClass from './baseClass'
 import initialize from './initialize';
 import Schema from './Schema';
 
@@ -17,13 +17,13 @@ const config: FirebaseConfig = {
 
 const Fireactive = {
   initialize,
-  modelRecord,
+  baseClass,
   Schema
 }
 
 export {
   initialize,
-  modelRecord,
+  baseClass,
   Schema
 }
 

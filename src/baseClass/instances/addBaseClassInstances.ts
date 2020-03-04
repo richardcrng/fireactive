@@ -5,7 +5,7 @@ import isNull from "../../utils/isNull";
 /**
  * Adds instance methods and properties onto the Record's prototype
  */
-const addRecordInstances = <Schema extends RecordSchema>(
+const addBaseClassInstances = <Schema extends RecordSchema>(
   Record: RecordModel<Schema>,
   scoped: { schema: Schema, tableName: string }
 ): void => {
@@ -44,4 +44,4 @@ const addRecordInstances = <Schema extends RecordSchema>(
 
 }
 
-export default addRecordInstances
+export default addBaseClassInstances

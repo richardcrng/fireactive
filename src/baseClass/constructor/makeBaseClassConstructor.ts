@@ -9,8 +9,8 @@ import checkPrimitive from './checkPrimitive';
  * @param modelName - The name of the model, used as a basis for the Firebase table name
  * @param schema - The schema that the model uses
  */
-const makeRecordConstructor = <Schema extends RecordSchema>(modelName: string, schema: Schema) => {
-  return function recordConstructor (
+const makeBaseClassConstructor = <Schema extends RecordSchema>(modelName: string, schema: Schema) => {
+  return function baseClassConstructor (
     this: ActiveRecord<Schema>,
     props: ToCreateRecord<Schema> & { _id?: string }
   ): void {
@@ -39,4 +39,4 @@ const makeRecordConstructor = <Schema extends RecordSchema>(modelName: string, s
   }
 }
 
-export default makeRecordConstructor
+export default makeBaseClassConstructor

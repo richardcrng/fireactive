@@ -1,7 +1,7 @@
 import FirebaseServer from 'firebase-server'
-import { modelRecord, Schema, initialize } from './fireactive'
+import { baseClass, Schema, initialize } from './fireactive'
 
-describe('modelRecord', () => {
+describe('baseClass', () => {
   describe("GIVEN a model name of 'players' and a schema", () => {
     const modelName = 'player'
     const schema = {
@@ -14,7 +14,7 @@ describe('modelRecord', () => {
     }
 
     describe("WHEN the model name and schema are passed to record", () => {
-      const PlayerRecord = modelRecord(modelName, schema)
+      const PlayerRecord = baseClass(modelName, schema)
 
       test("THEN the result is a class that can create new instances", () => {
         const player = new PlayerRecord({ name: 'Pedro', age: 3, isCool: true })
