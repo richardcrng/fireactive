@@ -30,8 +30,8 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
 
 
 /**
- * A _class_ to create ActiveRecord instances of `S`. 
- * This interface holds the static class methods and properties
+ * A _class_ to create `ActiveRecord<S>` instances from the `RecordSchema`, `S`. 
+ * This interface holds the static class methods and properties.
  * 
  * @template S - a RecordSchema
  */

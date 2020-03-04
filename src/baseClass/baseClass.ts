@@ -5,24 +5,33 @@ import makeBaseClassConstructor from './constructor/makeBaseClassConstructor';
 import addBaseClassStatics from './statics/addBaseClassStatics';
 import addBaseClassInstances from './instances/addBaseClassInstances';
 
+/**
+ * Create a `BaseClass<Schema>`, where `Schema` is an Active `RecordSchema`.
+ * 
+ * @param className - The name used as a basis for the Firebase RTD table
+ * @param schema - The `RecordSchema` for an `ActiveRecord` of the resultant class
+ * 
+ * @returns The `BaseClass<S>`.
+ * @template Schema - A `RecordSchema`
+ */
 function baseClass<Schema extends RecordSchema>(className: string, schema: Schema) {
   // our JavaScript `Record` variable, with a constructor type
-  let Record: BaseClass<Schema>;
+  let BaseClass: BaseClass<Schema>;
 
   const tableName = pluralize.plural(className)
 
-  // Constructor function does not satisfy the whole `Record` type
+  // Constructor function does not satisfy the whole `BaseClass` type
   //  so it needs to be case to any
-  Record = <any>makeBaseClassConstructor(className, schema);
+  BaseClass = <any>makeBaseClassConstructor(className, schema);
 
-  // adding static properties/methods onto `Record`
+  // adding static properties/methods onto `BaseClass`
   // @ts-ignore : infinitely deep :(
-  addBaseClassStatics(Record, { tableName })
+  addBaseClassStatics(BaseClass, { tableName })
 
-  // adding instance methods and properties onto `Record.prototype`
-  addBaseClassInstances(Record, { schema, tableName })
+  // adding instance methods and properties onto `BaseClass.prototype`
+  addBaseClassInstances(BaseClass, { schema, tableName })
 
-  return Record
+  return BaseClass
 }
 
 export default baseClass
