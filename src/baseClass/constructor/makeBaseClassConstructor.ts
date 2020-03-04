@@ -14,6 +14,9 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
   className: string,
   schema: Schema
 ) => {
+  /**
+   * A constructor function for a Fireactive Base Class.
+   */
   function baseClassConstructor (
     this: ActiveRecord<Schema>,
     props: ToCreateRecord<Schema> & { _id?: string }

@@ -44,6 +44,9 @@ export interface BaseClass<S extends RecordSchema> {
   new(props: ToCreateRecord<S> & { _id?: string }): ActiveRecord<S>,
   prototype: ActiveRecord<S>,
 
+  /**
+   * The 'table' key which this model uses in the Firebase RTD.
+   */
   key: string,
 
   /**
