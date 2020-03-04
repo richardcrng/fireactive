@@ -42,17 +42,26 @@ export type TypeFromIdentifier<T> =
  * Converts a FieldDefinition to a value that the record holds
  */
 export type RecordField<FD> =
+  // if FD.required === false, then the record might not have the property
   FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
-  : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
-  : FD extends {} ? UndefinedToOptional<{ [K in keyof FD]: RecordField<FD[K]> }>
-  : unknown
+    // else if it has `_fieldIdentifier`, then it is a necessary primitive field
+    : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
+    // else it is an object of RecordFields, some of which might be optional
+    : FD extends {} ? UndefinedToOptional<{ [K in keyof FD]: RecordField<FD[K]> }>
+    // 🤷
+    : unknown
 
 /**
  * Converts a FieldDefinition to a value taken by the record on initialisation
  */
 export type CreateField<FD> =
+  // if FD._hasDefault === true, then field does not need to be supplied at creation
   FD extends { _fieldIdentifier: infer C, _hasDefault: true } ? TypeFromIdentifier<C> | undefined
-  : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
-  : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
-  : FD extends {} ? UndefinedToOptional<{ [K in keyof FD]: CreateField<FD[K]> }>
-  : unknown
+    // if FD.required === false, then field does not need to be supplied at creation
+    : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
+    // else if it's a primitive field, then it does need to be supplied at creation
+    : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
+    // if not a primitive field, it's probably an object of other fields
+    : FD extends {} ? UndefinedToOptional<{ [K in keyof FD]: CreateField<FD[K]> }>
+    // 🤷
+    : unknown

@@ -22,30 +22,58 @@ describe('baseClass: creating a BaseClass', () => {
 
 describe('baseClass: integration test', () => {
   describe('integration with Schema', () => {
-    test('non-nested schema', () => {
+    describe('non-nested schema', () => {
       const modelName = 'player'
       const schema = {
         name: Schema.string,
-        age: Schema.number,
-        isCool: Schema.boolean(),
+        age: Schema.number({ required: false }),
+        isCool: Schema.boolean({ default: false }),
         friends: Schema.number({ required: false }),
         children: Schema.number({ default: 4 }),
         parents: Schema.number({ optional: true })
       }
 
-      const PlayerRecord = baseClass(modelName, schema)
+      const Player = baseClass(modelName, schema)
+      let player: InstanceType<typeof Player>
 
-      const player = new PlayerRecord({ name: 'Pedro', age: 3, isCool: true })
-      expect(player.name).toBe('Pedro')
-      expect(player.age).toBe(3)
-      expect(player.isCool).toBe(true)
-      expect(player.friends).toBeUndefined()
-      expect(player.children).toBe(4)
-      expect(player.parents).toBeUndefined()
+      describe('happy path', () => {
+        it("allows new instances that follow the explicit and implied requirement and defaults", () => {
+          player = new Player({ name: 'Pedro', age: 3, isCool: true })
+        })
+
+        it("uses the supplied values at creation", () => {
+          expect(player.name).toBe('Pedro')
+          expect(player.age).toBe(3)
+          expect(player.isCool).toBe(true)
+        })
+
+        it("uses a default value only if it is not overwritten", () => {
+          expect(player.isCool).toBe(true)
+          expect(player.children).toBe(4)
+        })
+
+        it("has optional properties as defined only if not supplied", () => {
+          expect(player.age).not.toBeUndefined()
+          expect(player.friends).toBeUndefined()
+          expect(player.parents).toBeUndefined()
+        })
+      })
+
+      describe('sad path', () => {
+        it('throws an error when an implicitly required field is not supplied', () => {
+          // @ts-ignore : checking static type error leads to creation error
+          expect(() => new Player({ age: 4, isCool: true })).toThrow(/required/)
+        })
+
+        it('throws an error when fields supplied are of wrong type', () => {
+          // @ts-ignore : checking static type error leads to creation error
+          expect(() => new Player({ name: 4, age: 4, isCool: true })).toThrow(/type/)
+        })
+      })
     })
 
-    test('nested schema', () => {
-      const modelName = 'venue'
+    describe('nested schema', () => {
+      const modelName = 'Venue'
       const schema = {
         name: Schema.string,
         hours: {
@@ -57,12 +85,33 @@ describe('baseClass: integration test', () => {
         }
       }
 
-      const VenueRecord = baseClass(modelName, schema)
-      const venue = new VenueRecord({ name: 'WeWork', hours: { openingTime: 4 }, status: {} })
-      expect(venue.name).toBe('WeWork')
-      expect(venue.hours.openingTime).toBe(4)
-      expect(venue.hours.closingTime).toBe(20)
-      expect(venue.status.isAccessible).toBeUndefined()
+      const Venue = baseClass(modelName, schema)
+
+      describe('happy path', () => {
+        it("allows new instances that follow the explicit and implied requirement and defaults", () => {
+          const venue = new Venue({ name: 'WeWork', hours: { openingTime: 4 }, status: {} })
+          expect(venue.name).toBe('WeWork')
+          expect(venue.hours.openingTime).toBe(4)
+          expect(venue.hours.closingTime).toBe(20)
+          expect(venue.status.isAccessible).toBeUndefined()
+        })
+      })
+
+      describe('sad path', () => {
+        it('throws an error when a required nested property is not supplied', () => {
+          expect(() => {
+            // @ts-ignore : checking that static error -> thrown error
+            new Venue({ name: 'TechHub', hours: { closingTime: 20 } })
+          }).toThrow(/required/)
+        })
+
+        it('throws an error when a nested property does not fit the schema type', () => {
+          expect(() => {
+            // @ts-ignore : checking that static error -> thrown error
+            new Venue({ name: 'TechHub', hours: { openingTime: true } })
+          }).toThrow(/type/)
+        })
+      })
     })
   })
 
