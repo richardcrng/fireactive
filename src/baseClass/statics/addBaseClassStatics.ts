@@ -1,4 +1,4 @@
-import { BaseClass, ActiveRecord } from "../../types/record.types";
+import { BaseClass, ActiveRecord } from "../../types/class.types";
 import { getFirebaseDatabase } from "../../initialize/initialize";
 import { RecordSchema, ToCreateRecord } from "../../types/schema.types";
 

@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import { ActiveRecord } from "../../types/record.types";
+import { ActiveRecord } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
 

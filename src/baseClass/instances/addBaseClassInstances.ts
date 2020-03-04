@@ -1,4 +1,4 @@
-import { BaseClass } from "../../types/record.types";
+import { BaseClass } from "../../types/class.types";
 import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 import isNull from "../../utils/isNull";
 

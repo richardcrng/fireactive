@@ -1,5 +1,5 @@
 import * as pluralize from 'pluralize'
-import { BaseClass } from "../types/record.types";
+import { BaseClass } from "../types/class.types";
 import { RecordSchema } from '../types/schema.types';
 import makeBaseClassConstructor from './constructor/makeBaseClassConstructor';
 import addBaseClassStatics from './statics/addBaseClassStatics';
