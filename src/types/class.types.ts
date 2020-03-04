@@ -1,7 +1,8 @@
 import { RecordSchema, ObjectFromRecord, ToCreateRecord } from "./schema.types"
 
 /**
- * An `ActiveRecord<S>` _instance_ of the `BaseClass<S>`
+ * An `ActiveRecord<S>` _instance_ of the `BaseClass<S>`. 
+ * This interface holds the instance methods and properties.
  */
 export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
   constructor: BaseClass<S>

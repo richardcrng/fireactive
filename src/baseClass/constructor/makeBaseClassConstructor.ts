@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import { ActiveRecord } from "../../types/class.types";
+import { ActiveRecord, BaseClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
 
@@ -9,8 +9,11 @@ import checkPrimitive from './checkPrimitive';
  * @param modelName - The name of the model, used as a basis for the Firebase table name
  * @param schema - The schema that the model uses
  */
-const makeBaseClassConstructor = <Schema extends RecordSchema>(modelName: string, schema: Schema) => {
-  return function baseClassConstructor (
+const makeBaseClassConstructor = <Schema extends RecordSchema>(
+  modelName: string,
+  schema: Schema
+) => {
+  function baseClassConstructor (
     this: ActiveRecord<Schema>,
     props: ToCreateRecord<Schema> & { _id?: string }
   ): void {
@@ -37,6 +40,10 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(modelName: string
       iterativelyCheckAgainstSchema([key])
     })
   }
+
+  Object.defineProperty(baseClassConstructor, 'name', { value: modelName })
+
+  return baseClassConstructor
 }
 
 export default makeBaseClassConstructor

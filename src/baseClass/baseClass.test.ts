@@ -3,6 +3,19 @@ import baseClass from '.';
 import Schema from '../Schema';
 import initialize from '../initialize';
 
+describe('baseClass: creating a BaseClass', () => {
+  const className = 'Car'
+  const schema = {
+    brand: Schema.string,
+    topSpeed: Schema.number
+  }
+  const BaseCar = baseClass(className, schema)
+
+  it('creates a class which knows its name', () => {
+    expect(BaseCar.name).toBe(className)
+  })
+})
+
 describe('baseClass: integration test', () => {
   describe('integration with Schema', () => {
     test('non-nested schema', () => {
