@@ -22,8 +22,8 @@ describe('baseClass: creating a BaseClass', () => {
 
 describe('baseClass: integration test', () => {
   describe('integration with Schema', () => {
-    describe('non-nested schema', () => {
-      const modelName = 'player'
+    describe('simple non-nested schema', () => {
+      const className = 'Player'
       const schema = {
         name: Schema.string,
         age: Schema.number({ required: false }),
@@ -33,7 +33,7 @@ describe('baseClass: integration test', () => {
         parents: Schema.number({ optional: true })
       }
 
-      const Player = baseClass(modelName, schema)
+      const Player = baseClass(className, schema)
       let player: InstanceType<typeof Player>
 
       describe('happy path', () => {
@@ -72,8 +72,30 @@ describe('baseClass: integration test', () => {
       })
     })
 
+    describe('enumr', () => {
+      const className = 'User'
+      const schema = {
+        username: Schema.string,
+        role: Schema.enumr(['admin', 'regular'])
+      }
+
+      const User = baseClass(className, schema)
+
+      const user = new User({ username: 'hi', role: 4 })
+
+      describe('sad path', () => {
+        it('throws an error when a non-enumerator value is provided', () => {
+          expect(() => {
+            expect(() => {
+              new User({ username: 'hello', role: 'banana' })
+            }).toThrow()
+          })
+        })
+      })
+    })
+
     describe('nested schema', () => {
-      const modelName = 'Venue'
+      const className = 'Venue'
       const schema = {
         name: Schema.string,
         hours: {
@@ -85,7 +107,7 @@ describe('baseClass: integration test', () => {
         }
       }
 
-      const Venue = baseClass(modelName, schema)
+      const Venue = baseClass(className, schema)
 
       describe('happy path', () => {
         it("allows new instances that follow the explicit and implied requirement and defaults", () => {
@@ -117,7 +139,7 @@ describe('baseClass: integration test', () => {
 
   describe('integration with Schema and server', () => {
     describe("GIVEN a model name of 'players' and a schema", () => {
-      const modelName = 'player'
+      const className = 'player'
       const schema = {
         name: Schema.string,
         age: Schema.number,
@@ -128,7 +150,7 @@ describe('baseClass: integration test', () => {
       }
 
       describe("WHEN the model name and schema are passed to record", () => {
-        const PlayerRecord = baseClass(modelName, schema)
+        const PlayerRecord = baseClass(className, schema)
 
         test("THEN the result is a class that can create new instances", () => {
           const player = new PlayerRecord({ name: 'Pedro', age: 3, isCool: true })

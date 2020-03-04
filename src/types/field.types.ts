@@ -9,19 +9,23 @@ export interface FieldOptions<T> {
  * @template D - does the field initialise with a default value?
  */
 export type FieldDefinition<T = any, R extends boolean = boolean, D extends boolean = boolean> = FieldOptions<T> & {
-  _fieldIdentifier: T extends string ? FieldIdentifier.string
-  : T extends number ? FieldIdentifier.number
+  _fieldIdentifier: T extends number ? FieldIdentifier.number
   : T extends boolean ? FieldIdentifier.boolean
+  // hopefully we pass an array for an enum
+  : T extends Array<infer E> ? FieldIdentifier.enum
+  : T extends string ? FieldIdentifier.string
   : unknown
 } & {
   required: R,
-  default?: T
+  default?: T extends Array<infer E> ? E : T
 } & (D extends true ? { _hasDefault: true } : { _hasDefault: false })
 
-export type FieldType<FI> = FI extends FieldIdentifier.boolean ? boolean
+export type FieldType<FI, T = any> = FI extends FieldIdentifier.boolean ? boolean
   : FI extends boolean ? boolean
   : FI extends FieldIdentifier.number ? number
   : FI extends number ? number
+  // if it's an enum, hopefully it'll be passed along
+  : FI extends FieldIdentifier.enum ? T
   : FI extends FieldIdentifier.string ? string
   : FI extends string ? string
   : unknown
@@ -29,21 +33,28 @@ export type FieldType<FI> = FI extends FieldIdentifier.boolean ? boolean
 export enum FieldIdentifier {
   string = 'STRING_FIELD_IDENTIFIER',
   number = 'NUMBER_FIELD_IDENTIFIER',
-  boolean = 'BOOLEAN_FIELD_IDENTIFIER'
+  boolean = 'BOOLEAN_FIELD_IDENTIFIER',
+  enum = 'ENUM_FIELD_IDENTIFIER'
 }
 
-export type TypeFromIdentifier<T> =
+export type TypeFromIdentifier<T, U = any> =
   T extends FieldIdentifier.string ? string
   : T extends FieldIdentifier.number ? number
   : T extends FieldIdentifier.boolean ? boolean
+  // if it's an enum, hopefully we pass along the enum values...
+  : T extends FieldIdentifier.enum ? U
   : unknown
 
 /**
  * Converts a FieldDefinition to a value that the record holds
  */
 export type RecordField<FD> =
-  // if FD.required === false, then the record might not have the property
-  FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
+  // handle enum cases first: is it optional?
+  FD extends { _fieldIdentifier: infer C, enum: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined
+    // required enum
+    : FD extends { _fieldIdentifier: infer C, enum: Array<infer E> } ? TypeFromIdentifier<C, E>
+    // if FD.required === false, then the record might not have the property
+    : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
     // else if it has `_fieldIdentifier`, then it is a necessary primitive field
     : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
     // else it is an object of RecordFields, some of which might be optional
@@ -55,8 +66,14 @@ export type RecordField<FD> =
  * Converts a FieldDefinition to a value taken by the record on initialisation
  */
 export type CreateField<FD> =
-  // if FD._hasDefault === true, then field does not need to be supplied at creation
-  FD extends { _fieldIdentifier: infer C, _hasDefault: true } ? TypeFromIdentifier<C> | undefined
+  // handle enum cases first: does it have a default value?
+  FD extends { _fieldIdentifier: infer C, enum: Array<infer E>, _hasDefault: true } ? TypeFromIdentifier<C, E> | undefined
+    // or is it an enum that is not required?
+    : FD extends { _fieldIdentifier: infer C, enum: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined
+    // or if it's still an enum, it's one required at creation
+    : FD extends { _fieldIdentifier: infer C, enum: Array<infer E> } ? TypeFromIdentifier<C, E>
+    // if FD._hasDefault === true, then field does not need to be supplied at creation
+    : FD extends { _fieldIdentifier: infer C, _hasDefault: true } ? TypeFromIdentifier<C> | undefined
     // if FD.required === false, then field does not need to be supplied at creation
     : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
     // else if it's a primitive field, then it does need to be supplied at creation
