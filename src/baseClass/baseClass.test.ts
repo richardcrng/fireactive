@@ -86,6 +86,15 @@ describe('baseClass: integration test', () => {
           const user = new User({ username: 'Test', role: 'regular' })
           expect(user.role).toBe('regular')
         })
+
+        it('can take a default', () => {
+          const Popcorn = baseClass('Popcorn', {
+            flavour: Schema.enum(['salty', 'sweet'], { default: 'salty' })
+          })
+
+          const popcorn = new Popcorn({})
+          expect(popcorn.flavour).toBe('salty')
+        })
       })
 
       describe('sad path', () => {
