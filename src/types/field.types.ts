@@ -19,8 +19,9 @@ export type FieldDefinition<T = any, R extends boolean = boolean, D extends bool
   required: R,
   default?: T extends Array<infer E> ? E : T
 } & (D extends true ? { _hasDefault: true } : { _hasDefault: false })
+  & (T extends Array<infer E> ? { vals: E[] } : {})
 
-export type FieldType<FI, T = any> = FI extends FieldIdentifier.boolean ? boolean
+export type FieldType<FI, T = unknown> = FI extends FieldIdentifier.boolean ? boolean
   : FI extends boolean ? boolean
   : FI extends FieldIdentifier.number ? number
   : FI extends number ? number
@@ -37,7 +38,7 @@ export enum FieldIdentifier {
   enum = 'ENUM_FIELD_IDENTIFIER'
 }
 
-export type TypeFromIdentifier<T, U = any> =
+export type TypeFromIdentifier<T, U = unknown> =
   T extends FieldIdentifier.string ? string
   : T extends FieldIdentifier.number ? number
   : T extends FieldIdentifier.boolean ? boolean
@@ -50,9 +51,9 @@ export type TypeFromIdentifier<T, U = any> =
  */
 export type RecordField<FD> =
   // handle enum cases first: is it optional?
-  FD extends { _fieldIdentifier: infer C, enum: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined
+  FD extends { _fieldIdentifier: infer C, vals: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined
     // required enum
-    : FD extends { _fieldIdentifier: infer C, enum: Array<infer E> } ? TypeFromIdentifier<C, E>
+    : FD extends { _fieldIdentifier: infer C, vals: Array<infer E> } ? TypeFromIdentifier<C, E>
     // if FD.required === false, then the record might not have the property
     : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
     // else if it has `_fieldIdentifier`, then it is a necessary primitive field
@@ -67,11 +68,11 @@ export type RecordField<FD> =
  */
 export type CreateField<FD> =
   // handle enum cases first: does it have a default value?
-  FD extends { _fieldIdentifier: infer C, enum: Array<infer E>, _hasDefault: true } ? TypeFromIdentifier<C, E> | undefined
+  FD extends { _fieldIdentifier: infer C, vals: Array<infer E>, _hasDefault: true } ? TypeFromIdentifier<C, E> | undefined
     // or is it an enum that is not required?
-    : FD extends { _fieldIdentifier: infer C, enum: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined
+    : FD extends { _fieldIdentifier: infer C, vals: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined
     // or if it's still an enum, it's one required at creation
-    : FD extends { _fieldIdentifier: infer C, enum: Array<infer E> } ? TypeFromIdentifier<C, E>
+    : FD extends { _fieldIdentifier: infer C, vals: Array<infer E> } ? TypeFromIdentifier<C, E>
     // if FD._hasDefault === true, then field does not need to be supplied at creation
     : FD extends { _fieldIdentifier: infer C, _hasDefault: true } ? TypeFromIdentifier<C> | undefined
     // if FD.required === false, then field does not need to be supplied at creation

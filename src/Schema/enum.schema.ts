@@ -21,12 +21,12 @@ function enumr<T extends string | number = string>(vals: readonly T[], opts: Fie
 function enumr<T extends string | number = string>(vals: readonly T[], opts: FieldOptions<T[]> & { required?: boolean, default?: T }): FieldDefinition<T[]>
 
 function enumr<T extends string | number = string>(vals: readonly T[],opts?: FieldOptions<T[]> & { required?: boolean, optional?: boolean, default?: T }): any {
-  if (!opts) return { _fieldIdentifier: FieldIdentifier.enum, required: true }
+  if (!opts) return { _fieldIdentifier: FieldIdentifier.enum, vals, required: true }
 
   const { default: defaultVal, required, optional, ...rest } = opts
 
   // @ts-ignore
-  let fieldConfig: FieldDefinition<T[]> = { ...rest, _fieldIdentifier: FieldIdentifier.enum }
+  let fieldConfig: FieldDefinition<T[]> = { ...rest, _fieldIdentifier: FieldIdentifier.enum, vals }
 
   if (typeof defaultVal !== 'undefined') {
     fieldConfig._hasDefault = true

@@ -81,12 +81,13 @@ describe('baseClass: integration test', () => {
 
       const User = baseClass(className, schema)
 
-      const user = new User({ username: 'hi', role: 4 })
+      const user = new User({ username: 'hi', role: 'admin' })
 
       describe('sad path', () => {
         it('throws an error when a non-enumerator value is provided', () => {
           expect(() => {
             expect(() => {
+              // @ts-ignore : checking static error -> runtime error
               new User({ username: 'hello', role: 'banana' })
             }).toThrow()
           })
