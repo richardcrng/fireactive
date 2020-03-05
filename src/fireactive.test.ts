@@ -44,7 +44,7 @@ describe('baseClass', () => {
         let server: FirebaseServer
 
         beforeAll(async (done) => {
-          server = new FirebaseServer(5555, 'localhost')
+          server = new FirebaseServer(0, 'localhost')
           initialize({
             databaseURL: `ws://localhost:${server.getPort()}`
           })

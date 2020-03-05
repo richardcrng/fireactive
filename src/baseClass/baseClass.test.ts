@@ -104,6 +104,14 @@ describe('baseClass: integration test', () => {
             new User({ username: 'hello', role: 'banana' })
           }).toThrow(/type/)
         })
+
+        it('throws an error when a default value is not in the enum', () => {
+          expect(() => {
+            const Popcorn = baseClass('Popcorn', {
+              flavour: Schema.enum(['salty', 'sweet'], { default: 'salt' })
+            })
+          }).toThrow()
+        })
       })
     })
 
