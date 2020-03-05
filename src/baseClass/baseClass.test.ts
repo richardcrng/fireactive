@@ -72,7 +72,7 @@ describe('baseClass: integration test', () => {
       })
     })
 
-    describe('enumr', () => {
+    describe('enum', () => {
       const className = 'User'
       const schema = {
         username: Schema.string,
@@ -80,6 +80,13 @@ describe('baseClass: integration test', () => {
       }
 
       const User = baseClass(className, schema)
+
+      describe('happy path', () => {
+        it('allows instantiation with a value from the array', () => {
+          const user = new User({ username: 'Test', role: 'regular' })
+          expect(user.role).toBe('regular')
+        })
+      })
 
       describe('sad path', () => {
         it('throws an error when a non-enumerator value is provided', () => {
