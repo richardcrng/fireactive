@@ -86,11 +86,9 @@ describe('baseClass: integration test', () => {
       describe('sad path', () => {
         it('throws an error when a non-enumerator value is provided', () => {
           expect(() => {
-            expect(() => {
-              // @ts-ignore : checking static error -> runtime error
-              new User({ username: 'hello', role: 'banana' })
-            }).toThrow()
-          })
+            // @ts-ignore : checking static error -> runtime error
+            new User({ username: 'hello', role: 'banana' })
+          }).toThrow()
         })
       })
     })
