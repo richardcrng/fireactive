@@ -88,12 +88,33 @@ describe('baseClass: integration test', () => {
         })
 
         it('can take a default', () => {
-          const Popcorn = baseClass('Popcorn', {
+          const schema = {
             flavour: Schema.enum(['salty', 'sweet'], { default: 'salty' })
-          })
+          }
+          const Popcorn = baseClass('Popcorn', schema)
 
           const popcorn = new Popcorn({})
           expect(popcorn.flavour).toBe('salty')
+        })
+
+        it('can be optional', () => {
+          const schema = {
+            name: Schema.enum(['river', 'ocean'], { optional: true })
+          }
+          const River = baseClass('River', schema)
+
+          const river = new River({})
+          expect(river.name).toBeUndefined()
+        })
+
+        it('can take both strings and numbers', () => {
+          const schema = {
+            value: Schema.enum([1, 2, 'many'])
+          }
+
+          const Number = baseClass('Number', schema)
+          const number = new Number({ value: 2 })
+          expect(number.value).toBe(2)
         })
       })
 
@@ -197,7 +218,7 @@ describe('baseClass: integration test', () => {
           expect(PlayerRecord.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
         })
 
-        describe("AND a connection to a database is initialise", () => {
+        describe("AND a connection to a database is initialised", () => {
           let server: FirebaseServer
 
           beforeAll(async (done) => {
