@@ -20,27 +20,30 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
    *  the value right now - we want to 
    */
   const currentValAtPath = () => get(this, [...schemaKeyPath])
-  const schemaVal = get(schema, schemaKeyPath)
+  const schemaFieldDef = get(schema, schemaKeyPath)
 
   // check if the path has the `_hasDefault` property and is undefined
-  if (schemaVal?._hasDefault && typeof currentValAtPath() === 'undefined') {
+  if (schemaFieldDef?._hasDefault && typeof currentValAtPath() === 'undefined') {
     const defaultVal = get(schema, [...schemaKeyPath, 'default'])
     set(this, schemaKeyPath, defaultVal)
   }
 
-  if (schemaVal?.required && typeof currentValAtPath() === 'undefined') {
+  if (schemaFieldDef?.required && typeof currentValAtPath() === 'undefined') {
     throw new Error(`Failed to instantiate ${modelName}: missing the required property ${schemaKeyPath.join('.')}`)
   }
 
   if (!(typeof currentValAtPath() === 'undefined')) {
     let doesMatch = true
-    switch (schemaVal?._fieldIdentifier) {
+    switch (schemaFieldDef?._fieldIdentifier) {
       case FieldIdentifier.string:
         doesMatch = typeof currentValAtPath() === 'string'; break
       case FieldIdentifier.number:
         doesMatch = typeof currentValAtPath() === 'number'; break
       case FieldIdentifier.boolean:
         doesMatch = typeof currentValAtPath() === 'boolean'; break
+      case FieldIdentifier.enum:
+        // the enum values are on the field definition's vals property
+        doesMatch = schemaFieldDef.vals.includes(currentValAtPath()); break
     }
 
     if (!doesMatch) {

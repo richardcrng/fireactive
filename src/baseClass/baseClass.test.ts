@@ -22,8 +22,8 @@ describe('baseClass: creating a BaseClass', () => {
 
 describe('baseClass: integration test', () => {
   describe('integration with Schema', () => {
-    describe('non-nested schema', () => {
-      const modelName = 'player'
+    describe('simple non-nested schema', () => {
+      const className = 'Player'
       const schema = {
         name: Schema.string,
         age: Schema.number({ required: false }),
@@ -33,7 +33,7 @@ describe('baseClass: integration test', () => {
         parents: Schema.number({ optional: true })
       }
 
-      const Player = baseClass(modelName, schema)
+      const Player = baseClass(className, schema)
       let player: InstanceType<typeof Player>
 
       describe('happy path', () => {
@@ -72,8 +72,72 @@ describe('baseClass: integration test', () => {
       })
     })
 
+    describe('enum', () => {
+      const className = 'User'
+      const schema = {
+        username: Schema.string,
+        role: Schema.enum(['admin', 'regular'])
+      }
+
+      const User = baseClass(className, schema)
+
+      describe('happy path', () => {
+        it('allows instantiation with a value from the array', () => {
+          const user = new User({ username: 'Test', role: 'regular' })
+          expect(user.role).toBe('regular')
+        })
+
+        it('can take a default', () => {
+          const schema = {
+            flavour: Schema.enum(['salty', 'sweet'], { default: 'salty' })
+          }
+          const Popcorn = baseClass('Popcorn', schema)
+
+          const popcorn = new Popcorn({})
+          expect(popcorn.flavour).toBe('salty')
+        })
+
+        it('can be optional', () => {
+          const schema = {
+            name: Schema.enum(['river', 'ocean'], { optional: true })
+          }
+          const River = baseClass('River', schema)
+
+          const river = new River({})
+          expect(river.name).toBeUndefined()
+        })
+
+        it('can take both strings and numbers', () => {
+          const schema = {
+            value: Schema.enum([1, 2, 'many'])
+          }
+
+          const Number = baseClass('Number', schema)
+          const number = new Number({ value: 2 })
+          expect(number.value).toBe(2)
+        })
+      })
+
+      describe('sad path', () => {
+        it('throws an error when a non-enumerator value is provided', () => {
+          expect(() => {
+            // @ts-ignore : checking static error -> runtime error
+            new User({ username: 'hello', role: 'banana' })
+          }).toThrow(/type/)
+        })
+
+        it('throws an error when a default value is not in the enum', () => {
+          expect(() => {
+            const Popcorn = baseClass('Popcorn', {
+              flavour: Schema.enum(['salty', 'sweet'], { default: 'salt' })
+            })
+          }).toThrow()
+        })
+      })
+    })
+
     describe('nested schema', () => {
-      const modelName = 'Venue'
+      const className = 'Venue'
       const schema = {
         name: Schema.string,
         hours: {
@@ -85,7 +149,7 @@ describe('baseClass: integration test', () => {
         }
       }
 
-      const Venue = baseClass(modelName, schema)
+      const Venue = baseClass(className, schema)
 
       describe('happy path', () => {
         it("allows new instances that follow the explicit and implied requirement and defaults", () => {
@@ -117,7 +181,7 @@ describe('baseClass: integration test', () => {
 
   describe('integration with Schema and server', () => {
     describe("GIVEN a model name of 'players' and a schema", () => {
-      const modelName = 'player'
+      const className = 'player'
       const schema = {
         name: Schema.string,
         age: Schema.number,
@@ -128,7 +192,7 @@ describe('baseClass: integration test', () => {
       }
 
       describe("WHEN the model name and schema are passed to record", () => {
-        const PlayerRecord = baseClass(modelName, schema)
+        const PlayerRecord = baseClass(className, schema)
 
         test("THEN the result is a class that can create new instances", () => {
           const player = new PlayerRecord({ name: 'Pedro', age: 3, isCool: true })
@@ -154,7 +218,7 @@ describe('baseClass: integration test', () => {
           expect(PlayerRecord.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
         })
 
-        describe("AND a connection to a database is initialise", () => {
+        describe("AND a connection to a database is initialised", () => {
           let server: FirebaseServer
 
           beforeAll(async (done) => {

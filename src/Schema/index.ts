@@ -1,8 +1,10 @@
-import Schema, { number, string, boolean } from './Schema';
+import Schema, { number, string, boolean, enumr } from './Schema';
 
 export {
   number,
   string,
-  boolean
+  boolean,
+  enumr,
+  enumr as enum
 }
 export default Schema
