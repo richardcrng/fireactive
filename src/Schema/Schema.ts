@@ -7,6 +7,7 @@ const Schema = {
   string,
   number,
   boolean,
+  enum: enumr,
   enumr
 }
 
@@ -14,7 +15,8 @@ export {
   number,
   string,
   boolean,
-  enumr
+  enumr,
+  enumr as enum
 }
 
 export default Schema

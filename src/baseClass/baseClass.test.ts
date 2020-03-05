@@ -76,19 +76,17 @@ describe('baseClass: integration test', () => {
       const className = 'User'
       const schema = {
         username: Schema.string,
-        role: Schema.enumr(['admin', 'regular'])
+        role: Schema.enum(['admin', 'regular'])
       }
 
       const User = baseClass(className, schema)
-
-      const user = new User({ username: 'hi', role: 'admin' })
 
       describe('sad path', () => {
         it('throws an error when a non-enumerator value is provided', () => {
           expect(() => {
             // @ts-ignore : checking static error -> runtime error
             new User({ username: 'hello', role: 'banana' })
-          }).toThrow()
+          }).toThrow(/type/)
         })
       })
     })
