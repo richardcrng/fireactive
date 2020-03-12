@@ -55,11 +55,34 @@ export interface BaseClass<S extends RecordSchema> {
    * @param props Properties to create the Record with
    * @returns a `Promise` that resolves into the created record
    */
-  create(props: ToCreateRecord<S> & { _id?: string }): Promise<ActiveRecord<S>>;
+  create(props: ToCreateRecord<S> & { _id?: string }): Promise<ActiveRecord<S>>,
+
+  /**
+   * Find all ActiveRecords from the database that
+   *  match the passed in `props`
+   * 
+   * @param props 
+   */
+  find(props: ObjectFromRecord<S>): Promise<ActiveRecord<S>[]>,
+
+  /**
+   * Find a single ActiveRecord in the database by id
+   * 
+   * @param id - id of the ActiveRecord to find
+   */
+  findById(id: string): Promise<ActiveRecord<S> | null>,
+
+  /**
+   * Find a single ActiveRecord in the database by
+   *  retrieving the first that matches the passed in `props`
+   * 
+   * @param props 
+   */
+  findOne(props: ObjectFromRecord<S>): Promise<ActiveRecord<S> | null>,
 
   /**
    * Return the Firebase Real-Time Database instance and interface
    * @returns `firebase.database.Database`
    */
-  getDb(): firebase.database.Database;
+  getDb(): firebase.database.Database,
 }
