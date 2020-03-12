@@ -141,13 +141,18 @@ describe('baseClass: integration test', () => {
       const schema = {
         username: Schema.string,
         friends: Schema.indexed.string(),
+        numbers: Schema.indexed.enum([1, 2, 3])
       }
 
       const User = baseClass(className, schema)
 
       describe('happy path', () => {
         it('allows instantiation with an appropriately indexed value', () => {
-          const user = new User({ username: 'Test', friends: { alfred: 'Alfred' } })
+          const user = new User({
+            username: 'Test',
+            friends: { alfred: 'Alfred' },
+            numbers: { first: 2 }
+          })
           expect(user.friends.alfred).toBe('Alfred')
         })
       })
@@ -156,7 +161,12 @@ describe('baseClass: integration test', () => {
         it('throws an error when a non appropriately indexed value is provided', () => {
           expect(() => {
             // @ts-ignore : checking static error -> runtime error
-            new User({ username: 'hello', friends: { alfred: 4 } })
+            new User({ username: 'hello', friends: { alfred: 4 }, numbers: { first: 2 } })
+          }).toThrow(/type/)
+
+          expect(() => {
+            // @ts-ignore : checking static error -> runtime error
+            new User({ username: 'hello', friends: { alfred: 'Afred' }, numbers: { first: 9 } })
           }).toThrow(/type/)
         })
       })
