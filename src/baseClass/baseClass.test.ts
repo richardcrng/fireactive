@@ -146,26 +146,18 @@ describe('baseClass: integration test', () => {
       const User = baseClass(className, schema)
 
       describe('happy path', () => {
-        it('allows instantiation with a value from the array', () => {
+        it('allows instantiation with an appropriately indexed value', () => {
           const user = new User({ username: 'Test', friends: { alfred: 'Alfred' } })
           expect(user.friends.alfred).toBe('Alfred')
         })
       })
 
-      describe.skip('sad path', () => {
-        it('throws an error when a non-enumerator value is provided', () => {
+      describe('sad path', () => {
+        it('throws an error when a non appropriately indexed value is provided', () => {
           expect(() => {
             // @ts-ignore : checking static error -> runtime error
-            new User({ username: 'hello', role: 'banana' })
+            new User({ username: 'hello', friends: { alfred: 4 } })
           }).toThrow(/type/)
-        })
-
-        it('throws an error when a default value is not in the enum', () => {
-          expect(() => {
-            const Popcorn = baseClass('Popcorn', {
-              flavour: Schema.enum(['salty', 'sweet'], { default: 'salt' })
-            })
-          }).toThrow()
         })
       })
     })
