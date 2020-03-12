@@ -1,17 +1,14 @@
-import { FieldDefinition, FieldIdentifier, IndexedFieldDefinition } from "../types/field.types"
-import { SchemaProperty } from "../types/schema.types"
+import { FieldIdentifier, IndexedFieldDefinition } from "../types/field.types"
 import string from './string.schema';
 import enumr from './enum.schema';
 import boolean from './boolean.schema';
 import number from './number.schema';
 
-const indexedString = (): IndexedFieldDefinition<string> => ({
+const indexString = (): IndexedFieldDefinition<string> => ({
   _fieldIdentifier: FieldIdentifier.indexed,
   indexed: string()
 })
-// indexedString._fieldIdentifier = FieldIdentifier.indexed
-// indexedString.indexed = string()
-// indexedString.required = true
+const indexedString = Object.assign(indexString, indexString())
 
 const indexedEnum = <T extends string | number = string>(
   enumVals: readonly T[]
@@ -20,21 +17,17 @@ const indexedEnum = <T extends string | number = string>(
   indexed: enumr(enumVals)
 })
 
-const indexedBoolean = (): IndexedFieldDefinition<boolean> => ({
+const indexBoolean = (): IndexedFieldDefinition<boolean> => ({
   _fieldIdentifier: FieldIdentifier.indexed,
   indexed: boolean()
 })
-// indexedBoolean._fieldIdentifier = FieldIdentifier.indexed
-// indexedBoolean.indexed = boolean()
-// indexedBoolean.required = true
+const indexedBoolean = Object.assign(indexBoolean, indexBoolean())
 
-const indexedNumber = (): IndexedFieldDefinition<number> => ({
+const indexNumber = (): IndexedFieldDefinition<number> => ({
   _fieldIdentifier: FieldIdentifier.indexed,
   indexed: number()
 })
-// indexedNumber._fieldIdentifier = FieldIdentifier.indexed
-// indexedNumber.indexed = number()
-// indexedNumber.required = true
+const indexedNumber = Object.assign(indexNumber, indexNumber())
 
 const indexed = {
   _fieldIdentifier: FieldIdentifier.indexed,
@@ -44,30 +37,5 @@ const indexed = {
   enumr: indexedEnum,
   enum: indexedEnum
 }
-
-// function indexed(schemaProperty: FieldDefinition): FieldDefinition<{ [key: string]: FieldDefinition }, true, false> {
-  
-//   // @ts-ignore
-//   let fieldConfig: FieldDefinition<{ [key: string]: FieldDefinition }, true, false> = {
-//     _fieldIdentifier: FieldIdentifier.indexed,
-//     indexed: schemaProperty,
-//     required: true
-//   }
-
-//   // if (typeof defaultVal !== 'undefined') {
-//   //   fieldConfig._hasDefault = true
-//   //   fieldConfig.default = defaultVal
-//   // } else {
-//   //   fieldConfig._hasDefault = false
-//   // }
-
-//   // if (optional || required === false) {
-//   //   fieldConfig.required = false
-//   // } else {
-//   //   fieldConfig.required = true
-//   // }
-
-//   return fieldConfig
-// }
 
 export default indexed

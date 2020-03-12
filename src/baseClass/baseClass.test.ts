@@ -140,7 +140,7 @@ describe('baseClass: integration test', () => {
       const className = 'User'
       const schema = {
         username: Schema.string,
-        friends: Schema.indexed.string(),
+        friends: Schema.indexed.string,
         numbers: Schema.indexed.enum([1, 2, 3])
       }
 
