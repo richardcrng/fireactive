@@ -150,36 +150,6 @@ describe('baseClass: integration test', () => {
           const user = new User({ username: 'Test', friends: { alfred: 'Alfred' } })
           expect(user.friends.alfred).toBe('Alfred')
         })
-
-        it.skip('can take a default', () => {
-          const schema = {
-            flavour: Schema.enum(['salty', 'sweet'], { default: 'salty' })
-          }
-          const Popcorn = baseClass('Popcorn', schema)
-
-          const popcorn = new Popcorn({})
-          expect(popcorn.flavour).toBe('salty')
-        })
-
-        it.skip('can be optional', () => {
-          const schema = {
-            name: Schema.enum(['river', 'ocean'], { optional: true })
-          }
-          const River = baseClass('River', schema)
-
-          const river = new River({})
-          expect(river.name).toBeUndefined()
-        })
-
-        it.skip('can take both strings and numbers', () => {
-          const schema = {
-            value: Schema.enum([1, 2, 'many'])
-          }
-
-          const Number = baseClass('Number', schema)
-          const number = new Number({ value: 2 })
-          expect(number.value).toBe(2)
-        })
       })
 
       describe.skip('sad path', () => {
