@@ -1,14 +1,14 @@
 import { UndefinedToOptional } from './util.types'
-import { FieldIdentifier, FieldDefinition, CreateField, FieldType, RecordField } from './field.types'
+import { FieldIdentifier, FieldDefinition, CreateField, FieldType, RecordField, IndexedFieldDefinition } from './field.types'
 import Schema from '../Schema'
 
-type SchemaField<FI extends FieldIdentifier = FieldIdentifier> = (FieldDefinition | typeof Schema.boolean | typeof Schema.number | typeof Schema.string) & {
+type SchemaField<FI extends FieldIdentifier = FieldIdentifier> = (IndexedFieldDefinition | FieldDefinition | typeof Schema.boolean | typeof Schema.number | typeof Schema.string) & {
   _hasDefault?: boolean
 } & {
   default?: FieldType<FI>
 }
 
-type SchemaProperty = SchemaField | {
+export type SchemaProperty = SchemaField | {
   [key: string]: SchemaProperty
 }
 

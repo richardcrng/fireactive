@@ -76,7 +76,7 @@ describe('baseClass: integration test', () => {
       const className = 'User'
       const schema = {
         username: Schema.string,
-        role: Schema.enum(['admin', 'regular'])
+        role: Schema.enum(['admin', 'regular']),
       }
 
       const User = baseClass(className, schema)
@@ -119,6 +119,70 @@ describe('baseClass: integration test', () => {
       })
 
       describe('sad path', () => {
+        it('throws an error when a non-enumerator value is provided', () => {
+          expect(() => {
+            // @ts-ignore : checking static error -> runtime error
+            new User({ username: 'hello', role: 'banana' })
+          }).toThrow(/type/)
+        })
+
+        it('throws an error when a default value is not in the enum', () => {
+          expect(() => {
+            const Popcorn = baseClass('Popcorn', {
+              flavour: Schema.enum(['salty', 'sweet'], { default: 'salt' })
+            })
+          }).toThrow()
+        })
+      })
+    })
+
+    describe('indexed', () => {
+      const className = 'User'
+      const schema = {
+        username: Schema.string,
+        friends: Schema.indexed.string(),
+      }
+
+      const User = baseClass(className, schema)
+
+      describe('happy path', () => {
+        it('allows instantiation with a value from the array', () => {
+          const user = new User({ username: 'Test', friends: { alfred: 'Alfred' } })
+          expect(user.friends.alfred).toBe('Alfred')
+        })
+
+        it.skip('can take a default', () => {
+          const schema = {
+            flavour: Schema.enum(['salty', 'sweet'], { default: 'salty' })
+          }
+          const Popcorn = baseClass('Popcorn', schema)
+
+          const popcorn = new Popcorn({})
+          expect(popcorn.flavour).toBe('salty')
+        })
+
+        it.skip('can be optional', () => {
+          const schema = {
+            name: Schema.enum(['river', 'ocean'], { optional: true })
+          }
+          const River = baseClass('River', schema)
+
+          const river = new River({})
+          expect(river.name).toBeUndefined()
+        })
+
+        it.skip('can take both strings and numbers', () => {
+          const schema = {
+            value: Schema.enum([1, 2, 'many'])
+          }
+
+          const Number = baseClass('Number', schema)
+          const number = new Number({ value: 2 })
+          expect(number.value).toBe(2)
+        })
+      })
+
+      describe.skip('sad path', () => {
         it('throws an error when a non-enumerator value is provided', () => {
           expect(() => {
             // @ts-ignore : checking static error -> runtime error
