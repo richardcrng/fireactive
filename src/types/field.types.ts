@@ -63,7 +63,10 @@ export type TypeFromIdentifier<T, U = unknown> =
   : T extends FieldIdentifier.boolean ? boolean
   // if it's an enum, hopefully we pass along the enum values...
   : T extends FieldIdentifier.enum ? U
-  : T extends FieldIdentifier.indexed ? { [key: string]: U }
+  : T extends FieldIdentifier.indexed
+    ? U extends Array<infer E>
+      ? { [key: string]: E }
+      : { [key: string]: U } 
   : unknown
 
 /**

@@ -137,14 +137,20 @@ describe('baseClass: integration test', () => {
     })
 
     describe('indexed', () => {
-      const className = 'User'
-      const schema = {
+      const userClassName = 'User'
+      const userSchema = {
         username: Schema.string,
         friends: Schema.indexed.string,
         numbers: Schema.indexed.enum([1, 2, 3])
       }
+      const User = baseClass(userClassName, userSchema)
 
-      const User = baseClass(className, schema)
+      const otherClassName = 'Other'
+      const otherSchema = {
+        keys: Schema.indexed.boolean,
+        counts: Schema.indexed.number
+      }
+      const Other = baseClass(otherClassName, otherSchema)
 
       describe('happy path', () => {
         it('allows instantiation with an appropriately indexed value', () => {
@@ -154,6 +160,14 @@ describe('baseClass: integration test', () => {
             numbers: { first: 2 }
           })
           expect(user.friends.alfred).toBe('Alfred')
+          expect(user.numbers.first).toBe(2)
+
+          const other = new Other({
+            keys: { random: true },
+            counts: { text: 5 }
+          })
+          expect(other.keys.random).toBe(true)
+          expect(other.counts.text).toBe(5)
         })
       })
 
