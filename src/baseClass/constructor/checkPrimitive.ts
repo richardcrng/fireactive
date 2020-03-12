@@ -44,6 +44,21 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
       case FieldIdentifier.enum:
         // the enum values are on the field definition's vals property
         doesMatch = schemaFieldDef.vals.includes(currentValAtPath()); break
+      case FieldIdentifier.indexed:
+        const currentIndexedValues = Object.values(currentValAtPath())
+        doesMatch = currentIndexedValues.every(val => {
+          switch (schemaFieldDef?.indexed?._fieldIdentifier) {
+            case FieldIdentifier.string:
+              return typeof val === 'string'
+            case FieldIdentifier.number:
+              return typeof val === 'number'
+            case FieldIdentifier.boolean:
+              return typeof val === 'boolean'
+            case FieldIdentifier.enum:
+              return schemaFieldDef.indexed.vals.includes(val)
+          }
+        })
+        break
     }
 
     if (!doesMatch) {

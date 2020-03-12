@@ -47,7 +47,4 @@ function enumr<T extends string | number = string>(enumVals: readonly T[],opts?:
   return fieldConfig
 }
 
-enumr.required = true
-enumr._fieldIdentifier = FieldIdentifier.enum
-
 export default enumr

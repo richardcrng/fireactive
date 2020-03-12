@@ -76,7 +76,7 @@ describe('baseClass: integration test', () => {
       const className = 'User'
       const schema = {
         username: Schema.string,
-        role: Schema.enum(['admin', 'regular'])
+        role: Schema.enum(['admin', 'regular']),
       }
 
       const User = baseClass(className, schema)
@@ -132,6 +132,56 @@ describe('baseClass: integration test', () => {
               flavour: Schema.enum(['salty', 'sweet'], { default: 'salt' })
             })
           }).toThrow()
+        })
+      })
+    })
+
+    describe('indexed', () => {
+      const userClassName = 'User'
+      const userSchema = {
+        username: Schema.string,
+        friends: Schema.indexed.string,
+        numbers: Schema.indexed.enum([1, 2, 3])
+      }
+      const User = baseClass(userClassName, userSchema)
+
+      const otherClassName = 'Other'
+      const otherSchema = {
+        keys: Schema.indexed.boolean,
+        counts: Schema.indexed.number
+      }
+      const Other = baseClass(otherClassName, otherSchema)
+
+      describe('happy path', () => {
+        it('allows instantiation with an appropriately indexed value', () => {
+          const user = new User({
+            username: 'Test',
+            friends: { alfred: 'Alfred' },
+            numbers: { first: 2 }
+          })
+          expect(user.friends.alfred).toBe('Alfred')
+          expect(user.numbers.first).toBe(2)
+
+          const other = new Other({
+            keys: { random: true },
+            counts: { text: 5 }
+          })
+          expect(other.keys.random).toBe(true)
+          expect(other.counts.text).toBe(5)
+        })
+      })
+
+      describe('sad path', () => {
+        it('throws an error when a non appropriately indexed value is provided', () => {
+          expect(() => {
+            // @ts-ignore : checking static error -> runtime error
+            new User({ username: 'hello', friends: { alfred: 4 }, numbers: { first: 2 } })
+          }).toThrow(/type/)
+
+          expect(() => {
+            // @ts-ignore : checking static error -> runtime error
+            new User({ username: 'hello', friends: { alfred: 'Afred' }, numbers: { first: 9 } })
+          }).toThrow(/type/)
         })
       })
     })
