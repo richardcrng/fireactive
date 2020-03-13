@@ -92,8 +92,7 @@ describe('baseClass: with server connection', () => {
     describe('#find', () => {
       const createData = { name: 'Alfred', age: 39 }
       beforeAll(async (done) => {
-        await db.ref(Player.key).set({})
-        await db.ref(Player.key).push(createData)
+        await pushWithId(db.ref(Player.key), createData)
         done()
       })
 
@@ -115,10 +114,7 @@ describe('baseClass: with server connection', () => {
       const createData = { name: 'Alfred', age: 39 }
       let id: string
       beforeAll(async (done) => {
-        await db.ref(Player.key).set({})
-        const newEntryRef = await db.ref(Player.key).push()
-        id = newEntryRef.key as string
-        await newEntryRef.set({ ...createData, _id: id })
+        await pushWithId(db.ref(Player.key), createData)
         done()
       })
 
@@ -141,8 +137,7 @@ describe('baseClass: with server connection', () => {
       const createDataOne = { name: 'Billybo', age: 29 }
       const createDataTwo = { name: 'Cassanda', age: 29 }
       beforeAll(async (done) => {
-        await db.ref(Player.key).set({})
-        await db.ref(Player.key).push(createDataOne)
+        await pushWithId(db.ref(Player.key), createDataOne)
         done()
       })
 
