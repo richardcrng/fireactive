@@ -66,6 +66,16 @@ export interface BaseClass<S extends RecordSchema> {
    */
   delete(props: Partial<ObjectFromRecord<S>>): Promise<number>,
 
+
+  /**
+   * Delete the first `ActiveRecord` from the database that
+   *  matches the passed in `props`
+   * 
+   * @param props Properties to create the Record with
+   * @returns a `Promise` that resolves to whether or not a record was deleted
+   */
+  deleteOne(props: Partial<ObjectFromRecord<S>>): Promise<boolean>,
+
   /**
    * Find all `ActiveRecord`s from the database that
    *  match the passed in `props`
