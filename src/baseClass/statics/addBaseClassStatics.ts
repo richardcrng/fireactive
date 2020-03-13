@@ -36,13 +36,19 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     return matchingVals.map(props => new this(props))
   }
 
-  BaseClass.findById = async function(id: string): Promise<ActiveRecord<Schema>> {
+  BaseClass.findById = async function(id: string): Promise<ActiveRecord<Schema> | null> {
     const db = this.getDb()
+
+    if (!id) return null
 
     const snapshotAtId = await db.ref(this.key).child(id).once('value')
     const valAtId = snapshotAtId.val()
-    const player = new this(valAtId)
-    return player
+    if (valAtId) {
+      const player = new this(valAtId)
+      return player
+    } else {
+      return null
+    }
   }
 
   BaseClass.getDb = function () {

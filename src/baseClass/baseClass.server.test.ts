@@ -105,6 +105,12 @@ describe('baseClass: with server connection', () => {
         expect(player.age).toBe(createData.age)
         done()
       })
+
+      it('returns null if there is no matching record', async (done) => {
+        const player = await Player.findById('this is definitely not a valid id, as if')
+        expect(player).toBeNull()
+        done()
+      })
     })
   })
 })
