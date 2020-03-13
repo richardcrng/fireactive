@@ -27,12 +27,31 @@ describe('baseClass: with server connection', () => {
         age: Schema.number
       }
       const Player = baseClass(className, schema)
+      let player: InstanceType<typeof Player>
+      let dbVals: any
+      const createData = { name: 'Jorge', age: 42 }
 
-      it('returns the created player', async (done) => {
-        const player = await Player.create({ name: 'Jorge', age: 42 })
+      it('returns the created record', async (done) => {
+        player = await Player.create(createData)
         expect(player.name).toBe('Jorge')
         expect(player.age).toBe(42)
         done()
+      })
+
+      it('creates an id for the player', () => {
+        expect(player._id).toBeDefined()
+      })
+
+      it('creates a table for the relevant class based on the class key property', async (done) => {
+        dbVals = await server.getValue()
+        expect(dbVals).toHaveProperty(Player.key)
+        done()
+      })
+
+      it('inserts the relevant data into the table', () => {
+        expect(dbVals[Player.key]).toMatchObject({
+          [player._id as string]: createData
+        })
       })
       
       it('throws an error if params passed do not fit the schema', () => {
@@ -41,5 +60,7 @@ describe('baseClass: with server connection', () => {
       })
 
     })
+
+
   })
 })
