@@ -9,12 +9,23 @@ import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/sche
 const addBaseClassStatics = <Schema extends RecordSchema>(
   BaseClass: BaseClass<Schema>
 ): void => {
-  
+
+  // helpers
+  async function getTableVals(): Promise<ObjectFromRecord<Schema>[]> {
+    const db = BaseClass.getDb()
+    const tableSnapshot = await db.ref(BaseClass.key).once('value')
+    const tableVal = tableSnapshot.val()
+    const tableValues: ObjectFromRecord<Schema>[] = Object.values(tableVal)
+    return tableValues
+  }
+
+
+
+  // main
   BaseClass.create = async function (
     props: ToCreateRecord<Schema> & { _id?: string }
   ): Promise<ActiveRecord<Schema>> {
     const db = this.getDb()
-
     const record = new this({ ...props })
     const _id = record.getId()
     await db.ref(this.key).child(_id).set({ ...props, _id })
@@ -22,10 +33,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
   }
 
   BaseClass.find = async function(props: Partial<ObjectFromRecord<Schema>>): Promise<ActiveRecord<Schema>[]> {
-    const db = this.getDb()
-    const tableSnapshot = await db.ref(this.key).once('value')
-    const tableVal = tableSnapshot.val()
-    const tableValues = Object.values(tableVal)
+    const tableValues = await getTableVals()
 
     // @ts-ignore
     const matchingVals: ObjectFromRecord<Schema>[] = tableValues.filter(record => {
@@ -51,6 +59,17 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     }
   }
 
+  BaseClass.findOne = async function(props): Promise<ActiveRecord<Schema> | null> {
+    const tableValues = await getTableVals()
+    const firstMatch = tableValues.find(record => whereEq(props, record))
+    if (firstMatch) {
+      // @ts-ignore
+      return new this(firstMatch)
+    } else {
+      return null
+    }
+  }
+
   BaseClass.getDb = function () {
     const database = getFirebaseDatabase()
     if (!database) {
@@ -60,6 +79,5 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     return database
   }
 }
-
 
 export default addBaseClassStatics
