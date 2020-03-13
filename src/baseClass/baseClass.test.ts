@@ -69,6 +69,10 @@ describe('baseClass: integration test', () => {
           // @ts-ignore : checking static type error leads to creation error
           expect(() => new Player({ name: 4, age: 4, isCool: true })).toThrow(/type/)
         })
+
+        it('throws an error when the `create` method is tried without a database connection', () => {
+          expect(Player.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow(/connection/)
+        })
       })
     })
 

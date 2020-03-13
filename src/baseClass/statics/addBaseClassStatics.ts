@@ -19,7 +19,15 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     const _id = record.getId()
     await db.ref(scoped.tableName).child(_id).set({ ...props, _id })
     return record
-  };
+  }
+
+  BaseClass.findById = async function(id: string): Promise<ActiveRecord<Schema>> {
+    const db = this.getDb()
+
+    const snapshot = await db.ref(scoped.tableName).child(id).once('value')
+    const val = snapshot.val()
+    return new this(val)
+  }
 
   BaseClass.getDb = function () {
     const database = getFirebaseDatabase()
