@@ -61,4 +61,5 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
   }
 }
 
+
 export default addBaseClassStatics

@@ -112,5 +112,28 @@ describe('baseClass: with server connection', () => {
         done()
       })
     })
+
+    describe('#findOne', () => {
+      const createDataOne = { name: 'Billybo', age: 29 }
+      const createDataTwo = { name: 'Cassanda', age: 29 }
+      beforeAll(async (done) => {
+        await db.ref(Player.key).set({})
+        await db.ref(Player.key).push(createDataOne)
+        done()
+      })
+
+      it('finds the first record that matches the data', async (done) => {
+        const player = await Player.findOne({ age: 29 }) as InstanceType<typeof Player>
+        expect(player.name).toBe(createDataOne.name)
+        expect(player.name).not.toBe(createDataTwo.name)
+        done()
+      })
+
+      it('returns null if there is no matching record', async (done) => {
+        const player = await Player.findOne({ age: 30 })
+        expect(player).toBeNull()
+        done()
+      })
+    })
   })
 })
