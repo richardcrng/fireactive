@@ -80,8 +80,8 @@ describe('baseClass: with server connection', () => {
       })
 
       it('deletes matching players', async (done) => {
-        const dbVals = await server.getValue()
-        const remainingKeys = Object.keys(dbVals[Player.key])
+        const dbPlayers = await server.getValue(db.ref(Player.key))
+        const remainingKeys = Object.keys(dbPlayers)
         expect(remainingKeys).toHaveLength(1)
         expect(remainingKeys).not.toContain(keyOne)
         expect(remainingKeys).toContain(keyTwo)
@@ -91,6 +91,20 @@ describe('baseClass: with server connection', () => {
 
       it('returns the count of players deleted', () => {
         expect(res).toBe(2)
+      })
+
+      it('returns 0 if no players have been deleted', async (done) => {
+        const res = await Player.delete({ age: 9 })
+        expect(res).toBe(0)
+        done()
+      })
+
+      it('deletes all if passed an empty object', async (done) => {
+        await pushWithId(db.ref(Player.key), { name: 'mikeee', age: 42 })
+        await Player.delete({})
+        const players = await server.getValue(db.ref(Player.key))
+        expect(players).toBeNull()
+        done()
       })
     })
 
@@ -119,6 +133,12 @@ describe('baseClass: with server connection', () => {
 
       it('returns true if an entry has been deleted', () => {
         expect(res).toBe(true)
+      })
+
+      it('returns false if no entry has been deleted', async (done) => {
+        const res = await Player.deleteOne({ age: 1002 })
+        expect(res).toBe(false)
+        done()
       })
     })
 
