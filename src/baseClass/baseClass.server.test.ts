@@ -2,6 +2,7 @@ import FirebaseServer from 'firebase-server'
 import baseClass from '.';
 import Schema from '../Schema';
 import initialize from '../initialize';
+import pushWithId from '../utils/pushWithId';
 
 describe('baseClass: with server connection', () => {
   let server: FirebaseServer
@@ -70,12 +71,9 @@ describe('baseClass: with server connection', () => {
       let res: number
       beforeAll(async (done) => {
         await db.ref(Player.key).set({})
-        const refOne = await db.ref(Player.key).push({ ...deleteData, name: 'Kev' })
-        await refOne.update({ _id: refOne.key })
-        const refTwo = await db.ref(Player.key).push({ name: 'Mev', age: 40 })
-        await refOne.update({ _id: refTwo.key })
-        const refThree = await db.ref(Player.key).push({ ...deleteData, name: 'Bev' })
-        await refThree.update({ _id: refThree.key })
+        await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Kev' })
+        await pushWithId(db.ref(Player.key), { name: 'Mev', age: 40 })
+        await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Bev' })
         res = await Player.delete(deleteData)
         done()
       })
