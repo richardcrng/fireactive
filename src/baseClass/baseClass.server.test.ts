@@ -65,6 +65,32 @@ describe('baseClass: with server connection', () => {
       })
     })
 
+    describe('#delete', () => {
+      const deleteData = { age: 39 }
+      let res: number
+      beforeAll(async (done) => {
+        await db.ref(Player.key).set({})
+        const refOne = await db.ref(Player.key).push({ ...deleteData, name: 'Kev' })
+        await refOne.update({ _id: refOne.key })
+        const refTwo = await db.ref(Player.key).push({ name: 'Mev', age: 40 })
+        await refOne.update({ _id: refTwo.key })
+        const refThree = await db.ref(Player.key).push({ ...deleteData, name: 'Bev' })
+        await refThree.update({ _id: refThree.key })
+        res = await Player.delete(deleteData)
+        done()
+      })
+
+      it('deletes matching players', async (done) => {
+        const dbVals = await server.getValue()
+        expect(Object.keys(dbVals[Player.key])).toHaveLength(1)
+        done()
+      })
+
+      it('returns the count of players deleted', () => {
+        expect(res).toBe(2)
+      })
+    })
+
     describe('#find', () => {
       const createData = { name: 'Alfred', age: 39 }
       beforeAll(async (done) => {

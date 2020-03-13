@@ -11,9 +11,13 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
 ): void => {
 
   // helpers
-  async function getTableVals(): Promise<ObjectFromRecord<Schema>[]> {
+  function getBaseClassRef() {
     const db = BaseClass.getDb()
-    const tableSnapshot = await db.ref(BaseClass.key).once('value')
+    return db.ref(BaseClass.key)
+  }
+
+  async function getTableVals(): Promise<ObjectFromRecord<Schema>[]> {
+    const tableSnapshot = await getBaseClassRef().once('value')
     const tableVal = tableSnapshot.val()
     const tableValues: ObjectFromRecord<Schema>[] = Object.values(tableVal)
     return tableValues
@@ -25,21 +29,26 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
   BaseClass.create = async function (
     props: ToCreateRecord<Schema> & { _id?: string }
   ): Promise<ActiveRecord<Schema>> {
-    const db = this.getDb()
     const record = new this({ ...props })
     const _id = record.getId()
-    await db.ref(this.key).child(_id).set({ ...props, _id })
+    await getBaseClassRef().child(_id).set({ ...props, _id })
     return record
+  }
+
+  BaseClass.delete = async function(props): Promise<number> {
+    const tableValues = await getTableVals()
+    // @ts-ignore
+    const matchingVals = tableValues.filter(record => whereEq(props, record))
+    await Promise.all(matchingVals.map(async (val) => {
+      await getBaseClassRef().child(val._id as string).remove()
+    }))
+    return matchingVals.length
   }
 
   BaseClass.find = async function(props: Partial<ObjectFromRecord<Schema>>): Promise<ActiveRecord<Schema>[]> {
     const tableValues = await getTableVals()
-
     // @ts-ignore
-    const matchingVals: ObjectFromRecord<Schema>[] = tableValues.filter(record => {
-      return whereEq(props, record)
-    })
-
+    const matchingVals: ObjectFromRecord<Schema>[] = tableValues.filter(record => whereEq(props, record))
     // @ts-ignore
     return matchingVals.map(props => new this(props))
   }

@@ -64,7 +64,7 @@ export interface BaseClass<S extends RecordSchema> {
    * @param props Properties to create the Record with
    * @returns a `Promise` that resolves with the count of deleted records
    */
-  delete(props: ToCreateRecord<S> & { _id?: string }): Promise<number>,
+  delete(props: Partial<ObjectFromRecord<S>>): Promise<number>,
 
   /**
    * Find all `ActiveRecord`s from the database that
