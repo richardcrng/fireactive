@@ -5,12 +5,16 @@ import initialize from '../initialize';
 
 describe('baseClass: with server connection', () => {
   let server: FirebaseServer
+  let app: firebase.app.App
+  let db: firebase.database.Database
 
   beforeAll(async (done) => {
     server = new FirebaseServer(0, 'localhost')
-    initialize({
+    const firebaseConfig = {
       databaseURL: `ws://localhost:${server.getPort()}`
-    })
+    }
+    app = initialize(firebaseConfig)
+    db = app.database()
     done()
   })
 
@@ -20,15 +24,16 @@ describe('baseClass: with server connection', () => {
   })
 
   describe('class methods', () => {
+    const className = 'player'
+    const schema = {
+      name: Schema.string,
+      age: Schema.number
+    }
+    const Player = baseClass(className, schema)
+    let player: InstanceType<typeof Player>
+    let dbVals: any
+
     describe('#create', () => {
-      const className = 'player'
-      const schema = {
-        name: Schema.string,
-        age: Schema.number
-      }
-      const Player = baseClass(className, schema)
-      let player: InstanceType<typeof Player>
-      let dbVals: any
       const createData = { name: 'Jorge', age: 42 }
 
       it('returns the created record', async (done) => {
@@ -58,9 +63,22 @@ describe('baseClass: with server connection', () => {
         // @ts-ignore : check that static error -> thrown error
         expect(Player.create({ name: 42, age: 42 })).rejects.toThrow(/type/)
       })
-
     })
 
+    describe('#find', () => {
+      const createData = { name: 'Alfred', age: 39 }
+      beforeAll(async (done) => {
+        await db.ref(Player.key).set({})
+        await db.ref(Player.key).push(createData)
+        done()
+      })
 
+      it('returns an array of records matching the props passed in', async (done) => {
+        const players = await Player.find({ name: 'Alfred' })
+        expect(players[0].name).toBe(createData.name)
+        expect(players[0].age).toBe(createData.age)
+        done()
+      })
+    })
   })
 })

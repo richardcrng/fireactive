@@ -1,6 +1,7 @@
+import { whereEq } from 'ramda'
 import { BaseClass, ActiveRecord } from "../../types/class.types";
 import { getFirebaseDatabase } from "../../initialize/initialize";
-import { RecordSchema, ToCreateRecord } from "../../types/schema.types";
+import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 
 /**
  * Adds default class methods and properties onto the `BaseClass`
@@ -17,16 +18,31 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
 
     const record = new BaseClass({ ...props })
     const _id = record.getId()
-    await db.ref(scoped.tableName).child(_id).set({ ...props, _id })
+    await db.ref(this.key).child(_id).set({ ...props, _id })
     return record
+  }
+
+  BaseClass.find = async function(props: Partial<ObjectFromRecord<Schema>>): Promise<ActiveRecord<Schema>[]> {
+    const db = this.getDb()
+    const tableSnapshot = await db.ref(this.key).once('value')
+    const tableVal = tableSnapshot.val()
+    const tableValues = Object.values(tableVal)
+
+    // @ts-ignore
+    const matchingVals: ObjectFromRecord<Schema>[] = tableValues.filter(record => {
+      return whereEq(props, record)
+    })
+
+    // @ts-ignore
+    return matchingVals.map(props => new this(props))
   }
 
   BaseClass.findById = async function(id: string): Promise<ActiveRecord<Schema>> {
     const db = this.getDb()
 
-    const snapshot = await db.ref(scoped.tableName).child(id).once('value')
-    const val = snapshot.val()
-    return new this(val)
+    const snapshotAtId = await db.ref(this.key).child(id).once('value')
+    const valAtId = snapshotAtId.val()
+    return new this(valAtId)
   }
 
   BaseClass.getDb = function () {

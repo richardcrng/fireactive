@@ -62,8 +62,9 @@ export interface BaseClass<S extends RecordSchema> {
    *  match the passed in `props`
    * 
    * @param props 
+   * @returns an array of `ActiveRecord<S>`
    */
-  find(props: ObjectFromRecord<S>): Promise<ActiveRecord<S>[]>,
+  find(props: Partial<ObjectFromRecord<S>>): Promise<ActiveRecord<S>[]>,
 
   /**
    * Find a single ActiveRecord in the database by id
@@ -78,7 +79,7 @@ export interface BaseClass<S extends RecordSchema> {
    * 
    * @param props 
    */
-  findOne(props: ObjectFromRecord<S>): Promise<ActiveRecord<S> | null>,
+  findOne(props: Partial<ObjectFromRecord<S>>): Promise<ActiveRecord<S> | null>,
 
   /**
    * Return the Firebase Real-Time Database instance and interface
