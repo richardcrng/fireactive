@@ -69,23 +69,56 @@ describe('baseClass: with server connection', () => {
     describe('#delete', () => {
       const deleteData = { age: 39 }
       let res: number
+      let keyOne: string, keyTwo: string, keyThree: string
       beforeAll(async (done) => {
         await db.ref(Player.key).set({})
-        await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Kev' })
-        await pushWithId(db.ref(Player.key), { name: 'Mev', age: 40 })
-        await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Bev' })
+        keyOne = await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Kev' })
+        keyTwo = await pushWithId(db.ref(Player.key), { name: 'Mev', age: 40 })
+        keyThree = await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Bev' })
         res = await Player.delete(deleteData)
         done()
       })
 
       it('deletes matching players', async (done) => {
         const dbVals = await server.getValue()
-        expect(Object.keys(dbVals[Player.key])).toHaveLength(1)
+        const remainingKeys = Object.keys(dbVals[Player.key])
+        expect(remainingKeys).toHaveLength(1)
+        expect(remainingKeys).not.toContain(keyOne)
+        expect(remainingKeys).toContain(keyTwo)
+        expect(remainingKeys).not.toContain(keyThree)
         done()
       })
 
       it('returns the count of players deleted', () => {
         expect(res).toBe(2)
+      })
+    })
+
+    describe('#deleteOne', () => {
+      const deleteData = { age: 39 }
+      let res: boolean
+      let keyOne: string, keyTwo: string, keyThree: string
+      beforeAll(async (done) => {
+        await db.ref(Player.key).set({})
+        keyOne = await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Kev' })
+        keyTwo = await pushWithId(db.ref(Player.key), { name: 'Mev', age: 40 })
+        keyThree = await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Bev' })
+        res = await Player.deleteOne(deleteData)
+        done()
+      })
+
+      it('deletes at most only one entry', async (done) => {
+        const dbVals = await server.getValue()
+        const remainingKeys = Object.keys(dbVals[Player.key])
+        expect(remainingKeys).toHaveLength(2)
+        expect(remainingKeys).not.toContain(keyOne)
+        expect(remainingKeys).toContain(keyTwo)
+        expect(remainingKeys).toContain(keyThree)
+        done()
+      })
+
+      it('returns true if an entry has been deleted', () => {
+        expect(res).toBe(true)
       })
     })
 
@@ -114,7 +147,7 @@ describe('baseClass: with server connection', () => {
       const createData = { name: 'Alfred', age: 39 }
       let id: string
       beforeAll(async (done) => {
-        await pushWithId(db.ref(Player.key), createData)
+        id = await pushWithId(db.ref(Player.key), createData)
         done()
       })
 
