@@ -7,8 +7,7 @@ import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/sche
  * Adds default class methods and properties onto the `BaseClass`
  */
 const addBaseClassStatics = <Schema extends RecordSchema>(
-  BaseClass: BaseClass<Schema>,
-  scoped: { tableName: string }
+  BaseClass: BaseClass<Schema>
 ): void => {
   
   BaseClass.create = async function (
@@ -16,7 +15,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
   ): Promise<ActiveRecord<Schema>> {
     const db = this.getDb()
 
-    const record = new BaseClass({ ...props })
+    const record = new this({ ...props })
     const _id = record.getId()
     await db.ref(this.key).child(_id).set({ ...props, _id })
     return record
@@ -42,7 +41,8 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
 
     const snapshotAtId = await db.ref(this.key).child(id).once('value')
     const valAtId = snapshotAtId.val()
-    return new this(valAtId)
+    const player = new this(valAtId)
+    return player
   }
 
   BaseClass.getDb = function () {

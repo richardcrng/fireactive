@@ -21,6 +21,9 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     this: ActiveRecord<Schema>,
     props: ToCreateRecord<Schema> & { _id?: string }
   ): void {
+    
+    // assign initial props
+    Object.assign(this, props)
 
     const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
 

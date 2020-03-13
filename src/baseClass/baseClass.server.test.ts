@@ -86,5 +86,25 @@ describe('baseClass: with server connection', () => {
         done()
       })
     })
+
+    describe('#findById', () => {
+      const createData = { name: 'Alfred', age: 39 }
+      let id: string
+      beforeAll(async (done) => {
+        await db.ref(Player.key).set({})
+        const newEntryRef = await db.ref(Player.key).push()
+        id = newEntryRef.key as string
+        await newEntryRef.set({ ...createData, _id: id })
+        done()
+      })
+
+      it('finds a record that matches the id', async (done) => {
+        const player = await Player.findById(id) as InstanceType<typeof Player>
+        expect(player._id).toBe(id)
+        expect(player.name).toBe(createData.name)
+        expect(player.age).toBe(createData.age)
+        done()
+      })
+    })
   })
 })
