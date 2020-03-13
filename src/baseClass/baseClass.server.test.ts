@@ -79,6 +79,12 @@ describe('baseClass: with server connection', () => {
         expect(players[0].age).toBe(createData.age)
         done()
       })
+
+      it('returns an empty array if no records match', async (done) => {
+        const players = await Player.find({ name: 'Alfred', age: 40 })
+        expect(players).toEqual([])
+        done()
+      })
     })
   })
 })
