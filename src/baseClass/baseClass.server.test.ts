@@ -336,8 +336,19 @@ describe('baseClass: with server connection', () => {
         await playerRef.update({ name: 'loloa' })
         expect(player.name).toBe('loloa') // as syncing is on
         player.syncOff()
+        expect(player.syncIsOn()).toBe(false)
         await playerRef.update({ name: 'jammy' })
         expect(player.name).toBe('loloa') // as syncing is off
+        done()
+      })
+
+      it('keeps syncing off it is already off', async (done) => {
+        // it will be off following the above test
+        expect(player.syncIsOn()).toBe(false)
+        player.syncOff()
+        expect(player.syncIsOn()).toBe(false)
+        await playerRef.update({ name: 'fwefewfew' })
+        expect(player.name).not.toBe('fwefewfew') // as syncing is off
         done()
       })
     })
