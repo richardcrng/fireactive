@@ -27,9 +27,11 @@ const addBaseClassInstances = <Schema extends RecordSchema>(
 
 
 
-  BaseClass.prototype.save = async function(): Promise<void> {
+  BaseClass.prototype.save = async function(): Promise<ObjectFromRecord<Schema>> {
     const db = this.constructor.getDb()
-    await db.ref(scoped.tableName).child(this.getId()).set(this.toObject())
+    const valsToSet = this.toObject()
+    await db.ref(scoped.tableName).child(this.getId()).set(valsToSet)
+    return valsToSet
   };
   
 

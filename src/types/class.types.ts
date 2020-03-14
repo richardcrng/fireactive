@@ -17,8 +17,10 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
 
   /**
    * Save the instance to Firebase
+   * 
+   * @returns The values saved to the Firebase database
    */
-  save(): Promise<void>,
+  save(): Promise<ObjectFromRecord<S>>,
 
   /**
    * Return the raw object properties (as schematised)

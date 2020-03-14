@@ -6,16 +6,16 @@ import setupTestServer from '../utils/setupTestServer';
 describe('baseClass: with server connection', () => {
   const { server, db } = setupTestServer()
 
-  describe('class methods', () => {
-    const className = 'player'
-    const schema = {
-      name: Schema.string,
-      age: Schema.number
-    }
-    const Player = baseClass(className, schema)
-    let player: InstanceType<typeof Player>
-    let dbVals: any
+  const className = 'Player'
+  const schema = {
+    name: Schema.string,
+    age: Schema.number
+  }
+  const Player = baseClass(className, schema)
+  let player: InstanceType<typeof Player>
+  let dbVals: any
 
+  describe('class methods', () => {
     describe('#create', () => {
       const createData = { name: 'Jorge', age: 42 }
 
@@ -265,6 +265,26 @@ describe('baseClass: with server connection', () => {
       it('returns null if no records match', async (done) => {
         const players = await Player.updateOne({ name: 'mickey', age: 39 }, { age: 10 })
         expect(players).toBeNull()
+        done()
+      })
+    })
+  })
+
+  describe('instance methods', () => {
+    describe('.save', () => {
+      let res: any
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Muriel', age: 7 })
+        player.name = 'Jerry'
+        player.age = 12
+        res = await player.save()
+        done()
+      })
+
+      it('updates any modified schema properties in the database', async (done) => {
+        const playerInDb = await server.getValue(db.ref(Player.key).child(player._id as string))
+        expect(playerInDb).toMatchObject({ name: 'Jerry', age: 12 })
+        expect(res).toMatchObject(playerInDb)
         done()
       })
     })
