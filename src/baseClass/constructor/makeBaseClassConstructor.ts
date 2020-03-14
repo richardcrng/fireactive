@@ -25,10 +25,13 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     // assign initial props
     Object.assign(this, props)
 
-    let syncIsOn = true
-    
-    this.syncIsOn = () => syncIsOn
+    let syncIsOn = false
+
+    this.syncIsOn = () => !!this._id && syncIsOn
     this.toggleSync = () => {
+      if (!this.syncIsOn() && !this._id) {
+        throw new Error(`Can't turn on sync for a ${className} without it having an _id property`)
+      }
       syncIsOn = !syncIsOn
     }
 

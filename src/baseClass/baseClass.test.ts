@@ -57,6 +57,10 @@ describe('baseClass: integration test', () => {
           expect(player.friends).toBeUndefined()
           expect(player.parents).toBeUndefined()
         })
+
+        it('is not syncing by default', () => {
+          expect(player.syncIsOn()).toBe(false)
+        })
       })
 
       describe('sad path', () => {
