@@ -1,6 +1,7 @@
 import { get } from 'lodash'
 import { defaultTo } from 'ramda'
 import { plural } from 'pluralize'
+import onChange from 'on-change'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
@@ -37,19 +38,16 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       Object.assign(record, snapshot.val())
     }
 
-    const handleSyncing = () => {
-      // if (!this._id) {
-      //   throw new Error(`Can't use syncing with a ${className} that has no _id property`)
-      // }
-      if (syncFromDb && syncCount < 1 && this._id) {
+    const alignHandlersSyncingFromDb = () => {
+      if (syncFromDb && syncCount < 1 && this.getId()) {
         const db = this.constructor.getDb()
-        db.ref(this.constructor.key).child(this._id).on('value', syncFromSnapshot)
+        db.ref(this.constructor.key).child(this.getId()).on('value', syncFromSnapshot)
         syncCount++
       }
-      if (!syncFromDb && syncCount > 0 && this._id) {
+      if (!syncFromDb && syncCount > 0 && this.getId()) {
         const db = this.constructor.getDb()
-        while (syncCount > 0 && this._id) {
-          db.ref(this.constructor.key).child(this._id).off('value', syncFromSnapshot)
+        while (syncCount > 0 && this.getId()) {
+          db.ref(this.constructor.key).child(this.getId()).off('value', syncFromSnapshot)
           syncCount--
         }
       }
@@ -58,7 +56,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     this.syncOpts = ({ fromDb, toDb }: Partial<SyncOpts> = {}): SyncOpts => {
       if (typeof fromDb !== 'undefined') syncFromDb = fromDb
       if (typeof toDb !== 'undefined') syncToDb = toDb
-      handleSyncing()
+      alignHandlersSyncingFromDb()
       return { fromDb: syncFromDb, toDb: syncToDb }
     }
 
@@ -106,6 +104,8 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       return plural(this.name)
     }
   })
+
+  
 
   return baseClassConstructor
 }
