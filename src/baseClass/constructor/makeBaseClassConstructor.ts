@@ -1,8 +1,10 @@
 import { get } from 'lodash'
+import { defaultTo } from 'ramda'
 import { plural } from 'pluralize'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
+import { SyncOpts } from '../../types/sync.types';
 
 /**
  * Creates a constructor function for a `RecordModel<Schema>`
@@ -56,7 +58,11 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     this.syncIsOn = () => syncFromDb
     this.syncOff = () => { syncFromDb = false; syncToDb = false; handleSyncing() }
     this.syncOn = () => { syncFromDb = true; syncToDb = true; handleSyncing() }
-    this.syncOpts = () => ({ fromDb: syncFromDb, toDb: syncToDb })
+    this.syncOpts = ({ fromDb, toDb }: Partial<SyncOpts> = {}): SyncOpts => {
+      if (typeof fromDb !== 'undefined') syncFromDb = fromDb
+      if (typeof toDb !== 'undefined') syncToDb = toDb
+      return { fromDb: syncFromDb, toDb: syncToDb }
+    }
     this.toggleSync = () => {
       syncFromDb ? this.syncOff() : this.syncOn()
     }

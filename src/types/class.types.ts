@@ -55,6 +55,14 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
   syncOpts(): SyncOpts
 
   /**
+   * Update sync options and return the overall syncing options
+   *  for the `ActiveRecord`
+   * @param syncOpts - The sync options to update
+   * @returns the current syncing options after the update
+   */
+  syncOpts(syncOpts: Partial<SyncOpts>): SyncOpts
+
+  /**
    * Turn on the `ActiveRecord`'s syncing with the realtime database
    */
   syncOn(): void,

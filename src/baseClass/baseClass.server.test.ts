@@ -421,6 +421,16 @@ describe('baseClass: with server connection', () => {
         expect(player.syncOpts()).toMatchObject({ fromDb: true, toDb: true })
         done()
       })
+
+      it('can update the sync options for a player', async (done) => {
+        const playerOne = await Player.create({ name: 'Bob', age: 2 })
+        const playerTwo = await Player.create({ name: 'Bob', age: 2 })
+        const optsOne = playerOne.syncOpts({ fromDb: false })
+        const optsTwo = playerTwo.syncOpts({ toDb: false })
+        expect(optsOne).toMatchObject({ fromDb: false, toDb: true })
+        expect(optsTwo).toMatchObject({ fromDb: true, toDb: false })
+        done()
+      })
     })
 
     describe('.toggleSync', () => {
