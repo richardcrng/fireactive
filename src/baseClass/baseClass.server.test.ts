@@ -271,6 +271,22 @@ describe('baseClass: with server connection', () => {
   })
 
   describe('instance methods', () => {
+    describe('.reload', () => {
+      let res: any
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Muriel', age: 7 })
+        await db.ref(Player.key).child(player._id as string).set({ name: 'Jerry', age: 12 })
+        res = await player.reload()
+        done()
+      })
+
+      it('reloads the player from the database', async (done) => {
+        expect(res).toMatchObject({ name: 'Jerry', age: 12 })
+        expect(player).toMatchObject({ name: 'Jerry', age: 12 })
+        done()
+      })
+    })
+
     describe('.save', () => {
       let res: any
       beforeAll(async (done) => {

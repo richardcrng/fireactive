@@ -16,6 +16,13 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
   getId(): string,
 
   /**
+   * Reloads the instance's properties from the Firebase database
+   * 
+   * @returns The values reloaded from the Firebase database
+   */
+  reload(): Promise<ObjectFromRecord<S>>,
+
+  /**
    * Save the instance to Firebase
    * 
    * @returns The values saved to the Firebase database

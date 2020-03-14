@@ -25,6 +25,14 @@ const addBaseClassInstances = <Schema extends RecordSchema>(
     }
   }
 
+  BaseClass.prototype.reload = async function (): Promise<ObjectFromRecord<Schema>> {
+    if (!this._id) throw new Error(`Can't reload a ${this.constructor.name} from the database without it having an id`)
+    const db = this.constructor.getDb()
+    const snapshot = await db.ref(this.constructor.key).child(this._id).once('value')
+    const vals = snapshot.val()
+    Object.assign(this, vals)
+    return vals
+  };
 
 
   BaseClass.prototype.save = async function(): Promise<ObjectFromRecord<Schema>> {
