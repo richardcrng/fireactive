@@ -204,6 +204,7 @@ describe('baseClass: with server connection', () => {
 
       it('returns an array of records that are updated', async (done) => {
         expect(res).toHaveLength(2)
+        expect(idOne).not.toBe(idThree)
         expect(res[0]._id).toBe(idOne)
         expect(res[0]).toMatchObject({ name: 'Alfred', age: 40 })
         expect(res[1]._id).toBe(idThree)
@@ -223,8 +224,8 @@ describe('baseClass: with server connection', () => {
         done()
       })
 
-      it.skip('returns an empty array if no records match', async (done) => {
-        const players = await Player.find({ name: 'Alfred', age: 40 })
+      it('returns an empty array if no records match', async (done) => {
+        const players = await Player.update({ name: 'mickey', age: 39 }, { age: 10 })
         expect(players).toEqual([])
         done()
       })
