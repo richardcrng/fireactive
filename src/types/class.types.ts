@@ -28,6 +28,14 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
    * @returns The values saved to the Firebase database
    */
   save(): Promise<ObjectFromRecord<S>>,
+
+
+  /**
+   * Save the instance to Firebase and turns on syncing
+   * 
+   * @returns The values saved to the Firebase database
+   */
+  saveAndSync(): Promise<ObjectFromRecord<S>>,
   
 
   /**

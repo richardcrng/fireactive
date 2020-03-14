@@ -41,7 +41,12 @@ const addBaseClassInstances = <Schema extends RecordSchema>(
     await db.ref(scoped.tableName).child(this.getId()).set(valsToSet)
     return valsToSet
   };
-  
+
+  BaseClass.prototype.saveAndSync = async function (): Promise<ObjectFromRecord<Schema>> {
+    const setVals = this.save()
+    this.syncOn()
+    return setVals
+  };
 
   BaseClass.prototype.toObject = function(): ObjectFromRecord<Schema> {
     return [...Object.keys(scoped.schema), "_id"].reduce((acc, key) => {

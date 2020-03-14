@@ -305,6 +305,32 @@ describe('baseClass: with server connection', () => {
       })
     })
 
+    describe('.saveAndSync', () => {
+      let res: any
+      let playerRef: firebase.database.Reference
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Muriel', age: 7 })
+        playerRef = db.ref(Player.key).child(player._id as string)
+        player.name = 'Jerry'
+        player.age = 12
+        res = await player.saveAndSync()
+        done()
+      })
+
+      it('updates any modified schema properties in the database', async (done) => {
+        const playerInDb = await server.getValue(playerRef)
+        expect(playerInDb).toMatchObject({ name: 'Jerry', age: 12 })
+        expect(res).toMatchObject(playerInDb)
+        done()
+      })
+
+      it('means the `ActiveRecord` syncs with changes in the database', async (done) => {
+        await playerRef.update({ name: 'Muriel again' })
+        expect(player.name).toBe('Muriel again')
+        done()
+      })
+    })
+
     describe('.syncIsOn', () => {
       beforeAll(async (done) => {
         player = await Player.create({ name: 'Michel', age: 78 })
