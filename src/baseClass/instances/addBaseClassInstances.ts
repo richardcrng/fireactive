@@ -1,4 +1,4 @@
-import { BaseClass } from "../../types/class.types";
+import { BaseClass, ActiveRecord } from "../../types/class.types";
 import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 import isNull from "../../utils/isNull";
 
@@ -25,13 +25,28 @@ const addBaseClassInstances = <Schema extends RecordSchema>(
     }
   }
 
-
-
-  BaseClass.prototype.save = async function(): Promise<void> {
+  BaseClass.prototype.reload = async function (): Promise<ObjectFromRecord<Schema>> {
+    if (!this._id) throw new Error(`Can't reload a ${this.constructor.name} from the database without it having an id`)
     const db = this.constructor.getDb()
-    await db.ref(scoped.tableName).child(this.getId()).set(this.toObject())
+    const snapshot = await db.ref(this.constructor.key).child(this._id).once('value')
+    const vals = snapshot.val()
+    Object.assign(this, vals)
+    return vals
   };
-  
+
+
+  BaseClass.prototype.save = async function(): Promise<ObjectFromRecord<Schema>> {
+    const db = this.constructor.getDb()
+    const valsToSet = this.toObject()
+    await db.ref(scoped.tableName).child(this.getId()).set(valsToSet)
+    return valsToSet
+  };
+
+  BaseClass.prototype.saveAndSync = async function (): Promise<ObjectFromRecord<Schema>> {
+    const setVals = this.save()
+    this.syncOn()
+    return setVals
+  };
 
   BaseClass.prototype.toObject = function(): ObjectFromRecord<Schema> {
     return [...Object.keys(scoped.schema), "_id"].reduce((acc, key) => {

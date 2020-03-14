@@ -6,16 +6,16 @@ import setupTestServer from '../utils/setupTestServer';
 describe('baseClass: with server connection', () => {
   const { server, db } = setupTestServer()
 
-  describe('class methods', () => {
-    const className = 'player'
-    const schema = {
-      name: Schema.string,
-      age: Schema.number
-    }
-    const Player = baseClass(className, schema)
-    let player: InstanceType<typeof Player>
-    let dbVals: any
+  const className = 'Player'
+  const schema = {
+    name: Schema.string,
+    age: Schema.number
+  }
+  const Player = baseClass(className, schema)
+  let player: InstanceType<typeof Player>
+  let dbVals: any
 
+  describe('class methods', () => {
     describe('#create', () => {
       const createData = { name: 'Jorge', age: 42 }
 
@@ -266,6 +266,163 @@ describe('baseClass: with server connection', () => {
         const players = await Player.updateOne({ name: 'mickey', age: 39 }, { age: 10 })
         expect(players).toBeNull()
         done()
+      })
+    })
+  })
+
+  describe('instance methods', () => {
+    describe('.reload', () => {
+      let res: any
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Muriel', age: 7 })
+        await db.ref(Player.key).child(player._id as string).set({ name: 'Jerry', age: 12 })
+        res = await player.reload()
+        done()
+      })
+
+      it('reloads the player from the database', async (done) => {
+        expect(res).toMatchObject({ name: 'Jerry', age: 12 })
+        expect(player).toMatchObject({ name: 'Jerry', age: 12 })
+        done()
+      })
+    })
+
+    describe('.save', () => {
+      let res: any
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Muriel', age: 7 })
+        player.name = 'Jerry'
+        player.age = 12
+        res = await player.save()
+        done()
+      })
+
+      it('updates any modified schema properties in the database', async (done) => {
+        const playerInDb = await server.getValue(db.ref(Player.key).child(player._id as string))
+        expect(playerInDb).toMatchObject({ name: 'Jerry', age: 12 })
+        expect(res).toMatchObject(playerInDb)
+        done()
+      })
+    })
+
+    describe('.saveAndSync', () => {
+      let res: any
+      let playerRef: firebase.database.Reference
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Muriel', age: 7 })
+        playerRef = db.ref(Player.key).child(player._id as string)
+        player.name = 'Jerry'
+        player.age = 12
+        res = await player.saveAndSync()
+        done()
+      })
+
+      it('updates any modified schema properties in the database', async (done) => {
+        const playerInDb = await server.getValue(playerRef)
+        expect(playerInDb).toMatchObject({ name: 'Jerry', age: 12 })
+        expect(res).toMatchObject(playerInDb)
+        done()
+      })
+
+      it('means the `ActiveRecord` syncs with changes in the database', async (done) => {
+        await playerRef.update({ name: 'Muriel again' })
+        expect(player.name).toBe('Muriel again')
+        done()
+      })
+    })
+
+    describe('.syncIsOn', () => {
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Michel', age: 78 })
+        done()
+      })
+
+      it('returns true by default', () => {
+        expect(player.syncIsOn()).toBe(true)
+      })
+
+      it('can be toggled by toggleSync', () => {
+        player.toggleSync()
+        expect(player.syncIsOn()).toBe(false)
+      })
+    })
+
+    describe('.syncOff', () => {
+      let playerRef: firebase.database.Reference
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Michel', age: 78 })
+        playerRef = db.ref(Player.key).child(player._id as string)
+        done()
+      })
+
+      it('flips off syncing if it is on', async (done) => {
+        // it will be on by start thanks to create
+        expect(player.syncIsOn()).toBe(true)
+        expect(player.name).toBe('Michel')
+        await playerRef.update({ name: 'loloa' })
+        expect(player.name).toBe('loloa') // as syncing is on
+        player.syncOff()
+        expect(player.syncIsOn()).toBe(false)
+        await playerRef.update({ name: 'jammy' })
+        expect(player.name).toBe('loloa') // as syncing is off
+        done()
+      })
+
+      it('keeps syncing off it is already off', async (done) => {
+        // it will be off following the above test
+        expect(player.syncIsOn()).toBe(false)
+        player.syncOff()
+        expect(player.syncIsOn()).toBe(false)
+        await playerRef.update({ name: 'fwefewfew' })
+        expect(player.name).not.toBe('fwefewfew') // as syncing is off
+        done()
+      })
+    })
+
+    describe('.syncOn', () => {
+      let playerRef: firebase.database.Reference
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Michel', age: 78 })
+        playerRef = db.ref(Player.key).child(player._id as string)
+        done()
+      })
+
+      it('keeps syncing on it is already on', async (done) => {
+        // it will be on by start thanks to create
+        expect(player.syncIsOn()).toBe(true)
+        player.syncOn()
+        expect(player.syncIsOn()).toBe(true)
+        await playerRef.update({ name: 'fwefewfew' })
+        expect(player.name).toBe('fwefewfew') // as syncing is on
+        done()
+      })
+
+      it('flips on syncing if it is off', async (done) => {
+        player.syncOff()
+        expect(player.syncIsOn()).toBe(false)
+        await playerRef.update({ name: 'loloa' })
+        expect(player.name).not.toBe('loloa') // as syncing is off
+        player.syncOn()
+        expect(player.syncIsOn()).toBe(true)
+        await playerRef.update({ name: 'jammy' })
+        expect(player.name).toBe('jammy') // as syncing is on
+        done()
+      })
+    })
+
+    describe('.toggleSync', () => {
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Michel', age: 78 })
+        const playerRef = db.ref(Player.key).child(player._id as string)
+        await playerRef.update({ name: 'Bobo' })
+        player.toggleSync()
+        await playerRef.update({ age: 4 })
+        done()
+      })
+
+      it('stops properties being synced', () => {
+        expect(player.name).toBe('Bobo') // before toggled sync
+        expect(player.age).toBe(78) // after toggled sync
       })
     })
   })

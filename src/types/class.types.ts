@@ -16,9 +16,52 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
   getId(): string,
 
   /**
-   * Save the instance to Firebase
+   * Reloads the instance's properties from the Firebase database
+   * 
+   * @returns The values reloaded from the Firebase database
    */
-  save(): Promise<void>,
+  reload(): Promise<ObjectFromRecord<S>>,
+
+  /**
+   * Save the instance to Firebase
+   * 
+   * @returns The values saved to the Firebase database
+   */
+  save(): Promise<ObjectFromRecord<S>>,
+
+
+  /**
+   * Save the instance to Firebase and turns on syncing
+   * 
+   * @returns The values saved to the Firebase database
+   */
+  saveAndSync(): Promise<ObjectFromRecord<S>>,
+  
+
+  /**
+   * Check whether the `ACtiveRecord` is set to realtime sync
+   *  with the database
+   * 
+   * @returns `true` if the `ActiveRecord` has sync turned on;
+   *  `false` otherwise
+   */
+  syncIsOn(): boolean,
+
+
+  /**
+   * Turn on the `ActiveRecord`'s syncing with the realtime database
+   */
+  syncOn(): void,
+
+  /**
+   * Turn off the `ActiveRecord`'s syncing with the realtime database
+   */
+  syncOff(): void,
+
+  /**
+   * Toggles the realtime syncing of the `ActiveRecord`
+   */
+  toggleSync(): void,
 
   /**
    * Return the raw object properties (as schematised)

@@ -25,6 +25,40 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     // assign initial props
     Object.assign(this, props)
 
+    const record = this
+
+    let syncIsOn = false
+    let syncCount: number = 0
+
+    const syncFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
+      Object.assign(record, snapshot.val())
+    }
+
+    const handleSyncing = () => {
+      if (!this._id) {
+        throw new Error(`Can't use syncing with a ${className} that has no _id property`)
+      }
+      if (syncIsOn && syncCount < 1 && this._id) {
+        const db = this.constructor.getDb()
+        db.ref(this.constructor.key).child(this._id).on('value', syncFromSnapshot)
+        syncCount++
+      }
+      if (!syncIsOn && syncCount > 0) {
+        const db = this.constructor.getDb()
+        while (syncCount > 0 && this._id) {
+          db.ref(this.constructor.key).child(this._id).off('value', syncFromSnapshot)
+          syncCount--
+        }
+      }
+    }
+
+    this.syncIsOn = () => syncIsOn
+    this.syncOff = () => { syncIsOn = false; handleSyncing() }
+    this.syncOn = () => { syncIsOn = true; handleSyncing() }
+    this.toggleSync = () => {
+      syncIsOn ? this.syncOff() : this.syncOn()
+    }
+
     const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
 
     /**
