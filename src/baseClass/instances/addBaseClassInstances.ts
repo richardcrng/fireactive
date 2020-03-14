@@ -44,7 +44,7 @@ const addBaseClassInstances = <Schema extends RecordSchema>(
 
   BaseClass.prototype.saveAndSync = async function (): Promise<ObjectFromRecord<Schema>> {
     const setVals = this.save()
-    this.syncOn()
+    this.syncOpts({ fromDb: true, toDb: true })
     return setVals
   };
 

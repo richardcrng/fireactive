@@ -40,16 +40,6 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
   
 
   /**
-   * Check whether the `ACtiveRecord` is set to realtime sync
-   *  with the database
-   * 
-   * @returns `true` if the `ActiveRecord` has sync turned on;
-   *  `false` otherwise
-   */
-  syncIsOn(): boolean,
-
-
-  /**
    * Returns the current syncing options for the `ActiveRecord`
    */
   syncOpts(): SyncOpts
@@ -62,20 +52,6 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
    */
   syncOpts(syncOpts: Partial<SyncOpts>): SyncOpts
 
-  /**
-   * Turn on the `ActiveRecord`'s syncing with the realtime database
-   */
-  syncOn(): void,
-
-  /**
-   * Turn off the `ActiveRecord`'s syncing with the realtime database
-   */
-  syncOff(): void,
-
-  /**
-   * Toggles the realtime syncing of the `ActiveRecord`
-   */
-  toggleSync(): void,
 
   /**
    * Return the raw object properties (as schematised)

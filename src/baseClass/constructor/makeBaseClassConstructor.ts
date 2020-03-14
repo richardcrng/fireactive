@@ -38,15 +38,15 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     }
 
     const handleSyncing = () => {
-      if (!this._id) {
-        throw new Error(`Can't use syncing with a ${className} that has no _id property`)
-      }
+      // if (!this._id) {
+      //   throw new Error(`Can't use syncing with a ${className} that has no _id property`)
+      // }
       if (syncFromDb && syncCount < 1 && this._id) {
         const db = this.constructor.getDb()
         db.ref(this.constructor.key).child(this._id).on('value', syncFromSnapshot)
         syncCount++
       }
-      if (!syncFromDb && syncCount > 0) {
+      if (!syncFromDb && syncCount > 0 && this._id) {
         const db = this.constructor.getDb()
         while (syncCount > 0 && this._id) {
           db.ref(this.constructor.key).child(this._id).off('value', syncFromSnapshot)
@@ -55,16 +55,11 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       }
     }
 
-    this.syncIsOn = () => syncFromDb
-    this.syncOff = () => { syncFromDb = false; syncToDb = false; handleSyncing() }
-    this.syncOn = () => { syncFromDb = true; syncToDb = true; handleSyncing() }
     this.syncOpts = ({ fromDb, toDb }: Partial<SyncOpts> = {}): SyncOpts => {
       if (typeof fromDb !== 'undefined') syncFromDb = fromDb
       if (typeof toDb !== 'undefined') syncToDb = toDb
+      handleSyncing()
       return { fromDb: syncFromDb, toDb: syncToDb }
-    }
-    this.toggleSync = () => {
-      syncFromDb ? this.syncOff() : this.syncOn()
     }
 
     const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
