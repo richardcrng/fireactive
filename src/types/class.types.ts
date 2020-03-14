@@ -39,6 +39,17 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
    */
   syncIsOn(): boolean,
 
+
+  /**
+   * Turn on the `ActiveRecord`'s syncing with the realtime database
+   */
+  syncOn(): void,
+
+  /**
+   * Turn off the `ActiveRecord`'s syncing with the realtime database
+   */
+  syncOff(): void,
+
   /**
    * Toggles the realtime syncing of the `ActiveRecord`
    */
