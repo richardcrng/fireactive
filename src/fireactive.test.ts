@@ -1,5 +1,5 @@
-import FirebaseServer from 'firebase-server'
-import { baseClass, Schema, initialize } from './fireactive'
+import { baseClass, Schema } from './fireactive'
+import setupTestServer from './utils/setupTestServer'
 
 describe('baseClass', () => {
   describe("GIVEN a model name of 'players' and a schema", () => {
@@ -37,24 +37,11 @@ describe('baseClass', () => {
       })
 
       test("AND using the model's create method throws an error without a database connection", () => {
-        expect(PlayerRecord.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
+        expect(PlayerRecord.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow(/connect/)
       })
 
       describe("AND a connection to a database is initialise", () => {
-        let server: FirebaseServer
-
-        beforeAll(async (done) => {
-          server = new FirebaseServer(0, 'localhost')
-          initialize({
-            databaseURL: `ws://localhost:${server.getPort()}`
-          })
-          done()
-        })
-
-        afterAll(async (done) => {
-          await server.close()
-          done()
-        })
+        setupTestServer()
 
         test("THEN a model's create method does not throw an error", () => {
           expect(PlayerRecord.create({ name: 'Pedro', age: 3, isCool: true })).resolves.toMatchObject({
