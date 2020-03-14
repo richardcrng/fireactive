@@ -1,5 +1,5 @@
-import FirebaseServer from 'firebase-server'
-import { baseClass, Schema, initialize } from './fireactive'
+import { baseClass, Schema } from './fireactive'
+import setupTestServer from './utils/setupTestServer'
 
 describe('baseClass', () => {
   describe("GIVEN a model name of 'players' and a schema", () => {
@@ -41,22 +41,7 @@ describe('baseClass', () => {
       })
 
       describe("AND a connection to a database is initialise", () => {
-        let server: FirebaseServer
-        let app: firebase.app.App
-
-        beforeAll(async (done) => {
-          server = new FirebaseServer(0, 'localhost')
-          app = initialize({
-            databaseURL: `ws://localhost:${server.getPort()}`
-          })
-          done()
-        })
-
-        afterAll(async (done) => {
-          await server.close()
-          await app.delete()
-          done()
-        })
+        setupTestServer()
 
         test("THEN a model's create method does not throw an error", () => {
           expect(PlayerRecord.create({ name: 'Pedro', age: 3, isCool: true })).resolves.toMatchObject({

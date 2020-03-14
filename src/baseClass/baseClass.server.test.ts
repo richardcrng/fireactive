@@ -1,29 +1,10 @@
-import FirebaseServer from 'firebase-server'
 import baseClass from '.';
 import Schema from '../Schema';
-import initialize from '../initialize';
 import pushWithId from '../utils/pushWithId';
+import setupTestServer from '../utils/setupTestServer';
 
 describe('baseClass: with server connection', () => {
-  let server: FirebaseServer
-  let app: firebase.app.App
-  let db: firebase.database.Database
-
-  beforeAll(async (done) => {
-    server = new FirebaseServer(0, 'localhost')
-    const firebaseConfig = {
-      databaseURL: `ws://localhost:${server.getPort()}`
-    }
-    app = initialize(firebaseConfig)
-    db = app.database()
-    done()
-  })
-
-  afterAll(async (done) => {
-    await server.close()
-    await app.delete()
-    done()
-  })
+  const { server, db } = setupTestServer()
 
   describe('class methods', () => {
     const className = 'player'
