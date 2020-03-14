@@ -271,6 +271,34 @@ describe('baseClass: with server connection', () => {
   })
 
   describe('instance methods', () => {
+    describe('.pendingSetters', () => {
+      let mary: InstanceType<typeof Player>
+      beforeAll(async (done) => {
+        mary = await Player.create({ name: 'Mary', age: 0 })
+        for (let i = 1; i <= 100; i++) {
+          mary.age = i
+        }
+        done()
+      })
+
+      it('returns an array of all pending setters when passed in the array option', () => {
+        expect(mary.pendingSetters({ array: true })).toHaveLength(100)
+      })
+
+      it('returns a promise when passed no arguments', () => {
+        expect(mary.pendingSetters()).toHaveProperty('then')
+      })
+
+      it('returns an empty array when passed the array option and all promises are resolved', async (done) => {
+        await mary.pendingSetters()
+        expect(mary.pendingSetters({ array: true })).toEqual([])
+        expect(mary.age).toBe(100)
+        const maryOnServer = await server.getValue(db.ref(Player.key).child(mary.getId()))
+        expect(maryOnServer.age).toBe(100)
+        done()
+      })
+    })
+
     describe('.reload', () => {
       let res: any
       beforeAll(async (done) => {

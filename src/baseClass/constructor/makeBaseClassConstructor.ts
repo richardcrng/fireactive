@@ -1,5 +1,5 @@
-import { get } from 'lodash'
-import { defaultTo } from 'ramda'
+import { get, remove } from 'lodash'
+import { identical } from 'ramda'
 import onChange from 'on-change'
 import { plural } from 'pluralize'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
@@ -35,7 +35,11 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     let syncCount: number = 0
 
     let pendingSetters: Promise<any>[] = []
-    this.pendingSetters = () => Promise.all(pendingSetters)
+    this.pendingSetters = (opts?: { array: true }): any => {
+      return opts?.array
+        ? pendingSetters
+        : Promise.all(pendingSetters)
+    }
 
     const syncFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
       Object.assign(record, snapshot.val())
@@ -54,13 +58,6 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
           syncCount--
         }
       }
-    }
-
-    async function updateInDb() {
-      const db = record.constructor.getDb()
-      const valsToSet = record.toObject()
-      await db.ref(record.constructor.key).child(record.getId()).set(valsToSet)
-      return valsToSet
     }
 
     this.syncOpts = ({ fromDb, toDb }: Partial<SyncOpts> = {}): SyncOpts => {
@@ -100,13 +97,26 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       iterativelyCheckAgainstSchema([key])
     })
 
-    return onChange(this, function(path, val, prevVal) {
+    /**
+     * https://github.com/sindresorhus/on-change
+     * 
+     * Return a proxied version of the instance
+     *  which syncs to the realtime database
+     *  on every set if `syncToDb` is truthy.
+     * 
+     * `pendingSetters` is used to provide something
+     *  awaitable for all pending database changes.
+     */
+    return onChange(this, function(path, val) {
       if (syncToDb) {
         const db = this.constructor.getDb()
         const thisRef = db.ref(this.constructor.key).child(this.getId())
         const propPath = path.replace(/\./g, '/')
-        const promise = thisRef.child(propPath).set(val)
-        pendingSetters = [promise]
+        const promiseToDb = thisRef.child(propPath).set(val)
+        pendingSetters.push(promiseToDb)
+        promiseToDb.then(() => {
+          remove(pendingSetters, identical(promiseToDb))
+        })
       }
     })
   }

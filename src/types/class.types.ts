@@ -39,9 +39,21 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
   saveAndSync(syncOpts?: Partial<SyncOpts>): Promise<ObjectFromRecord<S>>,
 
   /**
-   * @returns a promise of pending database sets
+   * A promise resolved when all pending setter promises to
+   *  the database have been completed
+   * 
+   * @returns a `Promise`
    */
   pendingSetters(): Promise<any>,
+
+  /**
+   * An array of all pending setter promises to
+   *  the database
+   * 
+   * @returns the array of all pending setter promises
+   *  to the database
+   */
+  pendingSetters({ array }: { array: true }): Promise<any>[],
 
   /**
    * Returns the current syncing options for the `ActiveRecord`
