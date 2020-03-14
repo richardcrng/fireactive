@@ -304,5 +304,37 @@ describe('baseClass: with server connection', () => {
         done()
       })
     })
+
+    describe('.syncIsOn', () => {
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Michel', age: 78 })
+        done()
+      })
+
+      it('returns true by default', () => {
+        expect(player.syncIsOn()).toBe(true)
+      })
+
+      it('can be toggled by toggleSync', () => {
+        player.toggleSync()
+        expect(player.syncIsOn()).toBe(false)
+      })
+    })
+
+    describe('.toggleSync', () => {
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Michel', age: 78 })
+        const playerRef = db.ref(Player.key).child(player._id as string)
+        await playerRef.update({ name: 'Bobo' })
+        player.toggleSync()
+        await playerRef.update({ age: 4 })
+        done()
+      })
+
+      it('stops properties being synced', () => {
+        expect(player.name).toBe('Bobo') // before toggled sync
+        expect(player.age).toBe(78) // after toggled sync
+      })
+    })
   })
 })

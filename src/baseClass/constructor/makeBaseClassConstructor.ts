@@ -25,6 +25,13 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     // assign initial props
     Object.assign(this, props)
 
+    let syncIsOn = true
+    
+    this.syncIsOn = () => syncIsOn
+    this.toggleSync = () => {
+      syncIsOn = !syncIsOn
+    }
+
     const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
 
     /**
