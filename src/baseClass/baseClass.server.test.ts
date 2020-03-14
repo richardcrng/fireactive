@@ -372,6 +372,28 @@ describe('baseClass: with server connection', () => {
           done()
         })
       })
+
+      describe('.syncOpts().toDb', () => {
+        it('when true, means record changes sync to the db', async (done) => {
+          const player = await Player.create({ name: 'Bob', age: 2 })
+          expect(player.syncOpts().toDb).toBe(true)
+          expect(player.name).toBe('Bob')
+          player.name = 'Lola'
+          const serverPlayer = await server.getValue(db.ref(Player.key).child(player._id as string))
+          expect(serverPlayer.name).toBe('Lola')
+          done()
+        })
+
+        it('when false, means record changes do not sync to thedb', async (done) => {
+          const player = await Player.create({ name: 'Bob', age: 2 })
+          expect(player.syncOpts({ toDb: false }).toDb).toBe(false)
+          expect(player.name).toBe('Bob')
+          player.name = 'Lola'
+          const serverPlayer = await server.getValue(db.ref(Player.key).child(player._id as string))
+          expect(serverPlayer.name).toBe('Bob')
+          done()
+        })
+      })
     })
 
   })
