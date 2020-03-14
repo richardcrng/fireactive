@@ -22,6 +22,7 @@
     "dotenv": "^8.2.0",
     "firebase": "^7.9.3",
     "lodash": "^4.17.15",
+    "on-change": "^1.8.1",
     "pluralize": "^8.0.0",
     "ramda": "^0.27.0",
     "utility-types": "^3.10.0"

@@ -1,8 +1,11 @@
-import { get } from 'lodash'
+import { get, remove } from 'lodash'
+import { identical } from 'ramda'
+import onChange from 'on-change'
 import { plural } from 'pluralize'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
+import { SyncOpts } from '../../types/sync.types';
 
 /**
  * Creates a constructor function for a `RecordModel<Schema>`
@@ -20,43 +23,48 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
   function baseClassConstructor (
     this: ActiveRecord<Schema>,
     props: ToCreateRecord<Schema> & { _id?: string }
-  ): void {
+  ) {
     
     // assign initial props
     Object.assign(this, props)
 
     const record = this
 
-    let syncIsOn = false
+    let syncFromDb: boolean = false
+    let syncToDb: boolean = false
     let syncCount: number = 0
+
+    let pendingSetters: Promise<any>[] = []
+    this.pendingSetters = (opts?: { array: true }): any => {
+      return opts?.array
+        ? [...pendingSetters] // stop users mutating the underlying array
+        : Promise.all(pendingSetters)
+    }
 
     const syncFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
       Object.assign(record, snapshot.val())
     }
 
-    const handleSyncing = () => {
-      if (!this._id) {
-        throw new Error(`Can't use syncing with a ${className} that has no _id property`)
-      }
-      if (syncIsOn && syncCount < 1 && this._id) {
+    const alignHandlersSyncingFromDb = () => {
+      if (syncFromDb && syncCount < 1 && this.getId()) {
         const db = this.constructor.getDb()
-        db.ref(this.constructor.key).child(this._id).on('value', syncFromSnapshot)
+        db.ref(this.constructor.key).child(this.getId()).on('value', syncFromSnapshot)
         syncCount++
       }
-      if (!syncIsOn && syncCount > 0) {
+      if (!syncFromDb && syncCount > 0 && this.getId()) {
         const db = this.constructor.getDb()
-        while (syncCount > 0 && this._id) {
-          db.ref(this.constructor.key).child(this._id).off('value', syncFromSnapshot)
+        while (syncCount > 0 && this.getId()) {
+          db.ref(this.constructor.key).child(this.getId()).off('value', syncFromSnapshot)
           syncCount--
         }
       }
     }
 
-    this.syncIsOn = () => syncIsOn
-    this.syncOff = () => { syncIsOn = false; handleSyncing() }
-    this.syncOn = () => { syncIsOn = true; handleSyncing() }
-    this.toggleSync = () => {
-      syncIsOn ? this.syncOff() : this.syncOn()
+    this.syncOpts = ({ fromDb, toDb }: Partial<SyncOpts> = {}): SyncOpts => {
+      if (typeof fromDb !== 'undefined') syncFromDb = fromDb
+      if (typeof toDb !== 'undefined') syncToDb = toDb
+      alignHandlersSyncingFromDb()
+      return { fromDb: syncFromDb, toDb: syncToDb }
     }
 
     const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
@@ -88,6 +96,29 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
 
       iterativelyCheckAgainstSchema([key])
     })
+
+    /**
+     * https://github.com/sindresorhus/on-change
+     * 
+     * Return a proxied version of the instance
+     *  which syncs to the realtime database
+     *  on every set if `syncToDb` is truthy.
+     * 
+     * `pendingSetters` is used to provide something
+     *  awaitable for all pending database changes.
+     */
+    return onChange(this, function(path, val) {
+      if (syncToDb) {
+        const db = this.constructor.getDb()
+        const thisRef = db.ref(this.constructor.key).child(this.getId())
+        const propPath = path.replace(/\./g, '/')
+        const promiseToDb = thisRef.child(propPath).set(val)
+        pendingSetters.push(promiseToDb)
+        promiseToDb.then(() => {
+          remove(pendingSetters, identical(promiseToDb))
+        })
+      }
+    })
   }
 
   /**
@@ -103,6 +134,8 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       return plural(this.name)
     }
   })
+
+  
 
   return baseClassConstructor
 }

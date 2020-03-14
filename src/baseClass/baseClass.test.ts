@@ -59,7 +59,7 @@ describe('baseClass: integration test', () => {
         })
 
         it('is not syncing by default', () => {
-          expect(player.syncIsOn()).toBe(false)
+          expect(player.syncOpts()).toMatchObject({ fromDb: false, toDb: false })
         })
       })
 

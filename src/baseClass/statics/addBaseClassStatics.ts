@@ -42,7 +42,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
   BaseClass.create = async function (props): Promise<ActiveRecord<Schema>> {
     const record = new this({ ...props })
     const _id = record.getId()
-    record.toggleSync() // sync by default when using `create`
+    record.syncOpts({ fromDb: true, toDb: true }) // sync by default when using `create`
     await getBaseClassRef().child(_id).set({ ...props, _id })
     return record
   }

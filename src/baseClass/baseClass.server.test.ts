@@ -271,6 +271,34 @@ describe('baseClass: with server connection', () => {
   })
 
   describe('instance methods', () => {
+    describe('.pendingSetters', () => {
+      let mary: InstanceType<typeof Player>
+      beforeAll(async (done) => {
+        mary = await Player.create({ name: 'Mary', age: 0 })
+        for (let i = 1; i <= 100; i++) {
+          mary.age = i
+        }
+        done()
+      })
+
+      it('returns an array of all pending setters when passed in the array option', () => {
+        expect(mary.pendingSetters({ array: true })).toHaveLength(100)
+      })
+
+      it('returns a promise when passed no arguments', () => {
+        expect(mary.pendingSetters()).toHaveProperty('then')
+      })
+
+      it('returns an empty array when passed the array option and all promises are resolved', async (done) => {
+        await mary.pendingSetters()
+        expect(mary.pendingSetters({ array: true })).toEqual([])
+        expect(mary.age).toBe(100)
+        const maryOnServer = await server.getValue(db.ref(Player.key).child(mary.getId()))
+        expect(maryOnServer.age).toBe(100)
+        done()
+      })
+    })
+
     describe('.reload', () => {
       let res: any
       beforeAll(async (done) => {
@@ -331,99 +359,72 @@ describe('baseClass: with server connection', () => {
       })
     })
 
-    describe('.syncIsOn', () => {
-      beforeAll(async (done) => {
-        player = await Player.create({ name: 'Michel', age: 78 })
+    describe('.syncOpts', () => {
+      it("when initialized through `new`, shows all syncing as off", () => {
+        const player = new Player({ name: 'Bob', age: 2 })
+        expect(player.syncOpts()).toMatchObject({ fromDb: false, toDb: false })
+      })
+
+      it('when initialized through `create`, shows all syncing as true', async (done) => {
+        const player = await Player.create({ name: 'Bob', age: 2 })
+        expect(player.syncOpts()).toMatchObject({ fromDb: true, toDb: true })
         done()
       })
 
-      it('returns true by default', () => {
-        expect(player.syncIsOn()).toBe(true)
+      it('can update the sync options for a player', async (done) => {
+        const playerOne = await Player.create({ name: 'Bob', age: 2 })
+        const playerTwo = await Player.create({ name: 'Bob', age: 2 })
+        const optsOne = playerOne.syncOpts({ fromDb: false })
+        const optsTwo = playerTwo.syncOpts({ toDb: false })
+        expect(optsOne).toMatchObject({ fromDb: false, toDb: true })
+        expect(optsTwo).toMatchObject({ fromDb: true, toDb: false })
+        done()
       })
 
-      it('can be toggled by toggleSync', () => {
-        player.toggleSync()
-        expect(player.syncIsOn()).toBe(false)
+      describe('.syncOpts().fromDb', () => {
+        it('when true, means db changes sync to the record', async (done) => {
+          const player = await Player.create({ name: 'Bob', age: 2 })
+          expect(player.syncOpts().fromDb).toBe(true)
+          expect(player.name).toBe('Bob')
+          await db.ref(Player.key).child(player._id as string).update({ name: 'Lola' })
+          expect(player.name).toBe('Lola')
+          done()
+        })
+
+        it('when false, means db changes do not sync to the record', async (done) => {
+          const player = await Player.create({ name: 'Bob', age: 2 })
+          expect(player.syncOpts({ fromDb: false }).fromDb).toBe(false)
+          expect(player.name).toBe('Bob')
+          await db.ref(Player.key).child(player._id as string).update({ name: 'Lola' })
+          expect(player.name).toBe('Bob')
+          done()
+        })
+      })
+
+      describe('.syncOpts().toDb', () => {
+        it('when true, means record changes sync to the db', async (done) => {
+          const player = await Player.create({ name: 'Bob', age: 2 })
+          expect(player.syncOpts().toDb).toBe(true)
+          expect(player.name).toBe('Bob')
+          player.name = 'Lola'
+          await player.pendingSetters()
+          const serverPlayer = await server.getValue(db.ref(Player.key).child(player._id as string))
+          expect(serverPlayer.name).toBe('Lola')
+          done()
+        })
+
+        it('when false, means record changes do not sync to thedb', async (done) => {
+          const player = await Player.create({ name: 'Bob', age: 2 })
+          expect(player.syncOpts({ toDb: false }).toDb).toBe(false)
+          expect(player.name).toBe('Bob')
+          player.name = 'Lola'
+          await player.pendingSetters()
+          const serverPlayer = await server.getValue(db.ref(Player.key).child(player._id as string))
+          expect(serverPlayer.name).toBe('Bob')
+          done()
+        })
       })
     })
 
-    describe('.syncOff', () => {
-      let playerRef: firebase.database.Reference
-      beforeAll(async (done) => {
-        player = await Player.create({ name: 'Michel', age: 78 })
-        playerRef = db.ref(Player.key).child(player._id as string)
-        done()
-      })
-
-      it('flips off syncing if it is on', async (done) => {
-        // it will be on by start thanks to create
-        expect(player.syncIsOn()).toBe(true)
-        expect(player.name).toBe('Michel')
-        await playerRef.update({ name: 'loloa' })
-        expect(player.name).toBe('loloa') // as syncing is on
-        player.syncOff()
-        expect(player.syncIsOn()).toBe(false)
-        await playerRef.update({ name: 'jammy' })
-        expect(player.name).toBe('loloa') // as syncing is off
-        done()
-      })
-
-      it('keeps syncing off it is already off', async (done) => {
-        // it will be off following the above test
-        expect(player.syncIsOn()).toBe(false)
-        player.syncOff()
-        expect(player.syncIsOn()).toBe(false)
-        await playerRef.update({ name: 'fwefewfew' })
-        expect(player.name).not.toBe('fwefewfew') // as syncing is off
-        done()
-      })
-    })
-
-    describe('.syncOn', () => {
-      let playerRef: firebase.database.Reference
-      beforeAll(async (done) => {
-        player = await Player.create({ name: 'Michel', age: 78 })
-        playerRef = db.ref(Player.key).child(player._id as string)
-        done()
-      })
-
-      it('keeps syncing on it is already on', async (done) => {
-        // it will be on by start thanks to create
-        expect(player.syncIsOn()).toBe(true)
-        player.syncOn()
-        expect(player.syncIsOn()).toBe(true)
-        await playerRef.update({ name: 'fwefewfew' })
-        expect(player.name).toBe('fwefewfew') // as syncing is on
-        done()
-      })
-
-      it('flips on syncing if it is off', async (done) => {
-        player.syncOff()
-        expect(player.syncIsOn()).toBe(false)
-        await playerRef.update({ name: 'loloa' })
-        expect(player.name).not.toBe('loloa') // as syncing is off
-        player.syncOn()
-        expect(player.syncIsOn()).toBe(true)
-        await playerRef.update({ name: 'jammy' })
-        expect(player.name).toBe('jammy') // as syncing is on
-        done()
-      })
-    })
-
-    describe('.toggleSync', () => {
-      beforeAll(async (done) => {
-        player = await Player.create({ name: 'Michel', age: 78 })
-        const playerRef = db.ref(Player.key).child(player._id as string)
-        await playerRef.update({ name: 'Bobo' })
-        player.toggleSync()
-        await playerRef.update({ age: 4 })
-        done()
-      })
-
-      it('stops properties being synced', () => {
-        expect(player.name).toBe('Bobo') // before toggled sync
-        expect(player.age).toBe(78) // after toggled sync
-      })
-    })
   })
 })

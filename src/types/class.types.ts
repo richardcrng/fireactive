@@ -1,4 +1,5 @@
 import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps } from "./schema.types"
+import { SyncOpts } from "./sync.types"
 
 /**
  * An `ActiveRecord<S>` _instance_ of the `BaseClass<S>`. 
@@ -35,33 +36,38 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
    * 
    * @returns The values saved to the Firebase database
    */
-  saveAndSync(): Promise<ObjectFromRecord<S>>,
-  
+  saveAndSync(syncOpts?: Partial<SyncOpts>): Promise<ObjectFromRecord<S>>,
 
   /**
-   * Check whether the `ACtiveRecord` is set to realtime sync
-   *  with the database
+   * A promise resolved when all pending setter promises to
+   *  the database have been completed
    * 
-   * @returns `true` if the `ActiveRecord` has sync turned on;
-   *  `false` otherwise
+   * @returns a `Promise`
    */
-  syncIsOn(): boolean,
-
+  pendingSetters(): Promise<any>,
 
   /**
-   * Turn on the `ActiveRecord`'s syncing with the realtime database
+   * An array of all pending setter promises to
+   *  the database
+   * 
+   * @returns the array of all pending setter promises
+   *  to the database
    */
-  syncOn(): void,
+  pendingSetters({ array }: { array: true }): Promise<any>[],
 
   /**
-   * Turn off the `ActiveRecord`'s syncing with the realtime database
+   * Returns the current syncing options for the `ActiveRecord`
    */
-  syncOff(): void,
+  syncOpts(): SyncOpts
 
   /**
-   * Toggles the realtime syncing of the `ActiveRecord`
+   * Update sync options and return the overall syncing options
+   *  for the `ActiveRecord`
+   * @param syncOpts - The sync options to update
+   * @returns the current syncing options after the update
    */
-  toggleSync(): void,
+  syncOpts(syncOpts: Partial<SyncOpts>): SyncOpts
+
 
   /**
    * Return the raw object properties (as schematised)

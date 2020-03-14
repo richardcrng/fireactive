@@ -29,6 +29,7 @@ function baseClass<Schema extends RecordSchema>(className: string, schema: Schem
   addBaseClassStatics(BaseClass, { tableName })
 
   // adding instance methods and properties onto `BaseClass.prototype`
+  // @ts-ignore : infinitely deep :(
   addBaseClassInstances(BaseClass, { schema, tableName })
 
   return BaseClass
