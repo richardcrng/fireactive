@@ -353,6 +353,37 @@ describe('baseClass: with server connection', () => {
       })
     })
 
+    describe('.syncOn', () => {
+      let playerRef: firebase.database.Reference
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'Michel', age: 78 })
+        playerRef = db.ref(Player.key).child(player._id as string)
+        done()
+      })
+
+      it('keeps syncing on it is already on', async (done) => {
+        // it will be on by start thanks to create
+        expect(player.syncIsOn()).toBe(true)
+        player.syncOn()
+        expect(player.syncIsOn()).toBe(true)
+        await playerRef.update({ name: 'fwefewfew' })
+        expect(player.name).toBe('fwefewfew') // as syncing is on
+        done()
+      })
+
+      it('flips on syncing if it is off', async (done) => {
+        player.syncOff()
+        expect(player.syncIsOn()).toBe(false)
+        await playerRef.update({ name: 'loloa' })
+        expect(player.name).not.toBe('loloa') // as syncing is off
+        player.syncOn()
+        expect(player.syncIsOn()).toBe(true)
+        await playerRef.update({ name: 'jammy' })
+        expect(player.name).toBe('jammy') // as syncing is on
+        done()
+      })
+    })
+
     describe('.toggleSync', () => {
       beforeAll(async (done) => {
         player = await Player.create({ name: 'Michel', age: 78 })

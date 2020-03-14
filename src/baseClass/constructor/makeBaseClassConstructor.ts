@@ -35,6 +35,9 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     }
 
     const handleSyncing = () => {
+      if (!this._id) {
+        throw new Error(`Can't use syncing with a ${className} that has no _id property`)
+      }
       if (syncIsOn && syncCount < 1 && this._id) {
         const db = this.constructor.getDb()
         db.ref(this.constructor.key).child(this._id).on('value', syncFromSnapshot)
@@ -53,11 +56,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     this.syncOff = () => { syncIsOn = false; handleSyncing() }
     this.syncOn = () => { syncIsOn = true; handleSyncing() }
     this.toggleSync = () => {
-      if (!this.syncIsOn() && !this._id) {
-        throw new Error(`Can't turn on sync for a ${className} without it having an _id property`)
-      }
-      syncIsOn = !syncIsOn
-      handleSyncing()
+      syncIsOn ? this.syncOff() : this.syncOn()
     }
 
     const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
