@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import { defaultTo } from 'ramda'
-import { plural } from 'pluralize'
 import onChange from 'on-change'
+import { plural } from 'pluralize'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
@@ -23,7 +23,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
   function baseClassConstructor (
     this: ActiveRecord<Schema>,
     props: ToCreateRecord<Schema> & { _id?: string }
-  ): void {
+  ) {
     
     // assign initial props
     Object.assign(this, props)
@@ -33,6 +33,9 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     let syncFromDb: boolean = false
     let syncToDb: boolean = false
     let syncCount: number = 0
+
+    let pendingSetters: Promise<any>[] = []
+    this.pendingSetters = () => Promise.all(pendingSetters)
 
     const syncFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
       Object.assign(record, snapshot.val())
@@ -51,6 +54,13 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
           syncCount--
         }
       }
+    }
+
+    async function updateInDb() {
+      const db = record.constructor.getDb()
+      const valsToSet = record.toObject()
+      await db.ref(record.constructor.key).child(record.getId()).set(valsToSet)
+      return valsToSet
     }
 
     this.syncOpts = ({ fromDb, toDb }: Partial<SyncOpts> = {}): SyncOpts => {
@@ -88,6 +98,16 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       this[schemaKey] = props[schemaKey]
 
       iterativelyCheckAgainstSchema([key])
+    })
+
+    return onChange(this, function(path, val, prevVal) {
+      if (syncToDb) {
+        const db = this.constructor.getDb()
+        const thisRef = db.ref(this.constructor.key).child(this.getId())
+        const propPath = path.replace(/\./g, '/')
+        const promise = thisRef.child(propPath).set(val)
+        pendingSetters = [promise]
+      }
     })
   }
 

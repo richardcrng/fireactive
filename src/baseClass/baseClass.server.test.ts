@@ -379,6 +379,7 @@ describe('baseClass: with server connection', () => {
           expect(player.syncOpts().toDb).toBe(true)
           expect(player.name).toBe('Bob')
           player.name = 'Lola'
+          await player.pendingSetters()
           const serverPlayer = await server.getValue(db.ref(Player.key).child(player._id as string))
           expect(serverPlayer.name).toBe('Lola')
           done()
@@ -389,6 +390,7 @@ describe('baseClass: with server connection', () => {
           expect(player.syncOpts({ toDb: false }).toDb).toBe(false)
           expect(player.name).toBe('Bob')
           player.name = 'Lola'
+          await player.pendingSetters()
           const serverPlayer = await server.getValue(db.ref(Player.key).child(player._id as string))
           expect(serverPlayer.name).toBe('Bob')
           done()
