@@ -1,4 +1,5 @@
 import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps } from "./schema.types"
+import { SyncOpts } from "./sync.types"
 
 /**
  * An `ActiveRecord<S>` _instance_ of the `BaseClass<S>`. 
@@ -35,7 +36,7 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
    * 
    * @returns The values saved to the Firebase database
    */
-  saveAndSync(): Promise<ObjectFromRecord<S>>,
+  saveAndSync(syncOpts?: Partial<SyncOpts>): Promise<ObjectFromRecord<S>>,
   
 
   /**
@@ -47,6 +48,11 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
    */
   syncIsOn(): boolean,
 
+
+  /**
+   * Returns the current syncing options for the `ActiveRecord`
+   */
+  syncOpts(): SyncOpts
 
   /**
    * Turn on the `ActiveRecord`'s syncing with the realtime database

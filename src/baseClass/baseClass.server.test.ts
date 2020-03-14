@@ -410,6 +410,19 @@ describe('baseClass: with server connection', () => {
       })
     })
 
+    describe('.syncOpts', () => {
+      it("when initialized through `new`, shows all syncing as off", () => {
+        const player = new Player({ name: 'Bob', age: 2 })
+        expect(player.syncOpts()).toMatchObject({ fromDb: false, toDb: false })
+      })
+
+      it('when initialized through `create`, shows all syncing as true', async (done) => {
+        const player = await Player.create({ name: 'Bob', age: 2 })
+        expect(player.syncOpts()).toMatchObject({ fromDb: true, toDb: true })
+        done()
+      })
+    })
+
     describe('.toggleSync', () => {
       beforeAll(async (done) => {
         player = await Player.create({ name: 'Michel', age: 78 })
