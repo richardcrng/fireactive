@@ -1,8 +1,7 @@
 import { whereEq } from 'ramda'
 import { BaseClass, ActiveRecord } from "../../types/class.types";
 import { getFirebaseDatabase } from "../../initialize/initialize";
-import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
-import baseClass from '../baseClass';
+import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 
 /**
  * Adds default class methods and properties onto the `BaseClass`
@@ -38,7 +37,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     return matchingVals
   }
 
-  
+
   // main
   BaseClass.create = async function (props): Promise<ActiveRecord<Schema>> {
     const record = new this({ ...props })
