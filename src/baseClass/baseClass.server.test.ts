@@ -189,5 +189,46 @@ describe('baseClass: with server connection', () => {
         done()
       })
     })
+
+    describe('#update', () => {
+      let res: InstanceType<typeof Player>[]
+      let idOne: string, idTwo: string, idThree: string
+      beforeAll(async (done) => {
+        await db.ref(Player.key).set({})
+        idOne = await pushWithId(db.ref(Player.key), { name: 'Alfred', age: 39 })
+        idTwo = await pushWithId(db.ref(Player.key), { name: 'Martha', age: 12 })
+        idThree = await pushWithId(db.ref(Player.key), { name: 'Alfred', age: 11 })
+        res = await Player.update({ name: 'Alfred' }, { age: 40 })
+        done()
+      })
+
+      it('returns an array of records that are updated', async (done) => {
+        expect(res).toHaveLength(2)
+        expect(res[0]._id).toBe(idOne)
+        expect(res[0]).toMatchObject({ name: 'Alfred', age: 40 })
+        expect(res[1]._id).toBe(idThree)
+        expect(res[1]).toMatchObject({ name: 'Alfred', age: 40 })
+        done()
+      })
+
+      it('updates only the underlying database entries', async (done) => {
+        const [entryOne, entryTwo, entryThree] = await Promise.all([
+          server.getValue(db.ref(Player.key).child(idOne)),
+          server.getValue(db.ref(Player.key).child(idTwo)),
+          server.getValue(db.ref(Player.key).child(idThree))
+        ])
+        expect(entryOne).toMatchObject({ name: 'Alfred', age: 40 })
+        expect(entryTwo).toMatchObject({ name: 'Martha', age: 12 })
+        expect(entryThree).toMatchObject({ name: 'Alfred', age: 40 })
+        done()
+      })
+
+      it.skip('returns an empty array if no records match', async (done) => {
+        const players = await Player.find({ name: 'Alfred', age: 40 })
+        expect(players).toEqual([])
+        done()
+      })
+    })
+
   })
 })

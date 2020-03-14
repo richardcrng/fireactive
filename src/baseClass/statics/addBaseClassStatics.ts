@@ -2,6 +2,7 @@ import { whereEq } from 'ramda'
 import { BaseClass, ActiveRecord } from "../../types/class.types";
 import { getFirebaseDatabase } from "../../initialize/initialize";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
+import baseClass from '../baseClass';
 
 /**
  * Adds default class methods and properties onto the `BaseClass`
@@ -23,12 +24,8 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     return tableValues
   }
 
-
-
   // main
-  BaseClass.create = async function (
-    props: ToCreateRecord<Schema> & { _id?: string }
-  ): Promise<ActiveRecord<Schema>> {
+  BaseClass.create = async function (props): Promise<ActiveRecord<Schema>> {
     const record = new this({ ...props })
     const _id = record.getId()
     await getBaseClassRef().child(_id).set({ ...props, _id })
@@ -40,7 +37,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     // @ts-ignore
     const matchingVals = tableValues.filter(record => whereEq(props, record))
     await Promise.all(matchingVals.map(async (val) => {
-      await getBaseClassRef().child(val._id as string).remove()
+      if (val._id) await getBaseClassRef().child(val._id).remove()
     }))
     return matchingVals.length
   }
@@ -56,7 +53,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     }
   }
 
-  BaseClass.find = async function(props: Partial<ObjectFromRecord<Schema>>): Promise<ActiveRecord<Schema>[]> {
+  BaseClass.find = async function(props): Promise<ActiveRecord<Schema>[]> {
     const tableValues = await getTableVals()
     // @ts-ignore
     const matchingVals: ObjectFromRecord<Schema>[] = tableValues.filter(record => whereEq(props, record))
@@ -97,6 +94,18 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     }
 
     return database
+  }
+
+  BaseClass.update = async function(props, newProps): Promise<ActiveRecord<Schema>[]> {
+    const tableValues = await getTableVals()
+    // @ts-ignore
+    const matchingVals: ObjectFromRecord<Schema>[] = tableValues.filter(record => whereEq(props, record))
+    const updatedVals = matchingVals.map(val => ({ ...val, ...newProps }))
+    await Promise.all(updatedVals.map(async (val) => {
+      if (val._id) await getBaseClassRef().child(val._id).update(newProps)
+    }))
+    // @ts-ignore
+    return updatedVals.map(val => new this(val))
   }
 }
 

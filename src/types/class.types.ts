@@ -1,4 +1,4 @@
-import { RecordSchema, ObjectFromRecord, ToCreateRecord } from "./schema.types"
+import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps } from "./schema.types"
 
 /**
  * An `ActiveRecord<S>` _instance_ of the `BaseClass<S>`. 
@@ -105,4 +105,14 @@ export interface BaseClass<S extends RecordSchema> {
    * @returns `firebase.database.Database`
    */
   getDb(): firebase.database.Database,
+
+  /**
+   * Updates all `ActiveRecord`s from the database that
+   *  match the passed in `props` with `newProps`
+   * 
+   * @param props - props to match by
+   * @param updateProps - props to update
+   * @returns an array of `ActiveRecord<S>` that were updated
+   */
+  update(props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<ActiveRecord<S>[]>
 }
