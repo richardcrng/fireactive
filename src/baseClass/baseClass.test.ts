@@ -71,7 +71,7 @@ describe('baseClass: integration test', () => {
         })
 
         it('throws an error when the `create` method is tried without a database connection', () => {
-          expect(Player.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow(/connection/)
+          expect(Player.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow(/connect/)
         })
       })
     })

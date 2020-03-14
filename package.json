@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "An ORM for Firebase Real-Time Database",
   "scripts": {
-    "test": "jest --watch"
+    "test": "jest --runInBand --watch"
   },
   "author": "Richard Ng",
   "license": "ISC",

@@ -48,7 +48,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
   BaseClass.deleteOne = async function (props): Promise<boolean> {
     const tableValues = await getTableVals()
     const firstMatch = tableValues.find(record => whereEq(props, record))
-    if (firstMatch && firstMatch._id) {
+    if (firstMatch?._id) {
       await getBaseClassRef().child(firstMatch._id).remove()
       return true
     } else {

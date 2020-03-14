@@ -21,6 +21,7 @@ describe('baseClass: with server connection', () => {
 
   afterAll(async (done) => {
     await server.close()
+    await app.delete()
     done()
   })
 

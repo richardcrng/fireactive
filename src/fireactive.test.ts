@@ -37,15 +37,16 @@ describe('baseClass', () => {
       })
 
       test("AND using the model's create method throws an error without a database connection", () => {
-        expect(PlayerRecord.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
+        expect(PlayerRecord.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow(/connect/)
       })
 
       describe("AND a connection to a database is initialise", () => {
         let server: FirebaseServer
+        let app: firebase.app.App
 
         beforeAll(async (done) => {
           server = new FirebaseServer(0, 'localhost')
-          initialize({
+          app = initialize({
             databaseURL: `ws://localhost:${server.getPort()}`
           })
           done()
@@ -53,6 +54,7 @@ describe('baseClass', () => {
 
         afterAll(async (done) => {
           await server.close()
+          await app.delete()
           done()
         })
 
