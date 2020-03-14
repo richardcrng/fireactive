@@ -231,5 +231,42 @@ describe('baseClass: with server connection', () => {
       })
     })
 
+    describe('#updateOne', () => {
+      let res: InstanceType<typeof Player> | null
+      let idOne: string, idTwo: string, idThree: string
+      beforeAll(async (done) => {
+        await db.ref(Player.key).set({})
+        idOne = await pushWithId(db.ref(Player.key), { name: 'Alfred', age: 39 })
+        idTwo = await pushWithId(db.ref(Player.key), { name: 'Martha', age: 12 })
+        idThree = await pushWithId(db.ref(Player.key), { name: 'Alfred', age: 11 })
+        res = await Player.updateOne({ name: 'Alfred' }, { age: 40 })
+        done()
+      })
+
+      it('returns the updated record', async (done) => {
+        expect(res?._id).toBe(idOne)
+        expect(res?._id).not.toBe(idThree)
+        expect(res).toMatchObject({ name: 'Alfred', age: 40 })
+        done()
+      })
+
+      it('updates only the underlying database entry', async (done) => {
+        const [entryOne, entryTwo, entryThree] = await Promise.all([
+          server.getValue(db.ref(Player.key).child(idOne)),
+          server.getValue(db.ref(Player.key).child(idTwo)),
+          server.getValue(db.ref(Player.key).child(idThree))
+        ])
+        expect(entryOne).toMatchObject({ name: 'Alfred', age: 40 })
+        expect(entryTwo).toMatchObject({ name: 'Martha', age: 12 })
+        expect(entryThree).toMatchObject({ name: 'Alfred', age: 11 })
+        done()
+      })
+
+      it('returns null if no records match', async (done) => {
+        const players = await Player.updateOne({ name: 'mickey', age: 39 }, { age: 10 })
+        expect(players).toBeNull()
+        done()
+      })
+    })
   })
 })

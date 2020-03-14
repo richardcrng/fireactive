@@ -89,6 +89,7 @@ export interface BaseClass<S extends RecordSchema> {
    * Find a single ActiveRecord in the database by id
    * 
    * @param id - id of the ActiveRecord to find
+   * @returns the `ActiveRecord` found, or `null` if none
    */
   findById(id: string): Promise<ActiveRecord<S> | null>,
 
@@ -97,6 +98,7 @@ export interface BaseClass<S extends RecordSchema> {
    *  retrieving the first that matches the passed in `props`
    * 
    * @param props 
+   * @returns the `ActiveRecord` found, or `null` if no record was found
    */
   findOne(props: Partial<ObjectFromRecord<S>>): Promise<ActiveRecord<S> | null>,
 
@@ -108,11 +110,21 @@ export interface BaseClass<S extends RecordSchema> {
 
   /**
    * Updates all `ActiveRecord`s from the database that
-   *  match the passed in `props` with `newProps`
+   *  match the passed in `props` with `updateProps`
    * 
    * @param props - props to match by
    * @param updateProps - props to update
    * @returns an array of `ActiveRecord<S>` that were updated
    */
   update(props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<ActiveRecord<S>[]>
+
+  /**
+   * Update a single ActiveRecord in the database by
+   *  retrieving the first that matches the passed in `props`
+   *  and updating it using `updateProps`
+   * 
+   * @param props 
+   * @returns the updated `ActiveRecord` if there is one, or `null` otherwise
+   */
+  updateOne(props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<ActiveRecord<S> | null>,
 }

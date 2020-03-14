@@ -107,6 +107,16 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     // @ts-ignore
     return updatedVals.map(val => new this(val))
   }
+
+  BaseClass.updateOne = async function (props, newProps): Promise<ActiveRecord<Schema> | null> {
+    const tableValues = await getTableVals()
+    const firstMatch = tableValues.find(record => whereEq(props, record))
+    if (!firstMatch) return null
+    const updatedMatch = { ...firstMatch, ...newProps }
+    if (firstMatch?._id) await getBaseClassRef().child(firstMatch._id).update(newProps)
+    // @ts-ignore
+    return new this(updatedMatch)
+  }
 }
 
 export default addBaseClassStatics
