@@ -37,7 +37,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     let pendingSetters: Promise<any>[] = []
     this.pendingSetters = (opts?: { array: true }): any => {
       return opts?.array
-        ? pendingSetters
+        ? [...pendingSetters] // stop users mutating the underlying array
         : Promise.all(pendingSetters)
     }
 
