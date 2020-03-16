@@ -337,8 +337,8 @@ describe('baseClass: with server connection', () => {
       let res: any
       let playerRef: firebase.database.Reference
       beforeAll(async (done) => {
-        player = await Player.create({ name: 'Muriel', age: 7 })
-        playerRef = db.ref(Player.key).child(player._id as string)
+        player = new Player({ name: 'Muriel', age: 7 })
+        playerRef = db.ref(Player.key).child(player.getId())
         player.name = 'Jerry'
         player.age = 12
         res = await player.saveAndSync()
@@ -352,9 +352,17 @@ describe('baseClass: with server connection', () => {
         done()
       })
 
-      it('means the `ActiveRecord` syncs with changes in the database', async (done) => {
+      it('means the `ActiveRecord` syncs changes from the database', async (done) => {
         await playerRef.update({ name: 'Muriel again' })
         expect(player.name).toBe('Muriel again')
+        done()
+      })
+
+      it('means the `ActiveRecord` syncs changes to the database', async (done) => {
+        player.name = 'No longer Muriel'
+        await player.pendingSetters()
+        const playerInDb = await server.getValue(db.ref(Player.key).child(player.getId()))
+        expect(playerInDb.name).toBe('No longer Muriel')
         done()
       })
     })
