@@ -34,6 +34,12 @@ const addBaseClassInstances = <Schema extends RecordSchema>(
     return vals
   };
 
+  BaseClass.prototype.ref = function(path?: string): firebase.database.Reference {
+    const recordRef = this.constructor.ref(this.getId())
+    return path
+      ? recordRef.child(path)
+      : recordRef
+  }
 
   BaseClass.prototype.save = async function(): Promise<ObjectFromRecord<Schema>> {
     const db = this.constructor.getDb()

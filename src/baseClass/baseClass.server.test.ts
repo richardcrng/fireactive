@@ -325,6 +325,22 @@ describe('baseClass: with server connection', () => {
       })
     })
 
+    describe('.ref', () => {
+      let player: InstanceType<typeof Player>
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'AFEFE', age: 20 })
+        done()
+      })
+
+      it('returns the ref for the record when no argument is supplied', () => {
+        expect(player.ref()).toEqual(db.ref(Player.key).child(player.getId()))  
+      })
+
+      it('returns the ref for a child of the record when an argument is supplied', () => {
+        expect(player.ref('name')).toEqual(db.ref(Player.key).child(player.getId()).child('name'))
+      })
+    })
+
     describe('.save', () => {
       let res: any
       beforeAll(async (done) => {
