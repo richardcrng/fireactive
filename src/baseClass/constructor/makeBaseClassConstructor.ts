@@ -109,6 +109,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
      */
     return onChange(this, function(path, val) {
       // check against schema
+      // this will throw an error for incompatible values
       Object.keys(schema).forEach(key => {
         iterativelyCheckAgainstSchema([key])
       })

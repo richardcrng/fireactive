@@ -87,6 +87,7 @@ describe('baseClass: integration test', () => {
           const player = new Player({ name: 'Pedro', age: 4 })
           // @ts-ignore : check static error -> runtime error
           expect(() => { player.age = 'four' }).toThrow(/type/)
+          expect(player.age).not.toBe('four')
         })
       })
     })
