@@ -98,6 +98,16 @@ export interface BaseClass<S extends RecordSchema> {
    */
   key: string,
 
+
+  /**
+   * Get a `Reference` for the table and/or a child within it
+   * 
+   * @param path - a relative path from the table
+   * @returns a `Reference` for the table, to its relative path
+   *  if supplied
+   */
+  ref(path?: string): firebase.database.Reference,
+
   /**
    * Create a new model and save it to the database
    * 
