@@ -15,12 +15,11 @@ const addBaseClassInstances = <Schema extends RecordSchema>(
       return this._id
     } else {
       const db = this.constructor.getDb()
-      const newRef = db.ref(scoped.tableName).push()
+      const newRef = db.ref(this.constructor.key).push()
       if (isNull(newRef.key)) {
         throw new Error('Failed to generate a new key, whoops')
       } else {
-        this._id = newRef.key
-        return this._id
+        return this._id = newRef.key
       }
     }
   }
