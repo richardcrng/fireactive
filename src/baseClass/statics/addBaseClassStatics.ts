@@ -96,6 +96,13 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     return new this(firstMatch)
   }
 
+  BaseClass.ref = function(path?: string): firebase.database.Reference {
+    const tableRef = this.getDb().ref(this.key)
+    return path
+      ? tableRef.child(path)
+      : tableRef
+  }
+
   BaseClass.getDb = function () {
     const database = getFirebaseDatabase()
     if (!database) {

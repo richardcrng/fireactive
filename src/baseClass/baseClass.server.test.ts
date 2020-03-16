@@ -190,6 +190,16 @@ describe('baseClass: with server connection', () => {
       })
     })
 
+    describe('#ref', () => {
+      it('returns the ref for the table when no argument is supplied', () => {
+        expect(Player.ref()).toEqual(db.ref(Player.key))
+      })
+
+      it('returns the ref for the child when argument is supplied', () => {
+        expect(Player.ref('random')).toEqual(db.ref(Player.key).child('random'))
+      })
+    })
+
     describe('#update', () => {
       let res: InstanceType<typeof Player>[]
       let idOne: string, idTwo: string, idThree: string
