@@ -96,19 +96,19 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     return new this(firstMatch)
   }
 
-  BaseClass.ref = function(path?: string): firebase.database.Reference {
-    const tableRef = this.getDb().ref(this.key)
-    return path
-      ? tableRef.child(path)
-      : tableRef
-  }
-
   BaseClass.getDb = function () {
     const database = getFirebaseDatabase()
     if (!database) {
       throw new Error('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
     }
     return database
+  }
+
+  BaseClass.ref = function (path?: string): firebase.database.Reference {
+    const tableRef = this.getDb().ref(this.key)
+    return path
+      ? tableRef.child(path)
+      : tableRef
   }
 
   BaseClass.update = async function(props, newProps): Promise<ActiveRecord<Schema>[]> {
