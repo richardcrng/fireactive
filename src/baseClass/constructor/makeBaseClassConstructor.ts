@@ -108,6 +108,11 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
      *  awaitable for all pending database changes.
      */
     return onChange(this, function(path, val) {
+      // check against schema
+      Object.keys(schema).forEach(key => {
+        iterativelyCheckAgainstSchema([key])
+      })
+
       if (syncToDb) {
         const db = this.constructor.getDb()
         const thisRef = db.ref(this.constructor.key).child(this.getId())

@@ -61,6 +61,11 @@ describe('baseClass: integration test', () => {
         it('is not syncing by default', () => {
           expect(player.syncOpts()).toMatchObject({ fromDb: false, toDb: false })
         })
+
+        it('allows setting of properties as fitting the schema', () => {
+          player.age = 5
+          expect(player.age).toBe(5)
+        })
       })
 
       describe('sad path', () => {
@@ -76,6 +81,12 @@ describe('baseClass: integration test', () => {
 
         it('throws an error when the `create` method is tried without a database connection', () => {
           expect(Player.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow(/connect/)
+        })
+
+        it('throws an error when a type is set to a non-schema compatible value', () => {
+          const player = new Player({ name: 'Pedro', age: 4 })
+          // @ts-ignore : check static error -> runtime error
+          expect(() => { player.age = 'four' }).toThrow(/type/)
         })
       })
     })
