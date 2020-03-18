@@ -47,14 +47,12 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
 
     const alignHandlersSyncingFromDb = () => {
       if (syncFromDb && syncCount < 1 && this.getId()) {
-        const db = this.constructor.getDb()
-        db.ref(this.constructor.key).child(this.getId()).on('value', syncFromSnapshot)
+        this.ref().on('value', syncFromSnapshot)
         syncCount++
       }
       if (!syncFromDb && syncCount > 0 && this.getId()) {
-        const db = this.constructor.getDb()
         while (syncCount > 0 && this.getId()) {
-          db.ref(this.constructor.key).child(this.getId()).off('value', syncFromSnapshot)
+          this.ref().off('value', syncFromSnapshot)
           syncCount--
         }
       }
@@ -121,8 +119,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       }
 
       if (syncToDb) {
-        const db = this.constructor.getDb()
-        const thisRef = db.ref(this.constructor.key).child(this.getId())
+        const thisRef = this.ref()
         const propPath = path.replace(/\./g, '/')
         const promiseToDb = thisRef.child(propPath).set(val)
         pendingSetters.push(promiseToDb)
