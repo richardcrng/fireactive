@@ -120,7 +120,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
         throw err
       }
 
-      if (syncToDb) {
+      if (record.syncOpts().toDb) {
         const db = this.constructor.getDb()
         const thisRef = db.ref(this.constructor.key).child(this.getId())
         const propPath = path.replace(/\./g, '/')
