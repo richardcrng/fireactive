@@ -153,6 +153,12 @@ describe('baseClass: integration test', () => {
             })
           }).toThrow()
         })
+
+        it('throws an error when setter is not in the enum', () => {
+          const user = new User({ username: 'hello', role: 'admin' })
+          // @ts-ignore : check static error -> runtime error
+          expect(() => { user.role = 'dumb' }).toThrow(/type/)
+        })
       })
     })
 
