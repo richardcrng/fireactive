@@ -1,4 +1,4 @@
-import { get, remove } from 'lodash'
+import { get, remove, set } from 'lodash'
 import { identical } from 'ramda'
 import onChange from 'on-change'
 import { plural } from 'pluralize'
@@ -107,12 +107,18 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
      * `pendingSetters` is used to provide something
      *  awaitable for all pending database changes.
      */
-    return onChange(this, function(path, val) {
+    return onChange(this, function(path, val, prevVal) {
       // check against schema
       // this will throw an error for incompatible values
-      Object.keys(schema).forEach(key => {
-        iterativelyCheckAgainstSchema([key])
-      })
+      try {
+        Object.keys(schema).forEach(key => {
+          iterativelyCheckAgainstSchema([key])
+        })
+      } catch (err) {
+        // revert to previous value
+        set(this, path, prevVal)
+        throw err
+      }
 
       if (syncToDb) {
         const db = this.constructor.getDb()
