@@ -118,7 +118,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
         throw err
       }
 
-      if (syncToDb) {
+      if (record.syncOpts().toDb) {
         const thisRef = this.ref()
         const propPath = path.replace(/\./g, '/')
         const promiseToDb = thisRef.child(propPath).set(val)

@@ -38,7 +38,7 @@ describe('baseClass: with server connection', () => {
 
       it('inserts the relevant data into the table', () => {
         expect(dbVals[Player.key]).toMatchObject({
-          [player._id as string]: createData
+          [player.getId()]: createData
         })
       })
       
@@ -53,16 +53,16 @@ describe('baseClass: with server connection', () => {
       let res: number
       let keyOne: string, keyTwo: string, keyThree: string
       beforeAll(async (done) => {
-        await db.ref(Player.key).set({})
-        keyOne = await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Kev' })
-        keyTwo = await pushWithId(db.ref(Player.key), { name: 'Mev', age: 40 })
-        keyThree = await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Bev' })
+        await Player.ref().set({})
+        keyOne = await pushWithId(Player.ref(), { ...deleteData, name: 'Kev' })
+        keyTwo = await pushWithId(Player.ref(), { name: 'Mev', age: 40 })
+        keyThree = await pushWithId(Player.ref(), { ...deleteData, name: 'Bev' })
         res = await Player.delete(deleteData)
         done()
       })
 
       it('deletes matching players', async (done) => {
-        const dbPlayers = await server.getValue(db.ref(Player.key))
+        const dbPlayers = await server.getValue(Player.ref())
         const remainingKeys = Object.keys(dbPlayers)
         expect(remainingKeys).toHaveLength(1)
         expect(remainingKeys).not.toContain(keyOne)
@@ -82,9 +82,9 @@ describe('baseClass: with server connection', () => {
       })
 
       it('deletes all if passed an empty object', async (done) => {
-        await pushWithId(db.ref(Player.key), { name: 'mikeee', age: 42 })
+        await pushWithId(Player.ref(), { name: 'mikeee', age: 42 })
         await Player.delete({})
-        const players = await server.getValue(db.ref(Player.key))
+        const players = await server.getValue(Player.ref())
         expect(players).toBeNull()
         done()
       })
@@ -95,10 +95,10 @@ describe('baseClass: with server connection', () => {
       let res: boolean
       let keyOne: string, keyTwo: string, keyThree: string
       beforeAll(async (done) => {
-        await db.ref(Player.key).set({})
-        keyOne = await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Kev' })
-        keyTwo = await pushWithId(db.ref(Player.key), { name: 'Mev', age: 40 })
-        keyThree = await pushWithId(db.ref(Player.key), { ...deleteData, name: 'Bev' })
+        await Player.ref().set({})
+        keyOne = await pushWithId(Player.ref(), { ...deleteData, name: 'Kev' })
+        keyTwo = await pushWithId(Player.ref(), { name: 'Mev', age: 40 })
+        keyThree = await pushWithId(Player.ref(), { ...deleteData, name: 'Bev' })
         res = await Player.deleteOne(deleteData)
         done()
       })
@@ -127,7 +127,7 @@ describe('baseClass: with server connection', () => {
     describe('#find', () => {
       const createData = { name: 'Alfred', age: 39 }
       beforeAll(async (done) => {
-        await pushWithId(db.ref(Player.key), createData)
+        await pushWithId(Player.ref(), createData)
         done()
       })
 
@@ -149,7 +149,7 @@ describe('baseClass: with server connection', () => {
       const createData = { name: 'Alfred', age: 39 }
       let id: string
       beforeAll(async (done) => {
-        id = await pushWithId(db.ref(Player.key), createData)
+        id = await pushWithId(Player.ref(), createData)
         done()
       })
 
@@ -172,7 +172,7 @@ describe('baseClass: with server connection', () => {
       const createDataOne = { name: 'Billybo', age: 29 }
       const createDataTwo = { name: 'Cassanda', age: 29 }
       beforeAll(async (done) => {
-        await pushWithId(db.ref(Player.key), createDataOne)
+        await pushWithId(Player.ref(), createDataOne)
         done()
       })
 
@@ -192,11 +192,11 @@ describe('baseClass: with server connection', () => {
 
     describe('#ref', () => {
       it('returns the ref for the table when no argument is supplied', () => {
-        expect(Player.ref()).toEqual(db.ref(Player.key))
+        expect(Player.ref()).toEqual(Player.ref())
       })
 
       it('returns the ref for the child when argument is supplied', () => {
-        expect(Player.ref('random')).toEqual(db.ref(Player.key).child('random'))
+        expect(Player.ref('random')).toEqual(Player.ref().child('random'))
       })
     })
 
@@ -204,10 +204,10 @@ describe('baseClass: with server connection', () => {
       let res: InstanceType<typeof Player>[]
       let idOne: string, idTwo: string, idThree: string
       beforeAll(async (done) => {
-        await db.ref(Player.key).set({})
-        idOne = await pushWithId(db.ref(Player.key), { name: 'Alfred', age: 39 })
-        idTwo = await pushWithId(db.ref(Player.key), { name: 'Martha', age: 12 })
-        idThree = await pushWithId(db.ref(Player.key), { name: 'Alfred', age: 11 })
+        await Player.ref().set({})
+        idOne = await pushWithId(Player.ref(), { name: 'Alfred', age: 39 })
+        idTwo = await pushWithId(Player.ref(), { name: 'Martha', age: 12 })
+        idThree = await pushWithId(Player.ref(), { name: 'Alfred', age: 11 })
         res = await Player.update({ name: 'Alfred' }, { age: 40 })
         done()
       })
@@ -224,9 +224,9 @@ describe('baseClass: with server connection', () => {
 
       it('updates only the underlying database entries', async (done) => {
         const [entryOne, entryTwo, entryThree] = await Promise.all([
-          server.getValue(db.ref(Player.key).child(idOne)),
-          server.getValue(db.ref(Player.key).child(idTwo)),
-          server.getValue(db.ref(Player.key).child(idThree))
+          server.getValue(Player.ref().child(idOne)),
+          server.getValue(Player.ref().child(idTwo)),
+          server.getValue(Player.ref().child(idThree))
         ])
         expect(entryOne).toMatchObject({ name: 'Alfred', age: 40 })
         expect(entryTwo).toMatchObject({ name: 'Martha', age: 12 })
@@ -245,10 +245,10 @@ describe('baseClass: with server connection', () => {
       let res: InstanceType<typeof Player> | null
       let idOne: string, idTwo: string, idThree: string
       beforeAll(async (done) => {
-        await db.ref(Player.key).set({})
-        idOne = await pushWithId(db.ref(Player.key), { name: 'Alfred', age: 39 })
-        idTwo = await pushWithId(db.ref(Player.key), { name: 'Martha', age: 12 })
-        idThree = await pushWithId(db.ref(Player.key), { name: 'Alfred', age: 11 })
+        await Player.ref().set({})
+        idOne = await pushWithId(Player.ref(), { name: 'Alfred', age: 39 })
+        idTwo = await pushWithId(Player.ref(), { name: 'Martha', age: 12 })
+        idThree = await pushWithId(Player.ref(), { name: 'Alfred', age: 11 })
         res = await Player.updateOne({ name: 'Alfred' }, { age: 40 })
         done()
       })
@@ -262,9 +262,9 @@ describe('baseClass: with server connection', () => {
 
       it('updates only the underlying database entry', async (done) => {
         const [entryOne, entryTwo, entryThree] = await Promise.all([
-          server.getValue(db.ref(Player.key).child(idOne)),
-          server.getValue(db.ref(Player.key).child(idTwo)),
-          server.getValue(db.ref(Player.key).child(idThree))
+          server.getValue(Player.ref().child(idOne)),
+          server.getValue(Player.ref().child(idTwo)),
+          server.getValue(Player.ref().child(idThree))
         ])
         expect(entryOne).toMatchObject({ name: 'Alfred', age: 40 })
         expect(entryTwo).toMatchObject({ name: 'Martha', age: 12 })
@@ -303,7 +303,7 @@ describe('baseClass: with server connection', () => {
         await mary.pendingSetters()
         expect(mary.pendingSetters({ array: true })).toEqual([])
         expect(mary.age).toBe(100)
-        const maryOnServer = await server.getValue(db.ref(Player.key).child(mary.getId()))
+        const maryOnServer = await server.getValue(Player.ref().child(mary.getId()))
         expect(maryOnServer.age).toBe(100)
         done()
       })
@@ -313,7 +313,7 @@ describe('baseClass: with server connection', () => {
       let res: any
       beforeAll(async (done) => {
         player = await Player.create({ name: 'Muriel', age: 7 })
-        await db.ref(Player.key).child(player._id as string).set({ name: 'Jerry', age: 12 })
+        await Player.ref().child(player._id as string).set({ name: 'Jerry', age: 12 })
         res = await player.reload()
         done()
       })
@@ -333,11 +333,11 @@ describe('baseClass: with server connection', () => {
       })
 
       it('returns the ref for the record when no argument is supplied', () => {
-        expect(player.ref()).toEqual(db.ref(Player.key).child(player.getId()))  
+        expect(player.ref()).toEqual(Player.ref().child(player.getId()))  
       })
 
       it('returns the ref for a child of the record when an argument is supplied', () => {
-        expect(player.ref('name')).toEqual(db.ref(Player.key).child(player.getId()).child('name'))
+        expect(player.ref('name')).toEqual(Player.ref().child(player.getId()).child('name'))
       })
     })
 
@@ -352,7 +352,7 @@ describe('baseClass: with server connection', () => {
       })
 
       it('updates any modified schema properties in the database', async (done) => {
-        const playerInDb = await server.getValue(db.ref(Player.key).child(player._id as string))
+        const playerInDb = await server.getValue(Player.ref().child(player._id as string))
         expect(playerInDb).toMatchObject({ name: 'Jerry', age: 12 })
         expect(res).toMatchObject(playerInDb)
         done()
@@ -362,26 +362,99 @@ describe('baseClass: with server connection', () => {
     describe('.saveAndSync', () => {
       let res: any
       let playerRef: firebase.database.Reference
-      beforeAll(async (done) => {
-        player = await Player.create({ name: 'Muriel', age: 7 })
-        playerRef = db.ref(Player.key).child(player._id as string)
-        player.name = 'Jerry'
-        player.age = 12
-        res = await player.saveAndSync()
-        done()
+
+      describe('no arguments provided', () => {
+        beforeAll(async (done) => {
+          player = new Player({ name: 'Muriel', age: 7 })
+          playerRef = Player.ref().child(player.getId())
+          player.name = 'Jerry'
+          player.age = 12
+          res = await player.saveAndSync()
+          done()
+        })
+
+        it('updates any modified schema properties in the database', async (done) => {
+          const playerInDb = await server.getValue(playerRef)
+          expect(playerInDb).toMatchObject({ name: 'Jerry', age: 12 })
+          expect(res).toMatchObject(playerInDb)
+          done()
+        })
+
+        it('updates the syncOpts so both are true', () => {
+          expect(player.syncOpts()).toMatchObject({ fromDb: true, toDb: true })
+        })
+
+        it('means the `ActiveRecord` syncs changes from the database', async (done) => {
+          await playerRef.update({ name: 'Muriel again' })
+          expect(player.name).toBe('Muriel again')
+          done()
+        })
+
+        it('means the `ActiveRecord` syncs changes to the database', async (done) => {
+          player.name = 'No longer Muriel'
+          await player.pendingSetters()
+          const playerInDb = await server.getValue(Player.ref().child(player.getId()))
+          expect(playerInDb.name).toBe('No longer Muriel')
+          done()
+        })
       })
 
-      it('updates any modified schema properties in the database', async (done) => {
-        const playerInDb = await server.getValue(playerRef)
-        expect(playerInDb).toMatchObject({ name: 'Jerry', age: 12 })
-        expect(res).toMatchObject(playerInDb)
-        done()
-      })
+      describe('syncOpts provided', () => {
+        describe('toDb: false', () => {
+          beforeAll(async (done) => {
+            player = new Player({ name: 'Malo', age: 4 })
+            playerRef = Player.ref().child(player.getId())
+            player.age = 10
+            await player.saveAndSync({ toDb: false })
+            done()
+          })
 
-      it('means the `ActiveRecord` syncs with changes in the database', async (done) => {
-        await playerRef.update({ name: 'Muriel again' })
-        expect(player.name).toBe('Muriel again')
-        done()
+          it("saves changes to db", async (done) => {
+            const playerInDb = await server.getValue(playerRef)
+            expect(playerInDb.name).toBe('Malo')
+            expect(playerInDb.age).toBe(10)
+            done()
+          })
+
+          it('updates the syncOpts saved', () => {
+            expect(player.syncOpts().toDb).toBe(false)
+          })
+
+          it("doesn't sync further sets to db automatically", async (done) => {
+            player.age = 11
+            await player.pendingSetters()
+            const playerInDb = await server.getValue(player.ref())
+            expect(playerInDb.age).not.toBe(11)
+            done()
+          })
+        })
+
+        describe('fromDb: false', () => {
+          beforeAll(async (done) => {
+            player = new Player({ name: 'Malo', age: 4 })
+            playerRef = Player.ref().child(player.getId())
+            player.age = 10
+            await player.saveAndSync({ fromDb: false })
+            done()
+          })
+
+          it("saves changes to db", async (done) => {
+            const playerInDb = await server.getValue(playerRef)
+            expect(playerInDb.name).toBe('Malo')
+            expect(playerInDb.age).toBe(10)
+            done()
+          })
+
+          it('updates the syncOpts saved', () => {
+            expect(player.syncOpts().fromDb).toBe(false)
+          })
+
+          it("doesn't sync further db updates automatically", async (done) => {
+            await player.ref().update({ age: 11 })
+            expect(player.age).not.toBe(11)
+            done()
+          })
+        })
       })
     })
 
@@ -412,7 +485,7 @@ describe('baseClass: with server connection', () => {
           const player = await Player.create({ name: 'Bob', age: 2 })
           expect(player.syncOpts().fromDb).toBe(true)
           expect(player.name).toBe('Bob')
-          await db.ref(Player.key).child(player._id as string).update({ name: 'Lola' })
+          await player.ref().update({ name: 'Lola' })
           expect(player.name).toBe('Lola')
           done()
         })
@@ -421,7 +494,7 @@ describe('baseClass: with server connection', () => {
           const player = await Player.create({ name: 'Bob', age: 2 })
           expect(player.syncOpts({ fromDb: false }).fromDb).toBe(false)
           expect(player.name).toBe('Bob')
-          await db.ref(Player.key).child(player._id as string).update({ name: 'Lola' })
+          await player.ref().update({ name: 'Lola' })
           expect(player.name).toBe('Bob')
           done()
         })
@@ -434,7 +507,7 @@ describe('baseClass: with server connection', () => {
           expect(player.name).toBe('Bob')
           player.name = 'Lola'
           await player.pendingSetters()
-          const serverPlayer = await server.getValue(db.ref(Player.key).child(player._id as string))
+          const serverPlayer = await server.getValue(player.ref())
           expect(serverPlayer.name).toBe('Lola')
           done()
         })
@@ -445,7 +518,7 @@ describe('baseClass: with server connection', () => {
           expect(player.name).toBe('Bob')
           player.name = 'Lola'
           await player.pendingSetters()
-          const serverPlayer = await server.getValue(db.ref(Player.key).child(player._id as string))
+          const serverPlayer = await server.getValue(player.ref())
           expect(serverPlayer.name).toBe('Bob')
           done()
         })
