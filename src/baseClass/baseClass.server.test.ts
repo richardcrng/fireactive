@@ -428,6 +428,33 @@ describe('baseClass: with server connection', () => {
             done()
           })
         })
+
+        describe('fromDb: false', () => {
+          beforeAll(async (done) => {
+            player = new Player({ name: 'Malo', age: 4 })
+            playerRef = db.ref(Player.key).child(player.getId())
+            player.age = 10
+            await player.saveAndSync({ fromDb: false })
+            done()
+          })
+
+          it("saves changes to db", async (done) => {
+            const playerInDb = await server.getValue(playerRef)
+            expect(playerInDb.name).toBe('Malo')
+            expect(playerInDb.age).toBe(10)
+            done()
+          })
+
+          it('updates the syncOpts saved', () => {
+            expect(player.syncOpts().fromDb).toBe(false)
+          })
+
+          it("doesn't sync further db updates automatically", async (done) => {
+            await player.ref().update({ age: 11 })
+            expect(player.age).not.toBe(11)
+            done()
+          })
+        })
       })
     })
 
