@@ -380,6 +380,10 @@ describe('baseClass: with server connection', () => {
           done()
         })
 
+        it('updates the syncOpts so both are true', () => {
+          expect(player.syncOpts()).toMatchObject({ fromDb: true, toDb: true })
+        })
+
         it('means the `ActiveRecord` syncs changes from the database', async (done) => {
           await playerRef.update({ name: 'Muriel again' })
           expect(player.name).toBe('Muriel again')
@@ -412,10 +416,15 @@ describe('baseClass: with server connection', () => {
             done()
           })
 
+          it('updates the syncOpts saved', () => {
+            expect(player.syncOpts().toDb).toBe(false)
+          })
+
           it("doesn't sync further sets to db automatically", async (done) => {
             player.age = 11
             await player.pendingSetters()
-            expect(player.age).not.toBe(11)
+            const playerInDb = await server.getValue(player.ref())
+            expect(playerInDb.age).not.toBe(11)
             done()
           })
         })
