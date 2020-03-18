@@ -10,14 +10,8 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
   BaseClass: BaseClass<Schema>
 ): void => {
 
-  // helpers
-  function getBaseClassRef() {
-    const db = BaseClass.getDb()
-    return db.ref(BaseClass.key)
-  }
-
   async function getTableVals(): Promise<ObjectFromRecord<Schema>[]> {
-    const tableSnapshot = await getBaseClassRef().once('value')
+    const tableSnapshot = await BaseClass.ref().once('value')
     const tableVal = tableSnapshot.val()
     return Object.values(tableVal) as ObjectFromRecord<Schema>[]
   }
@@ -43,7 +37,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     const record = new this({ ...props })
     const _id = record.getId()
     record.syncOpts({ fromDb: true, toDb: true }) // sync by default when using `create`
-    await getBaseClassRef().child(_id).set({ ...props, _id })
+    await record.ref().set({ ...props, _id })
     return record
   }
 
@@ -52,7 +46,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     // @ts-ignore
     const matchingVals = tableValues.filter(record => whereEq(props, record))
     await Promise.all(matchingVals.map(async (val) => {
-      if (val._id) await getBaseClassRef().child(val._id).remove()
+      if (val._id) await this.ref(val._id).remove()
     }))
     return matchingVals.length
   }
@@ -61,7 +55,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     const tableValues = await getTableVals()
     const firstMatch = tableValues.find(record => whereEq(props, record))
     if (firstMatch?._id) {
-      await getBaseClassRef().child(firstMatch._id).remove()
+      await this.ref(firstMatch._id).remove()
       return true
     } else {
       return false
@@ -79,7 +73,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
 
     if (!id) return null
 
-    const snapshotAtId = await db.ref(this.key).child(id).once('value')
+    const snapshotAtId = await this.ref(id).once('value')
     const valAtId = snapshotAtId.val()
     if (valAtId) {
       const player = new this(valAtId)
@@ -115,7 +109,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     const matchingVals = await getMatchingTableVals(props)
     const updatedVals = matchingVals.map(val => ({ ...val, ...newProps }))
     await Promise.all(updatedVals.map(async (val) => {
-      if (val._id) await getBaseClassRef().child(val._id).update(newProps)
+      if (val._id) await this.ref(val._id).update(newProps)
     }))
     // @ts-ignore
     return updatedVals.map(val => new this(val))
@@ -125,7 +119,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     const firstMatch = await getFirstMatchFromTable(props)
     if (!firstMatch) return null
     const updatedMatch = { ...firstMatch, ...newProps }
-    if (firstMatch?._id) await getBaseClassRef().child(firstMatch._id).update(newProps)
+    if (firstMatch?._id) await this.ref(firstMatch._id).update(newProps)
     // @ts-ignore
     return new this(updatedMatch)
   }
