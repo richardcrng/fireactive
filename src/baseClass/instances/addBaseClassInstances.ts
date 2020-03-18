@@ -1,6 +1,7 @@
 import { BaseClass, ActiveRecord } from "../../types/class.types";
 import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 import isNull from "../../utils/isNull";
+import { SyncOpts } from "../../types/sync.types";
 
 /**
  * Adds default instance methods and properties onto the `BaseClass`'s prototype
@@ -42,9 +43,9 @@ const addBaseClassInstances = <Schema extends RecordSchema>(
     return valsToSet
   };
 
-  BaseClass.prototype.saveAndSync = async function (): Promise<ObjectFromRecord<Schema>> {
-    const setVals = this.save()
-    this.syncOpts({ fromDb: true, toDb: true })
+  BaseClass.prototype.saveAndSync = async function(syncOpts?: SyncOpts): Promise<ObjectFromRecord<Schema>> {
+    this.syncOpts({ fromDb: true, toDb: true, ...syncOpts })
+    const setVals = await this.save()
     return setVals
   };
 

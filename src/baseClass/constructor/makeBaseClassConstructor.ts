@@ -108,7 +108,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
      *  awaitable for all pending database changes.
      */
     return onChange(this, function(path, val) {
-      if (syncToDb) {
+      if (record.syncOpts().toDb) {
         const db = this.constructor.getDb()
         const thisRef = db.ref(this.constructor.key).child(this.getId())
         const propPath = path.replace(/\./g, '/')

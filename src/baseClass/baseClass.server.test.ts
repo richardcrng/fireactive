@@ -336,34 +336,63 @@ describe('baseClass: with server connection', () => {
     describe('.saveAndSync', () => {
       let res: any
       let playerRef: firebase.database.Reference
-      beforeAll(async (done) => {
-        player = new Player({ name: 'Muriel', age: 7 })
-        playerRef = db.ref(Player.key).child(player.getId())
-        player.name = 'Jerry'
-        player.age = 12
-        res = await player.saveAndSync()
-        done()
+
+      describe('no arguments provided', () => {
+        beforeAll(async (done) => {
+          player = new Player({ name: 'Muriel', age: 7 })
+          playerRef = db.ref(Player.key).child(player.getId())
+          player.name = 'Jerry'
+          player.age = 12
+          res = await player.saveAndSync()
+          done()
+        })
+
+        it('updates any modified schema properties in the database', async (done) => {
+          const playerInDb = await server.getValue(playerRef)
+          expect(playerInDb).toMatchObject({ name: 'Jerry', age: 12 })
+          expect(res).toMatchObject(playerInDb)
+          done()
+        })
+
+        it('means the `ActiveRecord` syncs changes from the database', async (done) => {
+          await playerRef.update({ name: 'Muriel again' })
+          expect(player.name).toBe('Muriel again')
+          done()
+        })
+
+        it('means the `ActiveRecord` syncs changes to the database', async (done) => {
+          player.name = 'No longer Muriel'
+          await player.pendingSetters()
+          const playerInDb = await server.getValue(db.ref(Player.key).child(player.getId()))
+          expect(playerInDb.name).toBe('No longer Muriel')
+          done()
+        })
       })
 
-      it('updates any modified schema properties in the database', async (done) => {
-        const playerInDb = await server.getValue(playerRef)
-        expect(playerInDb).toMatchObject({ name: 'Jerry', age: 12 })
-        expect(res).toMatchObject(playerInDb)
-        done()
-      })
+      describe('syncOpts provided', () => {
+        describe('toDb: false', () => {
+          beforeAll(async (done) => {
+            player = new Player({ name: 'Malo', age: 4 })
+            playerRef = db.ref(Player.key).child(player.getId())
+            player.age = 10
+            await player.saveAndSync({ toDb: false })
+            done()
+          })
 
-      it('means the `ActiveRecord` syncs changes from the database', async (done) => {
-        await playerRef.update({ name: 'Muriel again' })
-        expect(player.name).toBe('Muriel again')
-        done()
-      })
+          it("saves changes to db", async (done) => {
+            const playerInDb = await server.getValue(playerRef)
+            expect(playerInDb.name).toBe('Malo')
+            expect(playerInDb.age).toBe(10)
+            done()
+          })
 
-      it('means the `ActiveRecord` syncs changes to the database', async (done) => {
-        player.name = 'No longer Muriel'
-        await player.pendingSetters()
-        const playerInDb = await server.getValue(db.ref(Player.key).child(player.getId()))
-        expect(playerInDb.name).toBe('No longer Muriel')
-        done()
+          it("doesn't sync further sets to db automatically", async (done) => {
+            player.age = 11
+            await player.pendingSetters()
+            expect(player.age).not.toBe(11)
+            done()
+          })
+        })
       })
     })
 
