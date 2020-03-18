@@ -190,6 +190,16 @@ describe('baseClass: with server connection', () => {
       })
     })
 
+    describe('#ref', () => {
+      it('returns the ref for the table when no argument is supplied', () => {
+        expect(Player.ref()).toEqual(db.ref(Player.key))
+      })
+
+      it('returns the ref for the child when argument is supplied', () => {
+        expect(Player.ref('random')).toEqual(db.ref(Player.key).child('random'))
+      })
+    })
+
     describe('#update', () => {
       let res: InstanceType<typeof Player>[]
       let idOne: string, idTwo: string, idThree: string
@@ -312,6 +322,22 @@ describe('baseClass: with server connection', () => {
         expect(res).toMatchObject({ name: 'Jerry', age: 12 })
         expect(player).toMatchObject({ name: 'Jerry', age: 12 })
         done()
+      })
+    })
+
+    describe('.ref', () => {
+      let player: InstanceType<typeof Player>
+      beforeAll(async (done) => {
+        player = await Player.create({ name: 'AFEFE', age: 20 })
+        done()
+      })
+
+      it('returns the ref for the record when no argument is supplied', () => {
+        expect(player.ref()).toEqual(db.ref(Player.key).child(player.getId()))  
+      })
+
+      it('returns the ref for a child of the record when an argument is supplied', () => {
+        expect(player.ref('name')).toEqual(db.ref(Player.key).child(player.getId()).child('name'))
       })
     })
 

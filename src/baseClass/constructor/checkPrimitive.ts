@@ -1,6 +1,6 @@
-import { get, set, isUndefined } from 'lodash'
+import { get, set } from 'lodash'
 import { ActiveRecord } from '../../types/class.types'
-import { RecordSchema, ObjectFromRecord } from '../../types/schema.types';
+import { RecordSchema } from '../../types/schema.types';
 import { FieldIdentifier } from '../../types/field.types';
 
 interface A<Schema extends RecordSchema> {

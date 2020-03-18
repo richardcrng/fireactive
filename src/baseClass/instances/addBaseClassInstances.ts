@@ -16,12 +16,11 @@ const addBaseClassInstances = <Schema extends RecordSchema>(
       return this._id
     } else {
       const db = this.constructor.getDb()
-      const newRef = db.ref(scoped.tableName).push()
+      const newRef = db.ref(this.constructor.key).push()
       if (isNull(newRef.key)) {
         throw new Error('Failed to generate a new key, whoops')
       } else {
-        this._id = newRef.key
-        return this._id
+        return this._id = newRef.key
       }
     }
   }
@@ -35,6 +34,12 @@ const addBaseClassInstances = <Schema extends RecordSchema>(
     return vals
   };
 
+  BaseClass.prototype.ref = function(path?: string): firebase.database.Reference {
+    const recordRef = this.constructor.ref(this.getId())
+    return path
+      ? recordRef.child(path)
+      : recordRef
+  }
 
   BaseClass.prototype.save = async function(): Promise<ObjectFromRecord<Schema>> {
     const db = this.constructor.getDb()

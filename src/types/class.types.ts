@@ -24,6 +24,15 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
   reload(): Promise<ObjectFromRecord<S>>,
 
   /**
+   * Get a `Reference` for the record and/or a child within it
+   * 
+   * @param path - a relative path from the record
+   * @returns a `Reference` for the record, to its relative path
+   *  if supplied
+   */
+  ref(path?: string): firebase.database.Reference,
+
+  /**
    * Save the instance to Firebase
    * 
    * @returns The values saved to the Firebase database
@@ -115,7 +124,6 @@ export interface BaseClass<S extends RecordSchema> {
    */
   delete(props: Partial<ObjectFromRecord<S>>): Promise<number>,
 
-
   /**
    * Delete the first `ActiveRecord` from the database that
    *  matches the passed in `props`
@@ -156,6 +164,15 @@ export interface BaseClass<S extends RecordSchema> {
    * @returns `firebase.database.Database`
    */
   getDb(): firebase.database.Database,
+
+  /**
+   * Get a `Reference` for the table and/or a child within it
+   * 
+   * @param path - a relative path from the table
+   * @returns a `Reference` for the table, to its relative path
+   *  if supplied
+   */
+  ref(path?: string): firebase.database.Reference,
 
   /**
    * Updates all `ActiveRecord`s from the database that
