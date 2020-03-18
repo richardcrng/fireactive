@@ -104,6 +104,13 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     return database
   }
 
+  BaseClass.ref = function (path?: string): firebase.database.Reference {
+    const tableRef = this.getDb().ref(this.key)
+    return path
+      ? tableRef.child(path)
+      : tableRef
+  }
+
   BaseClass.update = async function(props, newProps): Promise<ActiveRecord<Schema>[]> {
     const matchingVals = await getMatchingTableVals(props)
     const updatedVals = matchingVals.map(val => ({ ...val, ...newProps }))
