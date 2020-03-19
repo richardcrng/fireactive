@@ -195,6 +195,18 @@ describe('baseClass: integration test', () => {
           expect(other.keys.random).toBe(true)
           expect(other.counts.text).toBe(5)
         })
+
+        it('allows reassignment', () => {
+          const user = new User({
+            username: 'Test',
+            friends: { alfred: 'Alfred' },
+            numbers: { first: 2 }
+          })
+          user.friends.alfred = 'Alfie'
+          user.friends.bob = 'bobo'
+          expect(user.friends.alfred).toBe('Alfie')
+          expect(user.friends.bob).toBe('bobo')
+        })
       })
 
       describe('sad path', () => {
@@ -208,6 +220,12 @@ describe('baseClass: integration test', () => {
             // @ts-ignore : checking static error -> runtime error
             new User({ username: 'hello', friends: { alfred: 'Afred' }, numbers: { first: 9 } })
           }).toThrow(/type/)
+        })
+
+        it('throws an error when assignment incompatible with indexing is made', () => {
+          const user = new User({ username: 'hi', friends: { alfred: 'Alfred' }, numbers: { first: 2 } })
+          // @ts-ignore : checking static error -> runtime error
+          expect(() => { user.friends.bob = 4 }).toThrow(/type/)
         })
       })
     })

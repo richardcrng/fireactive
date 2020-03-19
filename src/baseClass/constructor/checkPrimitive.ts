@@ -47,6 +47,7 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
       case FieldIdentifier.indexed:
         const currentIndexedValues = Object.values(currentValAtPath())
         doesMatch = currentIndexedValues.every(val => {
+          if (typeof val === 'undefined') return true
           switch (schemaFieldDef?.indexed?._fieldIdentifier) {
             case FieldIdentifier.string:
               return typeof val === 'string'

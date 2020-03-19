@@ -1,4 +1,4 @@
-import { get, remove, set } from 'lodash'
+import { get, remove, set, unset } from 'lodash'
 import { identical } from 'ramda'
 import onChange from 'on-change'
 import { plural } from 'pluralize'
@@ -114,7 +114,11 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
         })
       } catch (err) {
         // revert to previous value
-        set(this, path, prevVal)
+        if (prevVal === 'undefined') {
+          unset(this, path)
+        } else {
+          set(this, path, prevVal)
+        }
         throw err
       }
 
