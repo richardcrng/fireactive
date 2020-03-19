@@ -512,6 +512,17 @@ describe('baseClass: with server connection', () => {
           done()
         })
 
+        it('does not sync non-fitting schema values', async (done) => {
+          const player = await Player.create({ name: 'Bob', age: 2 })
+          expect(player.name).toBe('Bob')
+          // @ts-ignore : check static error -> runtime error
+          expect(() => { player.name = 4 }).toThrow(/type/)
+          await player.pendingSetters()
+          const serverPlayer = await server.getValue(player.ref())
+          expect(serverPlayer.name).not.toBe(4)
+          done()
+        })
+
         it('when false, means record changes do not sync to thedb', async (done) => {
           const player = await Player.create({ name: 'Bob', age: 2 })
           expect(player.syncOpts({ toDb: false }).toDb).toBe(false)

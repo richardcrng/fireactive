@@ -153,6 +153,12 @@ describe('baseClass: integration test', () => {
             })
           }).toThrow()
         })
+
+        it('throws an error when setter is not in the enum', () => {
+          const user = new User({ username: 'hello', role: 'admin' })
+          // @ts-ignore : check static error -> runtime error
+          expect(() => { user.role = 'dumb' }).toThrow(/type/)
+        })
       })
     })
 
@@ -189,6 +195,18 @@ describe('baseClass: integration test', () => {
           expect(other.keys.random).toBe(true)
           expect(other.counts.text).toBe(5)
         })
+
+        it('allows reassignment', () => {
+          const user = new User({
+            username: 'Test',
+            friends: { alfred: 'Alfred' },
+            numbers: { first: 2 }
+          })
+          user.friends.alfred = 'Alfie'
+          user.friends.bob = 'bobo'
+          expect(user.friends.alfred).toBe('Alfie')
+          expect(user.friends.bob).toBe('bobo')
+        })
       })
 
       describe('sad path', () => {
@@ -202,6 +220,13 @@ describe('baseClass: integration test', () => {
             // @ts-ignore : checking static error -> runtime error
             new User({ username: 'hello', friends: { alfred: 'Afred' }, numbers: { first: 9 } })
           }).toThrow(/type/)
+        })
+
+        it('throws an error when assignment incompatible with indexing is made', () => {
+          const user = new User({ username: 'hi', friends: { alfred: 'Alfred' }, numbers: { first: 2 } })
+          // @ts-ignore : checking static error -> runtime error
+          expect(() => { user.friends.bob = 4 }).toThrow(/type/)
+          expect(user.friends.bob).not.toBe(4)
         })
       })
     })
@@ -244,6 +269,13 @@ describe('baseClass: integration test', () => {
             // @ts-ignore : checking that static error -> thrown error
             new Venue({ name: 'TechHub', hours: { openingTime: true } })
           }).toThrow(/type/)
+        })
+
+        it('throws an error when assignment to nested property is attempted that does not fit schema', () => {
+          const venue = new Venue({ name: 'WeWork', hours: { openingTime: 9 }, status: {} })
+          // @ts-ignore : checking that static error -> thrown error
+          expect(() => { venue.hours.openingTime = 'five' })
+          expect(venue.hours.openingTime).not.toBe('five')
         })
       })
     })
