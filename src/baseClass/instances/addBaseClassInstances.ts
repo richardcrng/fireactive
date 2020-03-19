@@ -1,4 +1,4 @@
-import { BaseClass, ActiveRecord } from "../../types/class.types";
+import { BaseClass } from "../../types/class.types";
 import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 import isNull from "../../utils/isNull";
 import { SyncOpts } from "../../types/sync.types";

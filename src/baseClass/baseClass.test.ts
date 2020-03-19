@@ -1,7 +1,5 @@
-import FirebaseServer from 'firebase-server'
 import baseClass from '.';
 import Schema from '../Schema';
-import initialize from '../initialize';
 
 describe('baseClass: creating a BaseClass', () => {
   const className = 'Car'
