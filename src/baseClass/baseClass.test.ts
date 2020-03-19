@@ -226,6 +226,7 @@ describe('baseClass: integration test', () => {
           const user = new User({ username: 'hi', friends: { alfred: 'Alfred' }, numbers: { first: 2 } })
           // @ts-ignore : checking static error -> runtime error
           expect(() => { user.friends.bob = 4 }).toThrow(/type/)
+          expect(user.friends.bob).not.toBe(4)
         })
       })
     })
@@ -268,6 +269,13 @@ describe('baseClass: integration test', () => {
             // @ts-ignore : checking that static error -> thrown error
             new Venue({ name: 'TechHub', hours: { openingTime: true } })
           }).toThrow(/type/)
+        })
+
+        it('throws an error when assignment to nested property is attempted that does not fit schema', () => {
+          const venue = new Venue({ name: 'WeWork', hours: { openingTime: 9 }, status: {} })
+          // @ts-ignore : checking that static error -> thrown error
+          expect(() => { venue.hours.openingTime = 'five' })
+          expect(venue.hours.openingTime).not.toBe('five')
         })
       })
     })
