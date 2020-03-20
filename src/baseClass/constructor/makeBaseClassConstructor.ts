@@ -1,11 +1,10 @@
-import { get, remove, set, unset } from 'lodash'
-import { identical } from 'ramda'
-import onChange from 'on-change'
+import { get } from 'lodash'
 import { plural } from 'pluralize'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
 import { SyncOpts } from '../../types/sync.types';
+import withOnChangeListener from './withOnChangeListener';
 
 /**
  * Creates a constructor function for a `RecordModel<Schema>`
@@ -95,43 +94,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       iterativelyCheckAgainstSchema([key])
     })
 
-    /**
-     * https://github.com/sindresorhus/on-change
-     * 
-     * Return a proxied version of the instance
-     *  which syncs to the realtime database
-     *  on every set if `syncToDb` is truthy.
-     * 
-     * `pendingSetters` is used to provide something
-     *  awaitable for all pending database changes.
-     */
-    return onChange(this, function(path, val, prevVal) {
-      // check against schema
-      // this will throw an error for incompatible values
-      try {
-        Object.keys(schema).forEach(key => {
-          iterativelyCheckAgainstSchema([key])
-        })
-      } catch (err) {
-        // revert to previous value
-        if (prevVal === 'undefined') {
-          unset(this, path)
-        } else {
-          set(this, path, prevVal)
-        }
-        throw err
-      }
-
-      if (record.syncOpts().toDb) {
-        const thisRef = this.ref()
-        const propPath = path.replace(/\./g, '/')
-        const promiseToDb = thisRef.child(propPath).set(val)
-        pendingSetters.push(promiseToDb)
-        promiseToDb.then(() => {
-          remove(pendingSetters, identical(promiseToDb))
-        })
-      }
-    })
+    return withOnChangeListener({ record: this, schema, iterativelyCheckAgainstSchema, pendingSetters })
   }
 
   /**
