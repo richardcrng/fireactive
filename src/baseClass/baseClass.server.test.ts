@@ -535,6 +535,5 @@ describe('baseClass: with server connection', () => {
         })
       })
     })
-
   })
 })
