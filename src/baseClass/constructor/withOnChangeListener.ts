@@ -4,25 +4,30 @@ import onChange from 'on-change'
 import { ActiveRecord } from '../../types/class.types'
 import { RecordSchema } from '../../types/schema.types'
 
-interface Args<Schema extends RecordSchema> {
+interface KWArgs<Schema extends RecordSchema> {
   record: ActiveRecord<Schema>,
   schema: Schema,
   iterativelyCheckAgainstSchema(schemaKeyPath: string[]): void,
   pendingSetters: Promise<any>[]
 }
 
+/**
+ * Return a proxied version of the record which:
+ *  (a) checks a property change against the schema
+ *        and throws an error if it is inconsistent
+ *  (b) if the record's syncOpts are set to sync to db,
+ *        syncs to the database on every property set 
+ * 
+ * @param kwargs - Keyword arguments object 
+ */
 function withOnChangeListener<Schema extends RecordSchema>({
   record,
   schema,
   iterativelyCheckAgainstSchema,
   pendingSetters
-}: Args<Schema>) {
+}: KWArgs<Schema>) {
   /**
    * https://github.com/sindresorhus/on-change
-   *
-   * Return a proxied version of the instance
-   *  which syncs to the realtime database
-   *  on every set if `syncToDb` is truthy.
    *
    * `pendingSetters` is used to provide something
    *  awaitable for all pending database changes.
