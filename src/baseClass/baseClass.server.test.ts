@@ -6,45 +6,73 @@ import setupTestServer from '../utils/setupTestServer';
 describe('baseClass: with server connection', () => {
   const { server, db } = setupTestServer()
 
-  const className = 'Player'
-  const schema = {
+  const playerSchema = {
     name: Schema.string,
     age: Schema.number
   }
-  const Player = baseClass(className, schema)
+  const Player = baseClass('Player', playerSchema)
   let player: InstanceType<typeof Player>
+
+  const superheroSchema = {
+    allies: {
+      marvel: {
+        spiderman: Schema.boolean({ required: false })
+      },
+      dc: {
+        batman: Schema.boolean({ required: false })
+      }
+    },
+    powers: {
+      flight: Schema.boolean({ required: false }),
+      superStrength: Schema.boolean({ required: false })
+    }
+  }
+  const SuperHero = baseClass('SuperHero', superheroSchema)
+  let superHero: InstanceType<typeof SuperHero>
+
   let dbVals: any
 
   describe('class methods', () => {
     describe('#create', () => {
-      const createData = { name: 'Jorge', age: 42 }
+      describe('simple data', () => {
+        const createData = { name: 'Jorge', age: 42 }
 
-      it('returns the created record', async (done) => {
-        player = await Player.create(createData)
-        expect(player.name).toBe('Jorge')
-        expect(player.age).toBe(42)
-        done()
-      })
+        it('returns the created record', async (done) => {
+          player = await Player.create(createData)
+          expect(player.name).toBe('Jorge')
+          expect(player.age).toBe(42)
+          done()
+        })
 
-      it('creates an id for the player', () => {
-        expect(player._id).toBeDefined()
-      })
+        it('creates an id for the player', () => {
+          expect(player._id).toBeDefined()
+        })
 
-      it('creates a table for the relevant class based on the class key property', async (done) => {
-        dbVals = await server.getValue()
-        expect(dbVals).toHaveProperty(Player.key)
-        done()
-      })
+        it('creates a table for the relevant class based on the class key property', async (done) => {
+          dbVals = await server.getValue()
+          expect(dbVals).toHaveProperty(Player.key)
+          done()
+        })
 
-      it('inserts the relevant data into the table', () => {
-        expect(dbVals[Player.key]).toMatchObject({
-          [player.getId()]: createData
+        it('inserts the relevant data into the table', () => {
+          expect(dbVals[Player.key]).toMatchObject({
+            [player.getId()]: createData
+          })
+        })
+
+        it('throws an error if params passed do not fit the schema', () => {
+          // @ts-ignore : check that static error -> thrown error
+          expect(Player.create({ name: 42, age: 42 })).rejects.toThrow(/type/)
         })
       })
-      
-      it('throws an error if params passed do not fit the schema', () => {
-        // @ts-ignore : check that static error -> thrown error
-        expect(Player.create({ name: 42, age: 42 })).rejects.toThrow(/type/)
+
+      describe('nested, data', () => {
+        it('can create a record with properties that are empty objects', async (done) => {
+          const superHero = await SuperHero.create({ allies: { marvel: {}, dc: {} }, powers: {} })
+          expect(superHero.allies).toEqual({ marvel: {}, dc: {} })
+          expect(superHero.powers).toEqual({})
+          done()
+        })
       })
     })
 
