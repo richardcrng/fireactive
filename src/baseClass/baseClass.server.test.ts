@@ -78,7 +78,7 @@ describe('baseClass: with server connection', () => {
           await superHero.ref('powers/superStrength').set(true)
           await superHero.ref('allies/marvel').update({ spiderman: true })
           expect(superHero.powers).toEqual({ superStrength: true })
-          expect(superHero.allies).toEqual({ marvel: { spiderman: true } })
+          expect(superHero.allies).toEqual({ marvel: { spiderman: true }, dc: {} })
           done()
         })
       })
