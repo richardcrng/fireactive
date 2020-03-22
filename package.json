@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "npm run build:types",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc",
     "prepublishOnly": "npm run build",
     "test": "jest --runInBand --watch",
     "type-check": "tsc --noEmit",
