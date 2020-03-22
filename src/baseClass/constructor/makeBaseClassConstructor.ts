@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get, set } from 'lodash'
 import { plural } from 'pluralize'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
@@ -29,19 +29,57 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
 
     const record = this
 
+    const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
+
+    /**
+     * Check whether the object conforms to the schema at a given path,
+     *  including iterating within child keys if it's an object at
+     *  that particular path
+     * 
+     * @param schemaKeyPath - The path from the object to the field
+     *  to be checked
+     */
+    const iterativelyCheckAgainstSchema = (schemaKeyPath: string[]) => {
+      if (schemaFieldIdentified(schemaKeyPath)) {
+        // @ts-ignore : infinitely deep :(
+        checkPrimitive.bind(this)({ schema, schemaKeyPath, className })
+      } else {
+        // probably an object
+        if (typeof get(this, schemaKeyPath) === 'undefined') {
+          // if it's undefined as a property, set it to empty object
+          set(this, schemaKeyPath, {})
+        }
+        // iteratively check keys
+        Object.keys(get(schema, schemaKeyPath)).forEach(childKey => {
+          iterativelyCheckAgainstSchema([...schemaKeyPath, childKey])
+        })
+      }
+    }
+
+    Object.keys(schema).forEach(key => {
+      const schemaKey = key as keyof ObjectFromRecord<Schema>
+      // @ts-ignore : set it from props, if it exists there
+      this[schemaKey] = props[schemaKey]
+
+      iterativelyCheckAgainstSchema([key])
+    })
+
     let syncFromDb: boolean = false
     let syncToDb: boolean = false
     let syncCount: number = 0
 
     let pendingSetters: Promise<any>[] = []
     this.pendingSetters = (opts?: { array: true }): any => {
-      return opts?.array
+      return opts && opts.array
         ? [...pendingSetters] // stop users mutating the underlying array
         : Promise.all(pendingSetters)
     }
 
     const syncFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
       Object.assign(record, snapshot.val())
+      Object.keys(schema).forEach(key => {
+        iterativelyCheckAgainstSchema([key])
+      })
     }
 
     const alignHandlersSyncingFromDb = () => {
@@ -63,36 +101,6 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       alignHandlersSyncingFromDb()
       return { fromDb: syncFromDb, toDb: syncToDb }
     }
-
-    const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
-
-    /**
-     * Check whether the object conforms to the schema at a given path,
-     *  including iterating within child keys if it's an object at
-     *  that particular path
-     * 
-     * @param schemaKeyPath - The path from the object to the field
-     *  to be checked
-     */
-    const iterativelyCheckAgainstSchema = (schemaKeyPath: string[]) => {
-      if (schemaFieldIdentified(schemaKeyPath)) {
-        // @ts-ignore : infinitely deep :(
-        checkPrimitive.bind(this)({ schema, schemaKeyPath, className })
-      } else {
-        // assume it's an object and iteratively check keys
-        Object.keys(get(schema, schemaKeyPath)).forEach(childKey => {
-          iterativelyCheckAgainstSchema([...schemaKeyPath, childKey])
-        })
-      }
-    }
-
-    Object.keys(schema).forEach(key => {
-      const schemaKey = key as keyof ObjectFromRecord<Schema>
-      // @ts-ignore : set it from props, if it exists there
-      this[schemaKey] = props[schemaKey]
-
-      iterativelyCheckAgainstSchema([key])
-    })
 
     return withOnChangeListener({ record: this, schema, iterativelyCheckAgainstSchema, pendingSetters })
   }
