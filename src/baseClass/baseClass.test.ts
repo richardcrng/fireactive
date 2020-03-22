@@ -5,7 +5,8 @@ describe('baseClass: creating a BaseClass', () => {
   const className = 'Car'
   const schema = {
     brand: Schema.string,
-    topSpeed: Schema.number
+    topSpeed: Schema.number,
+    age: Schema.number({ required: false })
   }
   const BaseCar = baseClass(className, schema)
 
@@ -15,6 +16,18 @@ describe('baseClass: creating a BaseClass', () => {
 
   it('created class knows its database key', () => {
     expect(BaseCar.key).toBe(`${className}s`)
+  })
+
+  describe('.toObject', () => {
+    it('removes any undefined properties', () => {
+      const car = new BaseCar({ brand: 'Ford', topSpeed: 20 })
+      car.age = 5
+      car.age = undefined
+      const result = car.toObject()
+      expect(result).toHaveProperty('brand')
+      expect(result).toHaveProperty('topSpeed')
+      expect(result).not.toHaveProperty('age')
+    })
   })
 })
 
