@@ -108,6 +108,13 @@ export interface BaseClass<S extends RecordSchema> {
   key: string,
 
   /**
+   * The currently cached object table for the class
+   * 
+   * @returns the cached object table for the class
+   */
+  cache(): { [_id: string]: ObjectFromRecord<S> },
+
+  /**
    * Create a new model and save it to the database
    * 
    * @param props Properties to create the Record with

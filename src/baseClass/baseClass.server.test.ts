@@ -33,7 +33,7 @@ describe('baseClass: with server connection', () => {
   let dbVals: any
 
   describe('class methods', () => {
-    describe('#all', () => {
+    describe('#cache', () => {
       let playerOne: typeof player
       let playerTwo: typeof player
 
@@ -46,10 +46,11 @@ describe('baseClass: with server connection', () => {
 
       it('returns the object representing the table', async (done) => {
         const playerTable = await server.getValue(Player.ref())
-        const allPlayers = Player.all()
-        expect(allPlayers).toEqual(playerTable)
-        expect(allPlayers[playerOne.getId()]).toEqual(playerOne.toObject())
-        expect(allPlayers[playerTwo.getId()]).toEqual(playerTwo.toObject())
+        const cachedPlayers = Player.cache()
+        expect(cachedPlayers).toEqual(playerTable)
+        expect(cachedPlayers[playerOne.getId()]).toEqual(playerOne.toObject())
+        expect(cachedPlayers[playerTwo.getId()]).toEqual(playerTwo.toObject())
+        done()
       })
     })
 

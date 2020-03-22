@@ -10,6 +10,8 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
   BaseClass: BaseClass<Schema>
 ): void => {
 
+  const tableRef = () => BaseClass.getDb().ref(BaseClass.key)
+
   async function getTableVals(): Promise<ObjectFromRecord<Schema>[]> {
     const tableSnapshot = await BaseClass.ref().once('value')
     const tableVal = tableSnapshot.val()
@@ -98,11 +100,10 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
     return database
   }
 
-  BaseClass.ref = function (path?: string): firebase.database.Reference {
-    const tableRef = this.getDb().ref(this.key)
+  BaseClass.ref = function(this: BaseClass<Schema>, path?: string): firebase.database.Reference {
     return path
-      ? tableRef.child(path)
-      : tableRef
+      ? tableRef().child(path)
+      : tableRef()
   }
 
   BaseClass.update = async function(props, newProps): Promise<ActiveRecord<Schema>[]> {
