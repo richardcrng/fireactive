@@ -1,6 +1,6 @@
 {
   "name": "fireactive",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "An ORM for Firebase Real-Time Database",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
