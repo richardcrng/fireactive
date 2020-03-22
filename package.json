@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "An ORM for Firebase Real-Time Database",
   "scripts": {
-    "test": "jest --runInBand --watch"
+    "test": "jest --runInBand --watch",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "npm run type-check -- --watch"
   },
   "author": "Richard Ng",
   "license": "ISC",
