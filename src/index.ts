@@ -1,9 +1,3 @@
-import Fireactive, { initialize, baseClass, Schema } from './fireactive'
+import Fireactive from './fireactive'
 
-export {
-  initialize,
-  baseClass,
-  Schema
-}
-
-export default Fireactive
+export = Fireactive
