@@ -25,7 +25,8 @@ describe('baseClass: with server connection', () => {
     powers: {
       flight: Schema.boolean({ required: false }),
       superStrength: Schema.boolean({ required: false })
-    }
+    },
+    collectibles: Schema.indexed.boolean
   }
   const SuperHero = baseClass('SuperHero', superheroSchema)
   let superHero: InstanceType<typeof SuperHero>
@@ -68,9 +69,10 @@ describe('baseClass: with server connection', () => {
 
       describe('nested, data', () => {
         it('can create a record with properties that are empty objects', async (done) => {
-          superHero = await SuperHero.create({ allies: { marvel: {}, dc: {} }, powers: {} })
+          superHero = await SuperHero.create({ allies: { marvel: {}, dc: {} }, powers: {}, collectibles: {} })
           expect(superHero.allies).toEqual({ marvel: {}, dc: {} })
           expect(superHero.powers).toEqual({})
+          expect(superHero.collectibles).toEqual({})
           done()
         })
 
@@ -79,6 +81,13 @@ describe('baseClass: with server connection', () => {
           await superHero.ref('allies/marvel').update({ spiderman: true })
           expect(superHero.powers).toEqual({ superStrength: true })
           expect(superHero.allies).toEqual({ marvel: { spiderman: true }, dc: {} })
+          expect(superHero.collectibles).toEqual({})
+          done()
+        })
+
+        it('reifies nested props', async (done) => {
+          const reifiedHero = await SuperHero.findById(superHero.getId())
+          expect(reifiedHero && reifiedHero.toObject()).toMatchObject(superHero.toObject())
           done()
         })
       })
