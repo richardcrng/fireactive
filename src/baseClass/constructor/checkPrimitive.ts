@@ -32,7 +32,11 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
     throw new Error(`Failed to instantiate or update ${className}: missing the required property '${schemaKeyPath.join('.')}'`)
   }
 
-  if (!(typeof currentValAtPath() === 'undefined')) {
+  if (typeof currentValAtPath() === 'undefined') {
+    if (schemaFieldDef && schemaFieldDef._fieldIdentifier === FieldIdentifier.indexed) {
+      set(this, schemaKeyPath, {})
+    }
+  } else {
     let doesMatch = true
     switch (schemaFieldDef && schemaFieldDef._fieldIdentifier) {
       case FieldIdentifier.string:
@@ -45,13 +49,7 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
         // the enum values are on the field definition's vals property
         doesMatch = schemaFieldDef.vals.includes(currentValAtPath()); break
       case FieldIdentifier.indexed:
-        const currentValue = currentValAtPath()
-        if (typeof currentValue === 'undefined') {
-          set(this, schemaKeyPath, {})
-          return true
-        }
-        const currentIndexedValues = Object.values(currentValAtPath())
-        doesMatch = currentIndexedValues.every(val => {
+        doesMatch = Object.values(currentValAtPath()).every(val => {
           if (typeof val === 'undefined') return true
           switch (get(schemaFieldDef, ['indexed', '_fieldIdentifier'])) {
             case FieldIdentifier.string:
