@@ -9,7 +9,7 @@ function setupSyncing<Schema extends RecordSchema>(record: ActiveRecord<Schema>)
 
   let pendingSetters: Promise<any>[] = []
   record.pendingSetters = (opts?: { array: true }): any => {
-    return opts?.array
+    return opts && opts.array
       ? [...pendingSetters] // stop users mutating the underlying array
       : Promise.all(pendingSetters)
   }

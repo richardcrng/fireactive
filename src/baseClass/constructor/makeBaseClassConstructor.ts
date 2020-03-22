@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import { get, set } from 'lodash'
 import { plural } from 'pluralize'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
@@ -28,8 +28,6 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     Object.assign(this, props)
 
     const record = this
-
-    // @ts-ignore : infinite instantiation :(
     const pendingSetters = setupSyncing(record)
 
     const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
@@ -47,7 +45,12 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
         // @ts-ignore : infinitely deep :(
         checkPrimitive.bind(this)({ schema, schemaKeyPath, className })
       } else {
-        // assume it's an object and iteratively check keys
+        // probably an object
+        if (typeof get(this, schemaKeyPath) === 'undefined') {
+          // if it's undefined as a property, set it to empty object
+          set(this, schemaKeyPath, {})
+        }
+        // iteratively check keys
         Object.keys(get(schema, schemaKeyPath)).forEach(childKey => {
           iterativelyCheckAgainstSchema([...schemaKeyPath, childKey])
         })
@@ -62,7 +65,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       iterativelyCheckAgainstSchema([key])
     })
 
-    return withOnChangeListener({ record, schema, iterativelyCheckAgainstSchema, pendingSetters })
+    return withOnChangeListener({ record: this, schema, iterativelyCheckAgainstSchema, pendingSetters })
   }
 
   /**
