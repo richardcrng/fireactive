@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { get } from 'lodash'
 import { plural } from 'pluralize'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
@@ -35,7 +37,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
 
     let pendingSetters: Promise<any>[] = []
     this.pendingSetters = (opts?: { array: true }): any => {
-      return opts?.array
+      return opts && opts.array
         ? [...pendingSetters] // stop users mutating the underlying array
         : Promise.all(pendingSetters)
     }

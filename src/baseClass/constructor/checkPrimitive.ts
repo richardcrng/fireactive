@@ -23,18 +23,18 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
   const schemaFieldDef = get(schema, schemaKeyPath)
 
   // check if the path has the `_hasDefault` property and is undefined
-  if (schemaFieldDef?._hasDefault && typeof currentValAtPath() === 'undefined') {
+  if (get(schemaFieldDef, '_hasDefault') && typeof currentValAtPath() === 'undefined') {
     const defaultVal = get(schema, [...schemaKeyPath, 'default'])
     set(this, schemaKeyPath, defaultVal)
   }
 
-  if (schemaFieldDef?.required && typeof currentValAtPath() === 'undefined') {
+  if (get(schemaFieldDef, 'required') && typeof currentValAtPath() === 'undefined') {
     throw new Error(`Failed to instantiate ${modelName}: missing the required property ${schemaKeyPath.join('.')}`)
   }
 
   if (!(typeof currentValAtPath() === 'undefined')) {
     let doesMatch = true
-    switch (schemaFieldDef?._fieldIdentifier) {
+    switch (schemaFieldDef && schemaFieldDef._fieldIdentifier) {
       case FieldIdentifier.string:
         doesMatch = typeof currentValAtPath() === 'string'; break
       case FieldIdentifier.number:
@@ -53,7 +53,7 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
         const currentIndexedValues = Object.values(currentValAtPath())
         doesMatch = currentIndexedValues.every(val => {
           if (typeof val === 'undefined') return true
-          switch (schemaFieldDef?.indexed?._fieldIdentifier) {
+          switch (get(schemaFieldDef, ['indexed', '_fieldIdentifier'])) {
             case FieldIdentifier.string:
               return typeof val === 'string'
             case FieldIdentifier.number:

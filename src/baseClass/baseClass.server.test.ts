@@ -68,9 +68,17 @@ describe('baseClass: with server connection', () => {
 
       describe('nested, data', () => {
         it('can create a record with properties that are empty objects', async (done) => {
-          const superHero = await SuperHero.create({ allies: { marvel: {}, dc: {} }, powers: {} })
+          superHero = await SuperHero.create({ allies: { marvel: {}, dc: {} }, powers: {} })
           expect(superHero.allies).toEqual({ marvel: {}, dc: {} })
           expect(superHero.powers).toEqual({})
+          done()
+        })
+
+        it('listens by default for updates', async (done) => {
+          await superHero.ref('powers/superStrength').set(true)
+          await superHero.ref('allies/marvel').update({ spiderman: true })
+          expect(superHero.powers).toEqual({ superStrength: true })
+          expect(superHero.allies).toEqual({ marvel: { spiderman: true } })
           done()
         })
       })
@@ -282,8 +290,8 @@ describe('baseClass: with server connection', () => {
       })
 
       it('returns the updated record', async (done) => {
-        expect(res?._id).toBe(idOne)
-        expect(res?._id).not.toBe(idThree)
+        expect(res && res._id).toBe(idOne)
+        expect(res && res._id).not.toBe(idThree)
         expect(res).toMatchObject({ name: 'Alfred', age: 40 })
         done()
       })

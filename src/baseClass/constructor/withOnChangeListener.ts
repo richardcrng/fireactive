@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { identical } from 'ramda'
 import { remove, set, unset } from 'lodash'
 import onChange from 'on-change'
