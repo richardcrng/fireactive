@@ -47,7 +47,7 @@ function setupSyncing<Schema extends RecordSchema>({
     return { fromDb: syncFromDb, toDb: syncToDb }
   }
 
-  return pendingSetters
+  return { pendingSetters }
 }
 
 export default setupSyncing

@@ -69,7 +69,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     checkAgainstSchema(true)
 
     // @ts-ignore : possibly infinitely deep :(
-    const pendingSetters = setupSyncing({ record, checkAgainstSchema })
+    const { pendingSetters } = setupSyncing({ record, checkAgainstSchema })
 
     return withOnChangeListener({ record, checkAgainstSchema, pendingSetters })
   }
