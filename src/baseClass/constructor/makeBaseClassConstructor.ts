@@ -3,8 +3,8 @@ import { plural } from 'pluralize'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
-import { SyncOpts } from '../../types/sync.types';
 import withOnChangeListener from './withOnChangeListener';
+import setupSyncing from './setupSyncing';
 
 /**
  * Creates a constructor function for a `RecordModel<Schema>`
@@ -29,40 +29,8 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
 
     const record = this
 
-    let syncFromDb: boolean = false
-    let syncToDb: boolean = false
-    let syncCount: number = 0
-
-    let pendingSetters: Promise<any>[] = []
-    this.pendingSetters = (opts?: { array: true }): any => {
-      return opts?.array
-        ? [...pendingSetters] // stop users mutating the underlying array
-        : Promise.all(pendingSetters)
-    }
-
-    const syncFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
-      Object.assign(record, snapshot.val())
-    }
-
-    const alignHandlersSyncingFromDb = () => {
-      if (syncFromDb && syncCount < 1 && this.getId()) {
-        this.ref().on('value', syncFromSnapshot)
-        syncCount++
-      }
-      if (!syncFromDb && syncCount > 0 && this.getId()) {
-        while (syncCount > 0 && this.getId()) {
-          this.ref().off('value', syncFromSnapshot)
-          syncCount--
-        }
-      }
-    }
-
-    this.syncOpts = ({ fromDb, toDb }: Partial<SyncOpts> = {}): SyncOpts => {
-      if (typeof fromDb !== 'undefined') syncFromDb = fromDb
-      if (typeof toDb !== 'undefined') syncToDb = toDb
-      alignHandlersSyncingFromDb()
-      return { fromDb: syncFromDb, toDb: syncToDb }
-    }
+    // @ts-ignore : infinite instantiation :(
+    const pendingSetters = setupSyncing(record)
 
     const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
 
@@ -94,7 +62,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       iterativelyCheckAgainstSchema([key])
     })
 
-    return withOnChangeListener({ record: this, schema, iterativelyCheckAgainstSchema, pendingSetters })
+    return withOnChangeListener({ record, schema, iterativelyCheckAgainstSchema, pendingSetters })
   }
 
   /**
