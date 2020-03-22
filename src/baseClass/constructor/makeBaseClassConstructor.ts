@@ -3,8 +3,8 @@ import { plural } from 'pluralize'
 import { ActiveRecord, BaseClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
-import { SyncOpts } from '../../types/sync.types';
 import withOnChangeListener from './withOnChangeListener';
+import setupSyncing from './setupSyncing';
 
 /**
  * Creates a constructor function for a `RecordModel<Schema>`
@@ -56,53 +56,22 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       }
     }
 
-    Object.keys(schema).forEach(key => {
-      const schemaKey = key as keyof ObjectFromRecord<Schema>
-      // @ts-ignore : set it from props, if it exists there
-      this[schemaKey] = props[schemaKey]
-
-      iterativelyCheckAgainstSchema([key])
-    })
-
-    let syncFromDb: boolean = false
-    let syncToDb: boolean = false
-    let syncCount: number = 0
-
-    let pendingSetters: Promise<any>[] = []
-    this.pendingSetters = (opts?: { array: true }): any => {
-      return opts && opts.array
-        ? [...pendingSetters] // stop users mutating the underlying array
-        : Promise.all(pendingSetters)
-    }
-
-    const syncFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
-      Object.assign(record, snapshot.val())
+    const checkAgainstSchema = (initialiseFromProps = false) => {
       Object.keys(schema).forEach(key => {
+        const schemaKey = key as keyof ObjectFromRecord<Schema>
+        // @ts-ignore : set it from props, if it exists there
+        if (initialiseFromProps) record[schemaKey] = props[schemaKey]
+
         iterativelyCheckAgainstSchema([key])
       })
     }
 
-    const alignHandlersSyncingFromDb = () => {
-      if (syncFromDb && syncCount < 1 && this.getId()) {
-        this.ref().on('value', syncFromSnapshot)
-        syncCount++
-      }
-      if (!syncFromDb && syncCount > 0 && this.getId()) {
-        while (syncCount > 0 && this.getId()) {
-          this.ref().off('value', syncFromSnapshot)
-          syncCount--
-        }
-      }
-    }
+    checkAgainstSchema(true)
 
-    this.syncOpts = ({ fromDb, toDb }: Partial<SyncOpts> = {}): SyncOpts => {
-      if (typeof fromDb !== 'undefined') syncFromDb = fromDb
-      if (typeof toDb !== 'undefined') syncToDb = toDb
-      alignHandlersSyncingFromDb()
-      return { fromDb: syncFromDb, toDb: syncToDb }
-    }
+    // @ts-ignore : possibly infinitely deep :(
+    const { pendingSetters } = setupSyncing({ record, checkAgainstSchema })
 
-    return withOnChangeListener({ record: this, schema, iterativelyCheckAgainstSchema, pendingSetters })
+    return withOnChangeListener({ record, checkAgainstSchema, pendingSetters })
   }
 
   /**
