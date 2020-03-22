@@ -2,6 +2,7 @@ import baseClass from '.';
 import Schema from '../Schema';
 import pushWithId from '../utils/pushWithId';
 import setupTestServer from '../utils/setupTestServer';
+import '../utils/toContainObject'
 
 describe('baseClass: with server connection', () => {
   const { server, db } = setupTestServer()
@@ -186,6 +187,30 @@ describe('baseClass: with server connection', () => {
       it('returns an empty array if no records match', async (done) => {
         const players = await Player.find({ name: 'Alfred', age: 40 })
         expect(players).toEqual([])
+        done()
+      })
+
+      it('can handle reifying with empty object properties', async (done) => {
+        const playerSchema = {
+          name: Schema.string({ required: true }),
+          alignment: Schema.enum(['mafia', 'town'], { required: false }),
+          votedBy: Schema.indexed.boolean,
+          votingFor: Schema.string({ required: false }),
+        }
+
+        const Player = baseClass('Player', playerSchema)
+
+        await Player.ref().set(null)
+
+        const richard = await Player.create({ name: 'Richard', votedBy: {} })
+        const sai = await Player.create({ name: 'Sai', votedBy: {} })
+        const alex = await Player.create({ name: 'Alex', votedBy: {} })
+
+        const result = await Player.find({})
+        expect(result).toHaveLength(3)
+        expect(result).toContainObject(richard.toObject())
+        expect(result).toContainObject(sai.toObject())
+        expect(result).toContainObject(alex.toObject())
         done()
       })
     })
