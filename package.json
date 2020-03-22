@@ -1,12 +1,12 @@
 {
   "name": "fireactive",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An ORM for Firebase Real-Time Database",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "npm run build:types",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc",
     "prepublishOnly": "npm run build",
     "test": "jest --runInBand --watch",
     "type-check": "tsc --noEmit",
