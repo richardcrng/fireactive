@@ -12,7 +12,7 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
 
   async function getTableVals(): Promise<ObjectFromRecord<Schema>[]> {
     const tableSnapshot = await BaseClass.ref().once('value')
-    const tableVal = tableSnapshot.val()
+    const tableVal = tableSnapshot.val() || {}
     return Object.values(tableVal) as ObjectFromRecord<Schema>[]
   }
 
