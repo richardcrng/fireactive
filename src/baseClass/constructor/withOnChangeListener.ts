@@ -8,8 +8,7 @@ import { RecordSchema } from '../../types/schema.types'
 
 interface KWArgs<Schema extends RecordSchema> {
   record: ActiveRecord<Schema>,
-  schema: Schema,
-  iterativelyCheckAgainstSchema(schemaKeyPath: string[]): void,
+  checkAgainstSchema: Function,
   pendingSetters: Promise<any>[]
 }
 
@@ -24,8 +23,7 @@ interface KWArgs<Schema extends RecordSchema> {
  */
 function withOnChangeListener<Schema extends RecordSchema>({
   record,
-  schema,
-  iterativelyCheckAgainstSchema,
+  checkAgainstSchema,
   pendingSetters
 }: KWArgs<Schema>) {
   /**
@@ -38,9 +36,7 @@ function withOnChangeListener<Schema extends RecordSchema>({
     // check against schema
     // this will throw an error for incompatible values
     try {
-      Object.keys(schema).forEach(key => {
-        iterativelyCheckAgainstSchema([key])
-      })
+      checkAgainstSchema()
     } catch (err) {
       // revert to previous value
       if (prevVal === 'undefined') {

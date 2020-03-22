@@ -56,18 +56,22 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
       }
     }
 
-    Object.keys(schema).forEach(key => {
-      const schemaKey = key as keyof ObjectFromRecord<Schema>
-      // @ts-ignore : set it from props, if it exists there
-      this[schemaKey] = props[schemaKey]
+    const checkAgainstSchema = (initialiseFromProps = false) => {
+      Object.keys(schema).forEach(key => {
+        const schemaKey = key as keyof ObjectFromRecord<Schema>
+        // @ts-ignore : set it from props, if it exists there
+        if (initialiseFromProps) record[schemaKey] = props[schemaKey]
 
-      iterativelyCheckAgainstSchema([key])
-    })
+        iterativelyCheckAgainstSchema([key])
+      })
+    }
+
+    checkAgainstSchema(true)
 
     // @ts-ignore : possibly infinitely deep :(
-    const pendingSetters = setupSyncing({ record, schema, iterativelyCheckAgainstSchema })
+    const pendingSetters = setupSyncing({ record, checkAgainstSchema })
 
-    return withOnChangeListener({ record: this, schema, iterativelyCheckAgainstSchema, pendingSetters })
+    return withOnChangeListener({ record, checkAgainstSchema, pendingSetters })
   }
 
   /**

@@ -4,14 +4,12 @@ import { SyncOpts } from "../../types/sync.types"
 
 interface KWArgs<Schema extends RecordSchema> {
   record: ActiveRecord<Schema>,
-  iterativelyCheckAgainstSchema: (schemaKeyPath: string[]) => void,
-  schema: Schema
+  checkAgainstSchema: Function
 }
 
 function setupSyncing<Schema extends RecordSchema>({
   record,
-  iterativelyCheckAgainstSchema,
-  schema
+  checkAgainstSchema
 }: KWArgs<Schema>) {
   let syncFromDb: boolean = false
   let syncToDb: boolean = false
@@ -26,9 +24,7 @@ function setupSyncing<Schema extends RecordSchema>({
 
   const syncFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
     Object.assign(record, snapshot.val())
-    Object.keys(schema).forEach(key => {
-      iterativelyCheckAgainstSchema([key])
-    })
+    checkAgainstSchema()
   }
 
   const alignHandlersSyncingFromDb = () => {
