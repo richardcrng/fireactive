@@ -2,7 +2,17 @@ import { ActiveRecord } from "../../types/class.types"
 import { RecordSchema } from "../../types/schema.types"
 import { SyncOpts } from "../../types/sync.types"
 
-function setupSyncing<Schema extends RecordSchema>(record: ActiveRecord<Schema>) {
+interface KWArgs<Schema extends RecordSchema> {
+  record: ActiveRecord<Schema>,
+  iterativelyCheckAgainstSchema: (schemaKeyPath: string[]) => void,
+  schema: Schema
+}
+
+function setupSyncing<Schema extends RecordSchema>({
+  record,
+  iterativelyCheckAgainstSchema,
+  schema
+}: KWArgs<Schema>) {
   let syncFromDb: boolean = false
   let syncToDb: boolean = false
   let syncCount: number = 0
@@ -16,6 +26,9 @@ function setupSyncing<Schema extends RecordSchema>(record: ActiveRecord<Schema>)
 
   const syncFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
     Object.assign(record, snapshot.val())
+    Object.keys(schema).forEach(key => {
+      iterativelyCheckAgainstSchema([key])
+    })
   }
 
   const alignHandlersSyncingFromDb = () => {

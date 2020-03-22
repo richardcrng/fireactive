@@ -28,7 +28,6 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
     Object.assign(this, props)
 
     const record = this
-    const pendingSetters = setupSyncing(record)
 
     const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
 
@@ -64,6 +63,9 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
 
       iterativelyCheckAgainstSchema([key])
     })
+
+    // @ts-ignore : possibly infinitely deep :(
+    const pendingSetters = setupSyncing({ record, schema, iterativelyCheckAgainstSchema })
 
     return withOnChangeListener({ record: this, schema, iterativelyCheckAgainstSchema, pendingSetters })
   }
