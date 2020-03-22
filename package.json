@@ -2,32 +2,37 @@
   "name": "fireactive",
   "version": "0.0.1",
   "description": "An ORM for Firebase Real-Time Database",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
+    "build": "npm run build:types",
+    "build:types": "tsc --emitDeclarationOnly",
+    "prepublishOnly": "npm run build",
     "test": "jest --runInBand --watch",
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch"
   },
   "author": "Richard Ng",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/jest": "^25.1.3",
+    "@types/lodash": "^4.14.149",
     "@types/pluralize": "0.0.29",
     "@types/ramda": "^0.26.43",
     "@types/ws": "^7.2.3",
     "firebase-server": "^1.1.0",
     "jest": "^25.1.0",
     "ts-jest": "^25.2.1",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "utility-types": "^3.10.0"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.149",
     "dotenv": "^8.2.0",
     "firebase": "^7.9.3",
     "lodash": "^4.17.15",
     "on-change": "^1.8.1",
     "pluralize": "^8.0.0",
-    "ramda": "^0.27.0",
-    "utility-types": "^3.10.0"
+    "ramda": "^0.27.0"
   }
 }
