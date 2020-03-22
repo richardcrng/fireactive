@@ -33,6 +33,26 @@ describe('baseClass: with server connection', () => {
   let dbVals: any
 
   describe('class methods', () => {
+    describe('#all', () => {
+      let playerOne: typeof player
+      let playerTwo: typeof player
+
+      beforeAll(async (done) => {
+        await Player.ref().set({})
+        playerOne = await Player.create({ name: 'First', age: 1 })
+        playerTwo = await Player.create({ name: 'Second', age: 2 })
+        done()
+      })
+
+      it('returns the object representing the table', async (done) => {
+        const playerTable = await server.getValue(Player.ref())
+        const allPlayers = Player.all()
+        expect(allPlayers).toEqual(playerTable)
+        expect(allPlayers[playerOne.getId()]).toEqual(playerOne.toObject())
+        expect(allPlayers[playerTwo.getId()]).toEqual(playerTwo.toObject())
+      })
+    })
+
     describe('#create', () => {
       describe('simple data', () => {
         const createData = { name: 'Jorge', age: 42 }
