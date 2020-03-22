@@ -55,7 +55,7 @@ const addBaseClassInstances = <Schema extends RecordSchema>(
   BaseClass.prototype.toObject = function(): ObjectFromRecord<Schema> {
     return [...Object.keys(scoped.schema), "_id"].reduce((acc, key) => {
       // @ts-ignore
-      acc[key] = this[key]
+      if (typeof this[key] !== 'undefined') acc[key] = this[key]
       return acc
     }, {}) as ObjectFromRecord<Schema>
   }
