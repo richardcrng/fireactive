@@ -6,13 +6,13 @@ import { FieldIdentifier } from '../../types/field.types';
 interface A<Schema extends RecordSchema> {
   schema: Schema,
   schemaKeyPath: string[],
-  modelName: string
+  className: string,
 }
 
 function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>, {
   schema,
   schemaKeyPath,
-  modelName
+  className
 }: A<Schema>) {
   /**
    * Check the current value at the current schema key path.
@@ -29,7 +29,7 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
   }
 
   if (get(schemaFieldDef, 'required') && typeof currentValAtPath() === 'undefined') {
-    throw new Error(`Failed to instantiate ${modelName}: missing the required property ${schemaKeyPath.join('.')}`)
+    throw new Error(`Failed to instantiate or update ${className}: missing the required property '${schemaKeyPath.join('.')}'`)
   }
 
   if (!(typeof currentValAtPath() === 'undefined')) {
@@ -68,7 +68,7 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
     }
 
     if (!doesMatch) {
-      throw new Error(`Failed to instantiate ${modelName}: property ${schemaKeyPath.join('.')} is of the wrong type`)
+      throw new Error(`Failed to instantiate or update ${className}: property ${schemaKeyPath.join('.')} is of the wrong type`)
     }
   }
 }

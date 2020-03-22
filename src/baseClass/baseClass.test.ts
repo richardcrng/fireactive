@@ -68,8 +68,16 @@ describe('baseClass: integration test', () => {
 
       describe('sad path', () => {
         it('throws an error when an implicitly required field is not supplied', () => {
-          // @ts-ignore : checking static type error leads to creation error
-          expect(() => new Player({ age: 4, isCool: true })).toThrow(/required/)
+          expect.assertions(4)
+          try {
+            // @ts-ignore : checking static type error leads to creation error
+            new Player({ isCool: true })
+          } catch (err) {
+            expect(err.message).toMatch(/instantiate/)
+            expect(err.message).toMatch(/Player/)
+            expect(err.message).toMatch(/required/)
+            expect(err.message).toMatch(/'name'/)
+          }
         })
 
         it('throws an error when fields supplied are of wrong type', () => {
