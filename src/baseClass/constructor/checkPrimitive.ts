@@ -32,7 +32,7 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
     throw new Error(`Failed to instantiate or update ${className}: missing the required property '${schemaKeyPath.join('.')}'`)
   }
 
-  if (typeof currentValAtPath() === 'undefined') {
+  if (currentValAtPath() == null) {
     if (schemaFieldDef && schemaFieldDef._fieldIdentifier === FieldIdentifier.indexed) {
       set(this, schemaKeyPath, {})
     }
