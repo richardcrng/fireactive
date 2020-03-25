@@ -56,6 +56,17 @@ describe('baseClass: creating a BaseClass', () => {
       expect(car.age).toBe(1)
     })
 
+    it('retains its original key', () => {
+      expect(Car.key).toBe(BaseCar.key)
+    })
+
+    it('can update its key via name', () => {
+      Object.defineProperty(Car, 'name', { value: 'NewCar' })
+      expect(Car.name).toBe('NewCar')
+      expect(Car.key).toBe('NewCars')
+      expect(Car.key).not.toBe(BaseCar)
+    })
+
     it('can be extended directly', () => {
       class SuperCar extends baseClass(className, schema) {
         polish() {
