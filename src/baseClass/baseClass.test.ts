@@ -55,6 +55,21 @@ describe('baseClass: creating a BaseClass', () => {
       car.annualMOT()
       expect(car.age).toBe(1)
     })
+
+    it('can be extended directly', () => {
+      class SuperCar extends baseClass(className, schema) {
+        polish() {
+          this.brand = 'Ferrari'
+          this.topSpeed = 100
+        }
+      }
+      const car = new SuperCar({ brand: 'Ford', topSpeed: 40 })
+      expect(car.brand).toBe('Ford')
+      expect(car.topSpeed).toBe(40)
+      car.polish()
+      expect(car.brand).toBe('Ferrari')
+      expect(car.topSpeed).toBe(100)
+    })
   })
 })
 
