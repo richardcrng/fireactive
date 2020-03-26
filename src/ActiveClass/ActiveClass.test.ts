@@ -1,7 +1,7 @@
 import ActiveClass from '.';
 import Schema from '../Schema';
 
-describe('ActiveClass: creating a BaseClass', () => {
+describe('ActiveClass: creating an ActiveClass', () => {
   const className = 'Car'
   const schema = {
     brand: Schema.string,
