@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import baseClass from './baseClass'
+import ActiveClass from './baseClass'
 import initialize from './initialize';
 import Schema from './Schema';
 import setupTestServer from './utils/setupTestServer';
@@ -8,14 +8,14 @@ dotenv.config()
 
 const Fireactive = {
   initialize,
-  baseClass,
+  ActiveClass,
   Schema,
   setupTestServer
 }
 
 export {
   initialize,
-  baseClass,
+  ActiveClass,
   Schema,
   setupTestServer
 }
