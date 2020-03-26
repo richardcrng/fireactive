@@ -13,10 +13,10 @@ const addBaseClassCache = <Schema extends RecordSchema>(
     cache = snapshot.val()
   }
 
-  BaseClass.cache = async function (listening = true): Promise<FirebaseTable<Schema>> {
+  BaseClass.cache = async function (listenForUpdates = true): Promise<FirebaseTable<Schema>> {
     BaseClass.ref().off('value', updateCacheFromSnapshot)
     await BaseClass.ref().once('value', updateCacheFromSnapshot)
-    if (listening) {
+    if (listenForUpdates) {
       BaseClass.ref().on('value', updateCacheFromSnapshot)
     }
     return cache

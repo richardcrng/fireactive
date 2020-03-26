@@ -63,6 +63,34 @@ describe('baseClass: with server connection', () => {
           done()
         })
       })
+
+      describe('argument of `false` provided', () => {
+        let playerOne: typeof player
+        let playerTwo: typeof player
+
+        beforeAll(async (done) => {
+          await Player.ref().set({})
+          playerOne = await Player.create({ name: 'First', age: 1 })
+          playerTwo = await Player.create({ name: 'Second', age: 2 })
+          done()
+        })
+
+        it('returns the object representing the table', async (done) => {
+          const playerTable = await server.getValue(Player.ref())
+          const cachedPlayers = await Player.cache(false)
+          expect(cachedPlayers).toEqual(playerTable)
+          expect(Player.cached).toBe(cachedPlayers)
+          expect(cachedPlayers[playerOne.getId()]).toEqual(playerOne.toObject())
+          expect(cachedPlayers[playerTwo.getId()]).toEqual(playerTwo.toObject())
+          done()
+        })
+
+        it('does not automatically listen and update the cache', async (done) => {
+          await playerOne.ref().update({ age: 5 })
+          expect(Player.cached[playerOne.getId()].age).not.toBe(5)
+          done()
+        })
+      })
     })
 
     describe('#cached (getter)', () => {

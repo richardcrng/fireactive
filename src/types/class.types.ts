@@ -110,12 +110,12 @@ export interface BaseClass<S extends RecordSchema> {
   /**
    * Caches the current table value
    * 
-   * @param {boolean} [listening = true] whether the cache should
+   * @param {boolean} [listenForUpdates = true] whether the cache should
    *  listen and automatically update to table changes
    * 
    * @returns the cached object table for the class
    */
-  cache(listening?: boolean): Promise<FirebaseTable<S>>,
+  cache(listenForUpdates?: boolean): Promise<FirebaseTable<S>>,
 
   /**
    * The currently cached object table for the class
