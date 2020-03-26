@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import ActiveClass from './baseClass'
+import ActiveClass from './ActiveClass'
 import initialize from './initialize';
 import Schema from './Schema';
 import setupTestServer from './utils/setupTestServer';
