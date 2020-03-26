@@ -1,4 +1,4 @@
-import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps } from "./schema.types"
+import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps, FirebaseTable } from "./schema.types"
 import { SyncOpts } from "./sync.types"
 
 /**
@@ -112,14 +112,12 @@ export interface BaseClass<S extends RecordSchema> {
    * 
    * @returns the cached object table for the class
    */
-  cache(): Promise<{ [_id: string]: ObjectFromRecord<S> }>,
+  cache(): Promise<FirebaseTable<S>>,
 
   /**
    * The currently cached object table for the class
-   * 
-   * @returns the cached object table for the class
    */
-  cached(): { [_id: string]: ObjectFromRecord<S> },
+  cached: FirebaseTable<S>,
 
   /**
    * Create a new model and save it to the database

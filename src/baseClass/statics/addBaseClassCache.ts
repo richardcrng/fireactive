@@ -1,7 +1,7 @@
 import { whereEq } from 'ramda'
 import { BaseClass, ActiveRecord } from "../../types/class.types";
 import { getFirebaseDatabase } from "../../initialize/initialize";
-import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
+import { RecordSchema, ObjectFromRecord, FirebaseTable } from "../../types/schema.types";
 
 /**
  * Adds default class methods and properties onto the `BaseClass`
@@ -9,26 +9,20 @@ import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 const addBaseClassCache = <Schema extends RecordSchema>(
   BaseClass: BaseClass<Schema>
 ): void => {
-  let cache: { [_id: string]: ObjectFromRecord<Schema> } = {}
+  let cache: FirebaseTable<Schema> = {}
 
-  const tryToUpdateCache = () => {
-    try {
-      BaseClass.ref().on('value', (snapshot) => {
-        cache = snapshot.val()
-      })
-    } catch (err) {}
-  }
-
-  BaseClass.cache = async function (): Promise<{ [_id: string]: ObjectFromRecord<Schema> }> {
+  BaseClass.cache = async function (): Promise<FirebaseTable<Schema>> {
     await BaseClass.ref().once('value', async (snapshot) => {
       cache = snapshot.val()
     })
     return cache
   }
 
-  BaseClass.cached = function (): { [_id: string]: ObjectFromRecord<Schema> } {
-    return cache
-  }
+  Object.defineProperty(BaseClass, 'cached', {
+    get() {
+      return cache
+    }
+  })
 }
 
 export default addBaseClassCache

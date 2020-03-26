@@ -56,6 +56,28 @@ describe('baseClass: with server connection', () => {
       })
     })
 
+    describe('#cached (getter)', () => {
+      let playerOne: typeof player
+      let playerTwo: typeof player
+
+      beforeAll(async (done) => {
+        await Player.ref().set({})
+        playerOne = await Player.create({ name: 'First', age: 1 })
+        playerTwo = await Player.create({ name: 'Second', age: 2 })
+        await Player.cache()
+        done()
+      })
+
+      it('returns the object representing the cached table', async (done) => {
+        const playerTable = await server.getValue(Player.ref())
+        const cachedPlayers = Player.cached
+        expect(cachedPlayers).toEqual(playerTable)
+        expect(cachedPlayers[playerOne.getId()]).toEqual(playerOne.toObject())
+        expect(cachedPlayers[playerTwo.getId()]).toEqual(playerTwo.toObject())
+        done()
+      })
+    })
+
     describe('#create', () => {
       describe('simple data', () => {
         const createData = { name: 'Jorge', age: 42 }
