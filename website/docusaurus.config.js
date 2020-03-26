@@ -1,6 +1,6 @@
 module.exports = {
   title: 'Fireactive',
-  tagline: 'Strongly-typed ORM for Firebase Realtime Database',
+  tagline: "Realtime, strongly-typed ODM for Firebase Realtime Database",
   url: 'https://your-docusaurus-test-site.com',
   baseUrl: '/',
   favicon: 'img/favicon.ico',
