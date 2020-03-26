@@ -108,11 +108,18 @@ export interface BaseClass<S extends RecordSchema> {
   key: string,
 
   /**
+   * Caches the current table value
+   * 
+   * @returns the cached object table for the class
+   */
+  cache(): Promise<{ [_id: string]: ObjectFromRecord<S> }>,
+
+  /**
    * The currently cached object table for the class
    * 
    * @returns the cached object table for the class
    */
-  cache(): { [_id: string]: ObjectFromRecord<S> },
+  cached(): { [_id: string]: ObjectFromRecord<S> },
 
   /**
    * Create a new model and save it to the database
