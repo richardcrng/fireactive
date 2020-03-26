@@ -5,14 +5,12 @@ import { FieldIdentifier } from '../../types/field.types';
 
 interface A<Schema extends RecordSchema> {
   schema: Schema,
-  schemaKeyPath: string[],
-  modelName: string
+  schemaKeyPath: string[]
 }
 
 function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>, {
   schema,
-  schemaKeyPath,
-  modelName
+  schemaKeyPath
 }: A<Schema>) {
   /**
    * Check the current value at the current schema key path.
@@ -29,10 +27,14 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
   }
 
   if (get(schemaFieldDef, 'required') && typeof currentValAtPath() === 'undefined') {
-    throw new Error(`Failed to instantiate ${modelName}: missing the required property ${schemaKeyPath.join('.')}`)
+    throw new Error(`Failed to instantiate or update ${this.constructor.name}: missing the required property '${schemaKeyPath.join('.')}'`)
   }
 
-  if (!(typeof currentValAtPath() === 'undefined')) {
+  if (currentValAtPath() == null) {
+    if (schemaFieldDef && schemaFieldDef._fieldIdentifier === FieldIdentifier.indexed) {
+      set(this, schemaKeyPath, {})
+    }
+  } else {
     let doesMatch = true
     switch (schemaFieldDef && schemaFieldDef._fieldIdentifier) {
       case FieldIdentifier.string:
@@ -45,13 +47,7 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
         // the enum values are on the field definition's vals property
         doesMatch = schemaFieldDef.vals.includes(currentValAtPath()); break
       case FieldIdentifier.indexed:
-        const currentValue = currentValAtPath()
-        if (typeof currentValue === 'undefined') {
-          set(this, schemaKeyPath, {})
-          return true
-        }
-        const currentIndexedValues = Object.values(currentValAtPath())
-        doesMatch = currentIndexedValues.every(val => {
+        doesMatch = Object.values(currentValAtPath()).every(val => {
           if (typeof val === 'undefined') return true
           switch (get(schemaFieldDef, ['indexed', '_fieldIdentifier'])) {
             case FieldIdentifier.string:
@@ -68,7 +64,7 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
     }
 
     if (!doesMatch) {
-      throw new Error(`Failed to instantiate ${modelName}: property ${schemaKeyPath.join('.')} is of the wrong type`)
+      throw new Error(`Failed to instantiate or update ${this.constructor.name}: property ${schemaKeyPath.join('.')} is of the wrong type`)
     }
   }
 }

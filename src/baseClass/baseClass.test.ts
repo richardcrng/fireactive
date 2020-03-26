@@ -5,7 +5,8 @@ describe('baseClass: creating a BaseClass', () => {
   const className = 'Car'
   const schema = {
     brand: Schema.string,
-    topSpeed: Schema.number
+    topSpeed: Schema.number,
+    age: Schema.number({ required: false })
   }
   const BaseCar = baseClass(className, schema)
 
@@ -15,6 +16,71 @@ describe('baseClass: creating a BaseClass', () => {
 
   it('created class knows its database key', () => {
     expect(BaseCar.key).toBe(`${className}s`)
+  })
+
+  describe('.toObject', () => {
+    it('removes any undefined properties', () => {
+      const car = new BaseCar({ brand: 'Ford', topSpeed: 20 })
+      car.age = 5
+      car.age = undefined
+      const result = car.toObject()
+      expect(result).toHaveProperty('brand')
+      expect(result).toHaveProperty('topSpeed')
+      expect(result).not.toHaveProperty('age')
+      expect(Object.keys(result)).toHaveLength(2)
+    })
+  })
+
+  describe('Extending', () => {
+    class Car extends BaseCar {
+      annualMOT() {
+        this.age = (this.age || 0) + 1
+      }
+    }
+    let car: Car
+
+    it('can be extended', () => {
+      car = new Car({ brand: 'Ford', topSpeed: 9 })
+      expect(car.brand).toBe('Ford')
+      expect(car.topSpeed).toBe(9)
+      expect(car.age).toBeUndefined()
+    })
+
+    it('by default still throws error with bad types', () => {
+      // @ts-ignore : check static error -> runtime error
+      expect(() => { new Car({ brand: 'Ford' }) }).toThrow(/required/)
+    })
+
+    it('can use its new class methods', () => {
+      car.annualMOT()
+      expect(car.age).toBe(1)
+    })
+
+    it('retains its original key', () => {
+      expect(Car.key).toBe(BaseCar.key)
+    })
+
+    it('can update its key via name', () => {
+      Object.defineProperty(Car, 'name', { value: 'NewCar' })
+      expect(Car.name).toBe('NewCar')
+      expect(Car.key).toBe('NewCars')
+      expect(Car.key).not.toBe(BaseCar)
+    })
+
+    it('can be extended directly', () => {
+      class SuperCar extends baseClass(className, schema) {
+        polish() {
+          this.brand = 'Ferrari'
+          this.topSpeed = 100
+        }
+      }
+      const car = new SuperCar({ brand: 'Ford', topSpeed: 40 })
+      expect(car.brand).toBe('Ford')
+      expect(car.topSpeed).toBe(40)
+      car.polish()
+      expect(car.brand).toBe('Ferrari')
+      expect(car.topSpeed).toBe(100)
+    })
   })
 })
 
@@ -68,8 +134,16 @@ describe('baseClass: integration test', () => {
 
       describe('sad path', () => {
         it('throws an error when an implicitly required field is not supplied', () => {
-          // @ts-ignore : checking static type error leads to creation error
-          expect(() => new Player({ age: 4, isCool: true })).toThrow(/required/)
+          expect.assertions(4)
+          try {
+            // @ts-ignore : checking static type error leads to creation error
+            new Player({ isCool: true })
+          } catch (err) {
+            expect(err.message).toMatch(/instantiate/)
+            expect(err.message).toMatch(/Player/)
+            expect(err.message).toMatch(/required/)
+            expect(err.message).toMatch(/'name'/)
+          }
         })
 
         it('throws an error when fields supplied are of wrong type', () => {

@@ -2,6 +2,7 @@ import baseClass from '.';
 import Schema from '../Schema';
 import pushWithId from '../utils/pushWithId';
 import setupTestServer from '../utils/setupTestServer';
+import '../utils/toContainObject'
 
 describe('baseClass: with server connection', () => {
   const { server, db } = setupTestServer()
@@ -25,7 +26,8 @@ describe('baseClass: with server connection', () => {
     powers: {
       flight: Schema.boolean({ required: false }),
       superStrength: Schema.boolean({ required: false })
-    }
+    },
+    collectibles: Schema.indexed.boolean
   }
   const SuperHero = baseClass('SuperHero', superheroSchema)
   let superHero: InstanceType<typeof SuperHero>
@@ -89,9 +91,10 @@ describe('baseClass: with server connection', () => {
 
       describe('nested, data', () => {
         it('can create a record with properties that are empty objects', async (done) => {
-          superHero = await SuperHero.create({ allies: { marvel: {}, dc: {} }, powers: {} })
+          superHero = await SuperHero.create({ allies: { marvel: {}, dc: {} }, powers: {}, collectibles: {} })
           expect(superHero.allies).toEqual({ marvel: {}, dc: {} })
           expect(superHero.powers).toEqual({})
+          expect(superHero.collectibles).toEqual({})
           done()
         })
 
@@ -100,6 +103,13 @@ describe('baseClass: with server connection', () => {
           await superHero.ref('allies/marvel').update({ spiderman: true })
           expect(superHero.powers).toEqual({ superStrength: true })
           expect(superHero.allies).toEqual({ marvel: { spiderman: true }, dc: {} })
+          expect(superHero.collectibles).toEqual({})
+          done()
+        })
+
+        it('reifies nested props', async (done) => {
+          const reifiedHero = await SuperHero.findById(superHero.getId())
+          expect(reifiedHero && reifiedHero.toObject()).toMatchObject(superHero.toObject())
           done()
         })
       })
@@ -198,6 +208,30 @@ describe('baseClass: with server connection', () => {
       it('returns an empty array if no records match', async (done) => {
         const players = await Player.find({ name: 'Alfred', age: 40 })
         expect(players).toEqual([])
+        done()
+      })
+
+      it('can handle reifying with empty object properties', async (done) => {
+        const playerSchema = {
+          name: Schema.string({ required: true }),
+          alignment: Schema.enum(['mafia', 'town'], { required: false }),
+          votedBy: Schema.indexed.boolean,
+          votingFor: Schema.string({ required: false }),
+        }
+
+        const Player = baseClass('Player', playerSchema)
+
+        await Player.ref().set(null)
+
+        const richard = await Player.create({ name: 'Richard', votedBy: {} })
+        const sai = await Player.create({ name: 'Sai', votedBy: {} })
+        const alex = await Player.create({ name: 'Alex', votedBy: {} })
+
+        const result = await Player.find({})
+        expect(result).toHaveLength(3)
+        expect(result).toContainObject(richard.toObject())
+        expect(result).toContainObject(sai.toObject())
+        expect(result).toContainObject(alex.toObject())
         done()
       })
     })
