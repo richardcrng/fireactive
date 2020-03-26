@@ -7,10 +7,8 @@ import { RecordSchema, FirebaseTable } from "../../types/schema.types";
 const addBaseClassCache = <Schema extends RecordSchema>(
   BaseClass: BaseClass<Schema>
 ): void => {
-  let cache: FirebaseTable<Schema> = {}
-
   const updateCacheFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
-    cache = snapshot.val()
+    BaseClass.cached = snapshot.val() as FirebaseTable<Schema>
   }
 
   BaseClass.cache = async function (listenForUpdates = true): Promise<FirebaseTable<Schema>> {
@@ -19,14 +17,8 @@ const addBaseClassCache = <Schema extends RecordSchema>(
     if (listenForUpdates) {
       BaseClass.ref().on('value', updateCacheFromSnapshot)
     }
-    return cache
+    return BaseClass.cached
   }
-
-  Object.defineProperty(BaseClass, 'cached', {
-    get() {
-      return cache
-    }
-  })
 }
 
 export default addBaseClassCache
