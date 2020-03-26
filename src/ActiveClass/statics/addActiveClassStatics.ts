@@ -6,7 +6,7 @@ import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 /**
  * Adds default class methods and properties onto the `BaseClass`
  */
-const addBaseClassStatics = <Schema extends RecordSchema>(
+const addActiveClassStatics = <Schema extends RecordSchema>(
   BaseClass: BaseClass<Schema>
 ): void => {
 
@@ -126,4 +126,4 @@ const addBaseClassStatics = <Schema extends RecordSchema>(
   }
 }
 
-export default addBaseClassStatics
+export default addActiveClassStatics

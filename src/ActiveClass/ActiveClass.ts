@@ -2,7 +2,7 @@ import * as pluralize from 'pluralize'
 import { BaseClass } from "../types/class.types";
 import { RecordSchema } from '../types/schema.types';
 import makeBaseClassConstructor from './constructor/makeActiveClassConstructor';
-import addBaseClassStatics from './statics/addBaseClassStatics';
+import addBaseClassStatics from './statics/addActiveClassStatics';
 import addBaseClassInstances from './instances/addActiveClassInstances';
 import addBaseClassCache from './statics/addActiveClassCache';
 
