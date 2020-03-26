@@ -1,23 +1,23 @@
-import { BaseClass } from "../../types/class.types";
+import { ActiveClass } from "../../types/class.types";
 import { RecordSchema, FirebaseTable } from "../../types/schema.types";
 
 /**
- * Adds default class methods and properties onto the `BaseClass`
+ * Adds default class methods and properties onto the `ActiveClass`
  */
 const addActiveClassCache = <Schema extends RecordSchema>(
-  BaseClass: BaseClass<Schema>
+  ActiveClass: ActiveClass<Schema>
 ): void => {
   const updateCacheFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
-    BaseClass.cached = snapshot.val() as FirebaseTable<Schema>
+    ActiveClass.cached = snapshot.val() as FirebaseTable<Schema>
   }
 
-  BaseClass.cache = async function (listenForUpdates = true): Promise<FirebaseTable<Schema>> {
-    BaseClass.ref().off('value', updateCacheFromSnapshot)
-    await BaseClass.ref().once('value', updateCacheFromSnapshot)
+  ActiveClass.cache = async function (listenForUpdates = true): Promise<FirebaseTable<Schema>> {
+    ActiveClass.ref().off('value', updateCacheFromSnapshot)
+    await ActiveClass.ref().once('value', updateCacheFromSnapshot)
     if (listenForUpdates) {
-      BaseClass.ref().on('value', updateCacheFromSnapshot)
+      ActiveClass.ref().on('value', updateCacheFromSnapshot)
     }
-    return BaseClass.cached
+    return ActiveClass.cached
   }
 }
 

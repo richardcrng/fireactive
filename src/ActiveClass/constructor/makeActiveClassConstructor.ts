@@ -1,6 +1,6 @@
 import { get, set } from 'lodash'
 import { plural } from 'pluralize'
-import { ActiveRecord, BaseClass } from "../../types/class.types";
+import { ActiveRecord, ActiveClass } from "../../types/class.types";
 import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
 import withOnChangeListener from './withOnChangeListener';
@@ -83,7 +83,7 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
    */
   Object.defineProperty(constructActiveClass, 'name', { value: className })
   Object.defineProperty(constructActiveClass, 'key', {
-    get(this: BaseClass<Schema>) {
+    get(this: ActiveClass<Schema>) {
       return plural(this.name)
     }
   })

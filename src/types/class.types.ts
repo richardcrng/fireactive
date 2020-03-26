@@ -2,11 +2,11 @@ import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps, FirebaseTa
 import { SyncOpts } from "./sync.types"
 
 /**
- * An `ActiveRecord<S>` _instance_ of the `BaseClass<S>`. 
+ * An `ActiveRecord<S>` _instance_ of the `ActiveClass<S>`. 
  * This interface holds the instance methods and properties.
  */
 export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
-  constructor: BaseClass<S>
+  constructor: ActiveClass<S>
 
   /**
    * Returns the `ActiveRecord`'s `_id` property if it has one, or
@@ -94,7 +94,7 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
  * 
  * @template S - a RecordSchema
  */
-export interface BaseClass<S extends RecordSchema> {
+export interface ActiveClass<S extends RecordSchema> {
   /**
    * Create an instance of the ActiveRecord -
    *  not yet saved to the database

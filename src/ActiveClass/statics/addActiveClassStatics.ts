@@ -1,19 +1,19 @@
 import { whereEq } from 'ramda'
-import { BaseClass, ActiveRecord } from "../../types/class.types";
+import { ActiveClass, ActiveRecord } from "../../types/class.types";
 import { getFirebaseDatabase } from "../../initialize/initialize";
 import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 
 /**
- * Adds default class methods and properties onto the `BaseClass`
+ * Adds default class methods and properties onto the `ActiveClass`
  */
 const addActiveClassStatics = <Schema extends RecordSchema>(
-  BaseClass: BaseClass<Schema>
+  ActiveClass: ActiveClass<Schema>
 ): void => {
 
-  const tableRef = () => BaseClass.getDb().ref(BaseClass.key)
+  const tableRef = () => ActiveClass.getDb().ref(ActiveClass.key)
 
   async function getTableVals(): Promise<ObjectFromRecord<Schema>[]> {
-    const tableSnapshot = await BaseClass.ref().once('value')
+    const tableSnapshot = await ActiveClass.ref().once('value')
     const tableVal = tableSnapshot.val() || {}
     return Object.values(tableVal) as ObjectFromRecord<Schema>[]
   }
@@ -35,7 +35,7 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
 
 
   // main
-  BaseClass.create = async function (props): Promise<ActiveRecord<Schema>> {
+  ActiveClass.create = async function (props): Promise<ActiveRecord<Schema>> {
     const record = new this({ ...props })
     const _id = record.getId()
     record.syncOpts({ fromDb: true, toDb: true }) // sync by default when using `create`
@@ -43,7 +43,7 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     return record
   }
 
-  BaseClass.delete = async function(props): Promise<number> {
+  ActiveClass.delete = async function(props): Promise<number> {
     const tableValues = await getTableVals()
     // @ts-ignore
     const matchingVals = tableValues.filter(record => whereEq(props, record))
@@ -53,7 +53,7 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     return matchingVals.length
   }
 
-  BaseClass.deleteOne = async function (props): Promise<boolean> {
+  ActiveClass.deleteOne = async function (props): Promise<boolean> {
     const tableValues = await getTableVals()
     const firstMatch = tableValues.find(record => whereEq(props, record))
     if (firstMatch && firstMatch._id) {
@@ -64,13 +64,13 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     }
   }
 
-  BaseClass.find = async function(props): Promise<ActiveRecord<Schema>[]> {
+  ActiveClass.find = async function(props): Promise<ActiveRecord<Schema>[]> {
     const matchingVals = await getMatchingTableVals(props)
     // @ts-ignore
     return matchingVals.map(props => new this(props))
   }
 
-  BaseClass.findById = async function(id: string): Promise<ActiveRecord<Schema> | null> {
+  ActiveClass.findById = async function(id: string): Promise<ActiveRecord<Schema> | null> {
     const db = this.getDb()
 
     if (!id) return null
@@ -85,14 +85,14 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     }
   }
 
-  BaseClass.findOne = async function(props): Promise<ActiveRecord<Schema> | null> {
+  ActiveClass.findOne = async function(props): Promise<ActiveRecord<Schema> | null> {
     const firstMatch = await getFirstMatchFromTable(props)
     if (!firstMatch) return null
     // @ts-ignore
     return new this(firstMatch)
   }
 
-  BaseClass.getDb = function () {
+  ActiveClass.getDb = function () {
     const database = getFirebaseDatabase()
     if (!database) {
       throw new Error('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
@@ -100,13 +100,13 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     return database
   }
 
-  BaseClass.ref = function(this: BaseClass<Schema>, path?: string): firebase.database.Reference {
+  ActiveClass.ref = function(this: ActiveClass<Schema>, path?: string): firebase.database.Reference {
     return path
       ? tableRef().child(path)
       : tableRef()
   }
 
-  BaseClass.update = async function(props, newProps): Promise<ActiveRecord<Schema>[]> {
+  ActiveClass.update = async function(props, newProps): Promise<ActiveRecord<Schema>[]> {
     const matchingVals = await getMatchingTableVals(props)
     const updatedVals = matchingVals.map(val => ({ ...val, ...newProps }))
     await Promise.all(updatedVals.map(async (val) => {
@@ -116,7 +116,7 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     return updatedVals.map(val => new this(val))
   }
 
-  BaseClass.updateOne = async function (props, newProps): Promise<ActiveRecord<Schema> | null> {
+  ActiveClass.updateOne = async function (props, newProps): Promise<ActiveRecord<Schema> | null> {
     const firstMatch = await getFirstMatchFromTable(props)
     if (!firstMatch) return null
     const updatedMatch = { ...firstMatch, ...newProps }
