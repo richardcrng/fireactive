@@ -1,14 +1,14 @@
-import baseClass from '.';
+import ActiveClass from '.';
 import Schema from '../Schema';
 
-describe('baseClass: creating a BaseClass', () => {
+describe('ActiveClass: creating a BaseClass', () => {
   const className = 'Car'
   const schema = {
     brand: Schema.string,
     topSpeed: Schema.number,
     age: Schema.number({ required: false })
   }
-  const BaseCar = baseClass(className, schema)
+  const BaseCar = ActiveClass(className, schema)
 
   it('created class knows its name', () => {
     expect(BaseCar.name).toBe(className)
@@ -68,7 +68,7 @@ describe('baseClass: creating a BaseClass', () => {
     })
 
     it('can be extended directly', () => {
-      class SuperCar extends baseClass(className, schema) {
+      class SuperCar extends ActiveClass(className, schema) {
         polish() {
           this.brand = 'Ferrari'
           this.topSpeed = 100
@@ -84,7 +84,7 @@ describe('baseClass: creating a BaseClass', () => {
   })
 })
 
-describe('baseClass: integration test', () => {
+describe('ActiveClass: integration test', () => {
   describe('integration with Schema', () => {
     describe('simple non-nested schema', () => {
       const className = 'Player'
@@ -97,7 +97,7 @@ describe('baseClass: integration test', () => {
         parents: Schema.number({ optional: true })
       }
 
-      const Player = baseClass(className, schema)
+      const Player = ActiveClass(className, schema)
       let player: InstanceType<typeof Player>
 
       describe('happy path', () => {
@@ -171,7 +171,7 @@ describe('baseClass: integration test', () => {
         role: Schema.enum(['admin', 'regular']),
       }
 
-      const User = baseClass(className, schema)
+      const User = ActiveClass(className, schema)
 
       describe('happy path', () => {
         it('allows instantiation with a value from the array', () => {
@@ -183,7 +183,7 @@ describe('baseClass: integration test', () => {
           const schema = {
             flavour: Schema.enum(['salty', 'sweet'], { default: 'salty' })
           }
-          const Popcorn = baseClass('Popcorn', schema)
+          const Popcorn = ActiveClass('Popcorn', schema)
 
           const popcorn = new Popcorn({})
           expect(popcorn.flavour).toBe('salty')
@@ -193,7 +193,7 @@ describe('baseClass: integration test', () => {
           const schema = {
             name: Schema.enum(['river', 'ocean'], { optional: true })
           }
-          const River = baseClass('River', schema)
+          const River = ActiveClass('River', schema)
 
           const river = new River({})
           expect(river.name).toBeUndefined()
@@ -204,7 +204,7 @@ describe('baseClass: integration test', () => {
             value: Schema.enum([1, 2, 'many'])
           }
 
-          const Number = baseClass('Number', schema)
+          const Number = ActiveClass('Number', schema)
           const number = new Number({ value: 2 })
           expect(number.value).toBe(2)
         })
@@ -220,7 +220,7 @@ describe('baseClass: integration test', () => {
 
         it('throws an error when a default value is not in the enum', () => {
           expect(() => {
-            const Popcorn = baseClass('Popcorn', {
+            const Popcorn = ActiveClass('Popcorn', {
               flavour: Schema.enum(['salty', 'sweet'], { default: 'salt' })
             })
           }).toThrow()
@@ -241,14 +241,14 @@ describe('baseClass: integration test', () => {
         friends: Schema.indexed.string,
         numbers: Schema.indexed.enum([1, 2, 3])
       }
-      const User = baseClass(userClassName, userSchema)
+      const User = ActiveClass(userClassName, userSchema)
 
       const otherClassName = 'Other'
       const otherSchema = {
         keys: Schema.indexed.boolean,
         counts: Schema.indexed.number
       }
-      const Other = baseClass(otherClassName, otherSchema)
+      const Other = ActiveClass(otherClassName, otherSchema)
 
       describe('happy path', () => {
         it('allows instantiation with an appropriately indexed value', () => {
@@ -316,7 +316,7 @@ describe('baseClass: integration test', () => {
         }
       }
 
-      const Venue = baseClass(className, schema)
+      const Venue = ActiveClass(className, schema)
 
       describe('happy path', () => {
         it("allows new instances that follow the explicit and implied requirement and defaults", () => {
