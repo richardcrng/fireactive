@@ -27,6 +27,59 @@ describe('baseClass: creating a BaseClass', () => {
       expect(result).toHaveProperty('brand')
       expect(result).toHaveProperty('topSpeed')
       expect(result).not.toHaveProperty('age')
+      expect(Object.keys(result)).toHaveLength(2)
+    })
+  })
+
+  describe('Extending', () => {
+    class Car extends BaseCar {
+      annualMOT() {
+        this.age = (this.age || 0) + 1
+      }
+    }
+    let car: Car
+
+    it('can be extended', () => {
+      car = new Car({ brand: 'Ford', topSpeed: 9 })
+      expect(car.brand).toBe('Ford')
+      expect(car.topSpeed).toBe(9)
+      expect(car.age).toBeUndefined()
+    })
+
+    it('by default still throws error with bad types', () => {
+      // @ts-ignore : check static error -> runtime error
+      expect(() => { new Car({ brand: 'Ford' }) }).toThrow(/required/)
+    })
+
+    it('can use its new class methods', () => {
+      car.annualMOT()
+      expect(car.age).toBe(1)
+    })
+
+    it('retains its original key', () => {
+      expect(Car.key).toBe(BaseCar.key)
+    })
+
+    it('can update its key via name', () => {
+      Object.defineProperty(Car, 'name', { value: 'NewCar' })
+      expect(Car.name).toBe('NewCar')
+      expect(Car.key).toBe('NewCars')
+      expect(Car.key).not.toBe(BaseCar)
+    })
+
+    it('can be extended directly', () => {
+      class SuperCar extends baseClass(className, schema) {
+        polish() {
+          this.brand = 'Ferrari'
+          this.topSpeed = 100
+        }
+      }
+      const car = new SuperCar({ brand: 'Ford', topSpeed: 40 })
+      expect(car.brand).toBe('Ford')
+      expect(car.topSpeed).toBe(40)
+      car.polish()
+      expect(car.brand).toBe('Ferrari')
+      expect(car.topSpeed).toBe(100)
     })
   })
 })
