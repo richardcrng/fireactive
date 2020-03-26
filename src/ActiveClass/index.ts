@@ -1,3 +1,3 @@
-import baseClass from "./baseClass";
+import ActiveClass from "./ActiveClass";
 
-export default baseClass
+export default ActiveClass

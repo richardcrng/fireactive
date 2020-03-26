@@ -15,7 +15,7 @@ import addBaseClassCache from './statics/addBaseClassCache';
  * @returns The `BaseClass<S>`.
  * @template Schema - A `RecordSchema`
  */
-function baseClass<Schema extends RecordSchema>(className: string, schema: Schema) {
+function ActiveClass<Schema extends RecordSchema>(className: string, schema: Schema) {
   // our JavaScript `Record` variable, with a constructor type
   let BaseClass: BaseClass<Schema>;
 
@@ -39,4 +39,4 @@ function baseClass<Schema extends RecordSchema>(className: string, schema: Schem
   return BaseClass
 }
 
-export default baseClass
+export default ActiveClass
