@@ -1,11 +1,11 @@
 module.exports = {
-  title: 'My Site',
-  tagline: 'The tagline of my site',
+  title: 'Fireactive',
+  tagline: 'Strongly-typed ORM for Firebase Realtime Database',
   url: 'https://your-docusaurus-test-site.com',
   baseUrl: '/',
   favicon: 'img/favicon.ico',
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  organizationName: 'richardcrng', // Usually your GitHub org/user name.
+  projectName: 'fireactive', // Usually your repo name.
   themeConfig: {
     navbar: {
       title: 'My Site',
@@ -22,7 +22,7 @@ module.exports = {
         },
         {to: 'blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/richardcrng/fireactive',
           label: 'GitHub',
           position: 'right',
         },
