@@ -36,3 +36,7 @@ export type RecordProps<S extends RecordSchema> = UndefinedToOptional<{
  * @template S - A Schema of Fields
  */
 export type ObjectFromRecord<S extends RecordSchema> = RecordProps<S> & { _id?: string }
+
+export interface FirebaseTable<S extends RecordSchema> {
+  [_id: string]: ObjectFromRecord<S> & { _id: string }
+}

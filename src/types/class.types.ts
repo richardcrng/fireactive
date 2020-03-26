@@ -1,4 +1,4 @@
-import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps } from "./schema.types"
+import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps, FirebaseTable } from "./schema.types"
 import { SyncOpts } from "./sync.types"
 
 /**
@@ -106,6 +106,21 @@ export interface BaseClass<S extends RecordSchema> {
    * The 'table' key which this model uses in the Firebase RTD.
    */
   key: string,
+
+  /**
+   * Caches the current table value
+   * 
+   * @param {boolean} [listenForUpdates = true] whether the cache should
+   *  listen and automatically update to table changes
+   * 
+   * @returns the cached object table for the class
+   */
+  cache(listenForUpdates?: boolean): Promise<FirebaseTable<S>>,
+
+  /**
+   * The currently cached object table for the class
+   */
+  cached: FirebaseTable<S>,
 
   /**
    * Create a new model and save it to the database
