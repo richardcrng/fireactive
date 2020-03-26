@@ -4,6 +4,7 @@ import { RecordSchema } from '../types/schema.types';
 import makeBaseClassConstructor from './constructor/makeBaseClassConstructor';
 import addBaseClassStatics from './statics/addBaseClassStatics';
 import addBaseClassInstances from './instances/addBaseClassInstances';
+import addBaseClassCache from './statics/addBaseClassCache';
 
 /**
  * Create a `BaseClass<Schema>`, where `Schema` is an Active `RecordSchema`.
@@ -26,7 +27,10 @@ function baseClass<Schema extends RecordSchema>(className: string, schema: Schem
 
   // adding static properties/methods onto `BaseClass`
   // @ts-ignore : infinitely deep :(
-  addBaseClassStatics(BaseClass, { tableName })
+  addBaseClassStatics(BaseClass)
+
+  // @ts-ignore : infinitely deep :(
+  addBaseClassCache(BaseClass)
 
   // adding instance methods and properties onto `BaseClass.prototype`
   // @ts-ignore : infinitely deep :(
