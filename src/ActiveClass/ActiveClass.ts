@@ -3,7 +3,7 @@ import { BaseClass } from "../types/class.types";
 import { RecordSchema } from '../types/schema.types';
 import makeBaseClassConstructor from './constructor/makeActiveClassConstructor';
 import addBaseClassStatics from './statics/addBaseClassStatics';
-import addBaseClassInstances from './instances/addBaseClassInstances';
+import addBaseClassInstances from './instances/addActiveClassInstances';
 import addBaseClassCache from './statics/addBaseClassCache';
 
 /**
