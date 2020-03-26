@@ -1,6 +1,6 @@
 {
   "name": "fireactive",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "An ORM for Firebase Real-Time Database",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -30,6 +30,7 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "firebase": "^7.9.3",
+    "grpc": "^1.24.2",
     "lodash": "^4.17.15",
     "on-change": "^1.8.1",
     "pluralize": "^8.0.0",
