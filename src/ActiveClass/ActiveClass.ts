@@ -1,4 +1,4 @@
-import * as pluralize from 'pluralize'
+import pluralize from 'pluralize'
 import { BaseClass } from "../types/class.types";
 import { RecordSchema } from '../types/schema.types';
 import makeBaseClassConstructor from './constructor/makeActiveClassConstructor';
