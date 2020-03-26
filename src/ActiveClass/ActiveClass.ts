@@ -4,7 +4,7 @@ import { RecordSchema } from '../types/schema.types';
 import makeBaseClassConstructor from './constructor/makeActiveClassConstructor';
 import addBaseClassStatics from './statics/addBaseClassStatics';
 import addBaseClassInstances from './instances/addActiveClassInstances';
-import addBaseClassCache from './statics/addBaseClassCache';
+import addBaseClassCache from './statics/addActiveClassCache';
 
 /**
  * Create a `BaseClass<Schema>`, where `Schema` is an Active `RecordSchema`.

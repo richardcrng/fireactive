@@ -4,7 +4,7 @@ import { RecordSchema, FirebaseTable } from "../../types/schema.types";
 /**
  * Adds default class methods and properties onto the `BaseClass`
  */
-const addBaseClassCache = <Schema extends RecordSchema>(
+const addActiveClassCache = <Schema extends RecordSchema>(
   BaseClass: BaseClass<Schema>
 ): void => {
   const updateCacheFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
@@ -21,4 +21,4 @@ const addBaseClassCache = <Schema extends RecordSchema>(
   }
 }
 
-export default addBaseClassCache
+export default addActiveClassCache
