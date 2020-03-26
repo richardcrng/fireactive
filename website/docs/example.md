@@ -23,7 +23,7 @@ const userSchema = {
   isVerified: Schema.boolean({ default: false }) // defaults to 'false'
 }
 
-class User extends BaseClass('User', userSchema) {
+class User extends ActiveClass('User', userSchema) {
   // optionally add some prototype and static methods
 }
 ```
