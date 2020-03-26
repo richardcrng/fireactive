@@ -1,4 +1,4 @@
-import { ActiveClass } from "../../types/class.types";
+import { BaseClass } from "../../types/class.types";
 import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 import isNull from "../../utils/isNull";
 import { SyncOpts } from "../../types/sync.types";
@@ -7,7 +7,7 @@ import { SyncOpts } from "../../types/sync.types";
  * Adds default instance methods and properties onto the `ActiveClass`'s prototype
  */
 const addActiveClassInstances = <Schema extends RecordSchema>(
-  ActiveClass: ActiveClass<Schema>,
+  ActiveClass: BaseClass<Schema>,
   scoped: { schema: Schema, tableName: string }
 ): void => {
 
