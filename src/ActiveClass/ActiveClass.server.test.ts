@@ -1,17 +1,17 @@
-import baseClass from '.';
+import ActiveClass from '.';
 import Schema from '../Schema';
 import pushWithId from '../utils/pushWithId';
 import setupTestServer from '../utils/setupTestServer';
 import '../utils/toContainObject'
 
-describe('baseClass: with server connection', () => {
+describe('ActiveClass: with server connection', () => {
   const { server, db } = setupTestServer()
 
   const playerSchema = {
     name: Schema.string,
     age: Schema.number
   }
-  const Player = baseClass('Player', playerSchema)
+  const Player = ActiveClass('Player', playerSchema)
   let player: InstanceType<typeof Player>
 
   const superheroSchema = {
@@ -29,7 +29,7 @@ describe('baseClass: with server connection', () => {
     },
     collectibles: Schema.indexed.boolean
   }
-  const SuperHero = baseClass('SuperHero', superheroSchema)
+  const SuperHero = ActiveClass('SuperHero', superheroSchema)
   let superHero: InstanceType<typeof SuperHero>
 
   let dbVals: any
@@ -278,7 +278,7 @@ describe('baseClass: with server connection', () => {
           votingFor: Schema.string({ required: false }),
         }
 
-        const Player = baseClass('Player', playerSchema)
+        const Player = ActiveClass('Player', playerSchema)
 
         await Player.ref().set(null)
 
