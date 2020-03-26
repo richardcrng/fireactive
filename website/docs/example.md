@@ -13,8 +13,7 @@ npm install fireactive
 ## Example
 ### Creating a class
 ```js
-import * as Fireactive from 'fireactive'
-// const Fireactive = require('fireactive')
+import { ActiveClass, Schema } from 'fireactive'
 
 const userSchema = {
   name: Schema.string,  // users must have a name
@@ -24,7 +23,44 @@ const userSchema = {
 }
 
 class User extends ActiveClass('User', userSchema) {
-  // optionally add some prototype and static methods
+  /*
+    User will inherit ActiveClass methods,
+      prototype and static.
+    
+    Optionally, add further methods yourself,
+      e.g.:
+  */
+
+  upgrade() {
+    this.role = 'admin'
+  }
 }
 ```
 
+### Instantiating
+```js
+import { initialize } from Fireactive
+
+initialize({
+  databaseURL: // your Firebase Realtime Database URL
+})
+
+// using top-level await for readability
+const moll = await User.create({ name: 'Moll', role: 'basic' })
+moll.name // => 'Moll'
+moll.age // => undefined
+moll.role // => 'basic'
+moll.isVerified // => false: uses default schema value
+
+moll.upgrade()
+moll.role // => 'admin'
+```
+
+### Type safety
+```js
+const anon = await User.create({ role: 'admin' })
+// => Error: could not create User. The required property 'name' was not supplied.
+
+const meg = await User.create({ name: 'Meg', role: 'superuser' })
+// => Error: could not create User. The supplied property 'role' is not of the required type.
+```
