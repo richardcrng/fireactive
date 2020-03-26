@@ -12,14 +12,14 @@ import setupSyncing from './setupSyncing';
  * @param className - The name of the model, used as a basis for the Firebase table name
  * @param schema - The schema that the model uses
  */
-const makeBaseClassConstructor = <Schema extends RecordSchema>(
+const makeActiveClassConstructor = <Schema extends RecordSchema>(
   className: string,
   schema: Schema
 ) => {
   /**
    * A constructor function for a Fireactive Base Class.
    */
-  function baseClassConstructor (
+  function constructActiveClass (
     this: ActiveRecord<Schema>,
     props: ToCreateRecord<Schema> & { _id?: string }
   ) {
@@ -81,8 +81,8 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
    *  Not sure why, but seems plausible that it might happen, e.g. to
    *  deliberately change which database is used.
    */
-  Object.defineProperty(baseClassConstructor, 'name', { value: className })
-  Object.defineProperty(baseClassConstructor, 'key', {
+  Object.defineProperty(constructActiveClass, 'name', { value: className })
+  Object.defineProperty(constructActiveClass, 'key', {
     get(this: BaseClass<Schema>) {
       return plural(this.name)
     }
@@ -90,7 +90,7 @@ const makeBaseClassConstructor = <Schema extends RecordSchema>(
 
   
 
-  return baseClassConstructor
+  return constructActiveClass
 }
 
-export default makeBaseClassConstructor
+export default makeActiveClassConstructor
