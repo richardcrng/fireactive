@@ -47,7 +47,7 @@ function withOnChangeListener<Schema extends RecordSchema>({
       }
 
       throw ActiveClassError.from(err, {
-        what: `${this.constructor.name} could not accept the value '${val}' (${typeof val}) at path '${path}'`
+        what: `${this.constructor.name} could not accept the value ${JSON.stringify(val)} (${typeof val}) at path '${path}'`
       })
     }
 

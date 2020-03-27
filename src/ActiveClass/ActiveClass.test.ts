@@ -171,7 +171,7 @@ describe('ActiveClass: integration test', () => {
         it('throws an error when a type is set to a non-schema compatible value', () => {
           const player = new Player({ name: 'Pedro', age: 4 })
           // @ts-ignore : check static error -> runtime error
-          expect(() => { player.age = 'four' }).toThrow("Player could not accept the value 'four' (string) at path 'age'. The property 'age' is of the wrong type")
+          expect(() => { player.age = 'four' }).toThrow(`Player could not accept the value "four" (string) at path 'age'. The property 'age' is of the wrong type`)
           expect(player.age).not.toBe('four')
         })
       })

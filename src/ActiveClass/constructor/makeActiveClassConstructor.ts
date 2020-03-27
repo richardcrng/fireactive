@@ -44,7 +44,7 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
     const iterativelyCheckAgainstSchema = (schemaKeyPath: string[]) => {
       if (schemaFieldIdentified(schemaKeyPath)) {
         // @ts-ignore : infinitely deep :(
-        checkPrimitive.bind(this)({ schema, schemaKeyPath, className })
+        checkPrimitive.bind(this)({ schema, schemaKeyPath })
       } else {
         // probably an object
         if (typeof get(this, schemaKeyPath) === 'undefined') {
