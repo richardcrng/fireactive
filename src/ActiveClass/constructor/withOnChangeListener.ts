@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { identical } from 'ramda'
+import { identical, equals } from 'ramda'
 import { remove, set, unset } from 'lodash'
 import onChange from 'on-change'
 import { ActiveRecord } from '../../types/class.types'
@@ -47,17 +47,27 @@ function withOnChangeListener<Schema extends RecordSchema>({
       }
 
       throw ActiveClassError.from(err, {
-        what: `${this.constructor.name} could not accept the value '${val}' (${typeof val}) at path '${path}'`
+        what: `${this.constructor.name} could not accept the value ${JSON.stringify(val)} (${typeof val}) at path '${path}'`
       })
     }
 
     if (record.syncOpts().toDb) {
-      const thisRef = this.ref()
+      let ref: firebase.database.Reference = record.ref()
       const propPath = path.replace(/\./g, '/')
-      const promiseToDb = thisRef.child(propPath).set(val)
-      pendingSetters.push(promiseToDb)
-      promiseToDb.then(() => {
-        remove(pendingSetters, identical(promiseToDb))
+      // to remove undefined properties: https://stackoverflow.com/questions/34708566/firebase-update-failed-first-argument-contains-undefined-in-property
+      const valToUpdate = JSON.parse(JSON.stringify(val))
+      if (propPath) {
+        ref = ref.child(propPath)
+      }
+      ref.once('value', snapshot => {
+        const presentVal = snapshot.val()
+        if (!equals(valToUpdate, presentVal)) {
+          const promiseToDb = ref.set(valToUpdate)
+          pendingSetters.push(promiseToDb)
+          promiseToDb.then(() => {
+            remove(pendingSetters, identical(promiseToDb))
+          })
+        }
       })
     }
   })

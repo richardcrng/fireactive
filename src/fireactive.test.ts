@@ -14,7 +14,7 @@ describe('ActiveClass', () => {
     }
 
     describe("WHEN the model name and schema are passed to record", () => {
-      const Player = ActiveClass(modelName, schema)
+      class Player extends ActiveClass(schema) {}
 
       test("THEN the result is a class that can create new instances", () => {
         const player = new Player({ name: 'Pedro', age: 3, isCool: true })

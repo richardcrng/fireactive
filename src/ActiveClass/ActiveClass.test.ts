@@ -1,23 +1,22 @@
 import ActiveClass from '.';
 import Schema from '../Schema';
-import ActiveClassError from './Error/ActiveClassError';
+import ActiveClassError from './Error';
 
 describe('ActiveClass: creating an ActiveClass', () => {
-  const className = 'Car'
   const schema = {
     brand: Schema.string,
     topSpeed: Schema.number,
     age: Schema.number({ required: false })
   }
-  const BaseCar = ActiveClass(className, schema)
+  class Car extends ActiveClass(schema) {}
 
   describe('happy creation path', () => {
     it('created class knows its name', () => {
-      expect(BaseCar.name).toBe(className)
+      expect(Car.name).toBe('Car')
     })
 
     it('created class knows its database key', () => {
-      expect(BaseCar.key).toBe(`${className}s`)
+      expect(Car.key).toBe(`Cars`)
     })
   })
 
@@ -26,17 +25,17 @@ describe('ActiveClass: creating an ActiveClass', () => {
       expect.assertions(2)
       try {
         // @ts-ignore
-        new BaseCar({})
+        new Car({})
       } catch (err) {
         expect(err).toBeInstanceOf(ActiveClassError)
-        expect(err.message).toMatch(`Could not construct ${className}. The required property 'brand' is missing`)
+        expect(err.message).toMatch(`Could not construct Car. The required property 'brand' is missing`)
       }
     })
   })
 
   describe('.toObject', () => {
     it('removes any undefined properties', () => {
-      const car = new BaseCar({ brand: 'Ford', topSpeed: 20 })
+      const car = new Car({ brand: 'Ford', topSpeed: 20 })
       car.age = 5
       car.age = undefined
       const result = car.toObject()
@@ -47,8 +46,8 @@ describe('ActiveClass: creating an ActiveClass', () => {
     })
   })
 
-  describe('Extending', () => {
-    class Car extends BaseCar {
+  describe('Extending with methods', () => {
+    class Car extends ActiveClass(schema) {
       annualMOT() {
         this.age = (this.age || 0) + 1
       }
@@ -73,18 +72,18 @@ describe('ActiveClass: creating an ActiveClass', () => {
     })
 
     it('retains its original key', () => {
-      expect(Car.key).toBe(BaseCar.key)
+      expect(Car.key).toBe('Cars')
     })
 
     it('can update its key via name', () => {
       Object.defineProperty(Car, 'name', { value: 'NewCar' })
       expect(Car.name).toBe('NewCar')
       expect(Car.key).toBe('NewCars')
-      expect(Car.key).not.toBe(BaseCar)
+      expect(Car.key).not.toBe('Car')
     })
 
     it('can be extended directly', () => {
-      class SuperCar extends ActiveClass(className, schema) {
+      class SuperCar extends ActiveClass(schema) {
         polish() {
           this.brand = 'Ferrari'
           this.topSpeed = 100
@@ -103,7 +102,6 @@ describe('ActiveClass: creating an ActiveClass', () => {
 describe('ActiveClass: integration test', () => {
   describe('integration with Schema', () => {
     describe('simple non-nested schema', () => {
-      const className = 'Player'
       const schema = {
         name: Schema.string,
         age: Schema.number({ required: false }),
@@ -113,7 +111,7 @@ describe('ActiveClass: integration test', () => {
         parents: Schema.number({ optional: true })
       }
 
-      const Player = ActiveClass(className, schema)
+      class Player extends ActiveClass(schema) {}
       let player: InstanceType<typeof Player>
 
       describe('happy path', () => {
@@ -165,13 +163,13 @@ describe('ActiveClass: integration test', () => {
         })
 
         it('throws an error when the `create` method is tried without a database connection', () => {
-          expect(Player.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow('Failed to create Player. Could not connect to your Firebase database. This might be because you have not initialized your Firebase app')
+          expect(Player.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow('Could not create Player. Could not connect to your Firebase database. This might be because you have not initialized your Firebase app')
         })
 
         it('throws an error when a type is set to a non-schema compatible value', () => {
           const player = new Player({ name: 'Pedro', age: 4 })
           // @ts-ignore : check static error -> runtime error
-          expect(() => { player.age = 'four' }).toThrow("Player could not accept the value 'four' (string) at path 'age'. The property 'age' is of the wrong type")
+          expect(() => { player.age = 'four' }).toThrow(`Player could not accept the value "four" (string) at path 'age'. The property 'age' is of the wrong type`)
           expect(player.age).not.toBe('four')
         })
       })
@@ -184,7 +182,7 @@ describe('ActiveClass: integration test', () => {
         role: Schema.enum(['admin', 'regular']),
       }
 
-      const User = ActiveClass(className, schema)
+      class User extends ActiveClass(schema) {}
 
       describe('happy path', () => {
         it('allows instantiation with a value from the array', () => {
@@ -196,7 +194,7 @@ describe('ActiveClass: integration test', () => {
           const schema = {
             flavour: Schema.enum(['salty', 'sweet'], { default: 'salty' })
           }
-          const Popcorn = ActiveClass('Popcorn', schema)
+          class Popcorn extends ActiveClass(schema) {}
 
           const popcorn = new Popcorn({})
           expect(popcorn.flavour).toBe('salty')
@@ -206,7 +204,7 @@ describe('ActiveClass: integration test', () => {
           const schema = {
             name: Schema.enum(['river', 'ocean'], { optional: true })
           }
-          const River = ActiveClass('River', schema)
+          class River extends ActiveClass(schema) {}
 
           const river = new River({})
           expect(river.name).toBeUndefined()
@@ -217,7 +215,7 @@ describe('ActiveClass: integration test', () => {
             value: Schema.enum([1, 2, 'many'])
           }
 
-          const Number = ActiveClass('Number', schema)
+          class Number extends ActiveClass(schema) {}
           const number = new Number({ value: 2 })
           expect(number.value).toBe(2)
         })
@@ -233,9 +231,10 @@ describe('ActiveClass: integration test', () => {
 
         it('throws an error when a default value is not in the enum', () => {
           expect(() => {
-            const Popcorn = ActiveClass('Popcorn', {
+            // @ts-ignore
+            class Popcorn extends ActiveClass({
               flavour: Schema.enum(['salty', 'sweet'], { default: 'salt' })
-            })
+            }) {}
           }).toThrow()
         })
 
@@ -254,14 +253,14 @@ describe('ActiveClass: integration test', () => {
         friends: Schema.indexed.string,
         numbers: Schema.indexed.enum([1, 2, 3])
       }
-      const User = ActiveClass(userClassName, userSchema)
+      class User extends ActiveClass(userSchema) {}
 
       const otherClassName = 'Other'
       const otherSchema = {
         keys: Schema.indexed.boolean,
         counts: Schema.indexed.number
       }
-      const Other = ActiveClass(otherClassName, otherSchema)
+      class Other extends ActiveClass(otherSchema) {}
 
       describe('happy path', () => {
         it('allows instantiation with an appropriately indexed value', () => {
@@ -329,7 +328,7 @@ describe('ActiveClass: integration test', () => {
         }
       }
 
-      const Venue = ActiveClass(className, schema)
+      class Venue extends ActiveClass(schema) {}
 
       describe('happy path', () => {
         it("allows new instances that follow the explicit and implied requirement and defaults", () => {
