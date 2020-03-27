@@ -1,7 +1,7 @@
 {
   "name": "fireactive",
   "version": "0.1.6",
-  "description": "An ORM for Firebase Real-Time Database",
+  "description": "Realtime, strongly-typed ODM for Firebase Realtime Database",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
