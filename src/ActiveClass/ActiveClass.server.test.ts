@@ -3,6 +3,7 @@ import Schema from '../Schema';
 import pushWithId from '../utils/pushWithId';
 import setupTestServer from '../utils/setupTestServer';
 import '../utils/toContainObject'
+import ActiveClassError from './Error';
 
 describe('ActiveClass: with server connection', () => {
   const { server, db } = setupTestServer()
@@ -142,9 +143,16 @@ describe('ActiveClass: with server connection', () => {
           })
         })
 
-        it('throws an error if params passed do not fit the schema', () => {
-          // @ts-ignore : check that static error -> thrown error
-          expect(Player.create({ name: 42, age: 42 })).rejects.toThrow(/type/)
+        it('throws an error if params passed do not fit the schema', async (done) => {
+          expect.assertions(2)
+          try {
+            // @ts-ignore : check that static error -> thrown error
+            await Player.create({ name: 42, age: 42 })
+          } catch (err) {
+            expect(err).toBeInstanceOf(ActiveClassError)
+            expect(err.message).toMatch("Could not create Player. The property 'name' is of the wrong type")
+            done()
+          }
         })
       })
 

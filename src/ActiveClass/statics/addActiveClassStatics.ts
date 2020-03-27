@@ -45,7 +45,7 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
       return record
     } catch (err) {
       throw ActiveClassError.from(err, {
-        what: `Failed to create ${this.name}`
+        what: `Could not create ${this.name}`
       })
     }
   }

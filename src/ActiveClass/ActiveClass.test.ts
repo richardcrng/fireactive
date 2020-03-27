@@ -1,6 +1,6 @@
 import ActiveClass from '.';
 import Schema from '../Schema';
-import ActiveClassError from './Error/ActiveClassError';
+import ActiveClassError from './Error';
 
 describe('ActiveClass: creating an ActiveClass', () => {
   const className = 'Car'
@@ -165,7 +165,7 @@ describe('ActiveClass: integration test', () => {
         })
 
         it('throws an error when the `create` method is tried without a database connection', () => {
-          expect(Player.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow('Failed to create Player. Could not connect to your Firebase database. This might be because you have not initialized your Firebase app')
+          expect(Player.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow('Could not create Player. Could not connect to your Firebase database. This might be because you have not initialized your Firebase app')
         })
 
         it('throws an error when a type is set to a non-schema compatible value', () => {
