@@ -49,9 +49,8 @@ function withOnChangeListener<Schema extends RecordSchema>({
         ? err.why
         : err.message
 
-      throw new ActiveClassError({
-        what: `${this.constructor.name} could not accept the value '${val}' (${typeof val}) at path '${path}'`,
-        why
+      throw ActiveClassError.from(err, {
+        what: `${this.constructor.name} could not accept the value '${val}' (${typeof val}) at path '${path}'`
       })
     }
 

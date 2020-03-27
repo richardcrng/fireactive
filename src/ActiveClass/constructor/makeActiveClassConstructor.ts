@@ -71,12 +71,8 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
     try {
       checkAgainstSchema(true)
     } catch (err) {
-      const why = err instanceof ActiveClassError
-        ? err.why
-        : err.message
-      throw new ActiveClassError({
-        what: `Could not construct ${this.constructor.name}`,
-        why
+      throw ActiveClassError.from(err, {
+        what: `Could not construct ${this.constructor.name}`
       })
     }
 

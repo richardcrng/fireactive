@@ -44,12 +44,8 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
       await record.ref().set({ ...props, _id })
       return record
     } catch (err) {
-      const why = err instanceof ActiveClassError
-        ? err.why
-        : err.message
-      throw new ActiveClassError({
-        what: `Failed to create ${this.name}`,
-        why
+      throw ActiveClassError.from(err, {
+        what: `Failed to create ${this.name}`
       })
     }
   }
