@@ -90,5 +90,5 @@ await User.create({ role: 'admin' })
 // => ActiveClassError: Could not create User. The required property 'name' is missing
 
 await User.create({ name: 'Meg', role: 'superuser' })
-// => Error: Could not create User. The property 'role' is of the wrong type
+// => ActiveClassError: Could not create User. The property 'role' is of the wrong type
 ```
