@@ -28,7 +28,12 @@ describe('Usage', () => {
 
   const { databaseURL } = testDatabase()
 
-  initialize({ databaseURL })
+  const app = initialize({ databaseURL })
+
+  afterAll(async (done) => {
+    await app.delete()
+    done()
+  })
 
   test('Instantiating an `ActiveClass`', async (done) => {
     const moll = await User.create({ name: 'Moll', role: 'basic' })
