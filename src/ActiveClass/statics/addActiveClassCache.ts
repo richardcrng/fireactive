@@ -8,7 +8,7 @@ const addActiveClassCache = <Schema extends RecordSchema>(
   ActiveClass: ActiveClass<Schema>
 ): void => {
   const updateCacheFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {
-    ActiveClass.cached = snapshot.val() as FirebaseTable<Schema>
+    ActiveClass.cached = snapshot.val() || {} as FirebaseTable<Schema>
   }
 
   ActiveClass.cache = async function (listenForUpdates = true): Promise<FirebaseTable<Schema>> {
