@@ -8,7 +8,7 @@ import { SyncOpts } from "../../types/sync.types";
  */
 const addActiveClassInstances = <Schema extends RecordSchema>(
   ActiveClass: ActiveClass<Schema>,
-  scoped: { schema: Schema, tableName: string }
+  scoped: { schema: Schema }
 ): void => {
 
   ActiveClass.prototype.getId = function(): string {

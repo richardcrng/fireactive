@@ -10,7 +10,7 @@ describe('Usage', () => {
     isVerified: Schema.boolean({ default: false }) // defaults to 'false'
   }
 
-  class User extends ActiveClass('User', userSchema) {
+  class User extends ActiveClass(userSchema) {
     /*
       User will inherit ActiveClass methods,
         prototype and static.

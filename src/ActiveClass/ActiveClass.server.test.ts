@@ -12,7 +12,7 @@ describe('ActiveClass: with server connection', () => {
     name: Schema.string,
     age: Schema.number
   }
-  const Player = ActiveClass('Player', playerSchema)
+  class Player extends ActiveClass(playerSchema) {}
   let player: InstanceType<typeof Player>
 
   const superheroSchema = {
@@ -30,7 +30,7 @@ describe('ActiveClass: with server connection', () => {
     },
     collectibles: Schema.indexed.boolean
   }
-  const SuperHero = ActiveClass('SuperHero', superheroSchema)
+  class SuperHero extends ActiveClass(superheroSchema) {}
   let superHero: InstanceType<typeof SuperHero>
 
   let dbVals: any
@@ -286,7 +286,7 @@ describe('ActiveClass: with server connection', () => {
           votingFor: Schema.string({ required: false }),
         }
 
-        const Player = ActiveClass('Player', playerSchema)
+        class Player extends ActiveClass(playerSchema) {}
 
         await Player.ref().set(null)
 

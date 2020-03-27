@@ -49,7 +49,7 @@ const userSchema = {
   isVerified: Schema.boolean({ default: false }) // defaults to 'false'
 }
 
-export class User extends ActiveClass('User', userSchema) {
+export class User extends ActiveClass(userSchema) {
   /*
     User will inherit ActiveClass methods,
       prototype and static.
