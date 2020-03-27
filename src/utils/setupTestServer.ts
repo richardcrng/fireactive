@@ -1,11 +1,15 @@
 import FirebaseServer from 'firebase-server'
 import initialize from '../initialize';
 
-function setupTestServer() {
+export const testDatabase = () => {
   const server = new FirebaseServer(0, 'localhost')
-  const firebaseConfig = {
-    databaseURL: `ws://localhost:${server.getPort()}`
-  }
+  const databaseURL = `ws://localhost:${server.getPort()}`
+  return { server, databaseURL }
+}
+
+function setupTestServer() {
+  const { server, databaseURL } = testDatabase()
+  const firebaseConfig = { databaseURL }
   const app = initialize(firebaseConfig)
   const db = app.database()
 
