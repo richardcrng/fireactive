@@ -5,6 +5,7 @@ import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/sche
 import checkPrimitive from './checkPrimitive';
 import withOnChangeListener from './withOnChangeListener';
 import setupSyncing from './setupSyncing';
+import ActiveClassError from '../Error/ActiveClassError';
 
 /**
  * Creates a constructor function for a `RecordModel<Schema>`
@@ -21,7 +22,8 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
    */
   function constructActiveClass (
     this: ActiveRecord<Schema>,
-    props: ToCreateRecord<Schema> & { _id?: string }
+    // @ts-ignore : allow instantiation with no argument
+    props: ToCreateRecord<Schema> & { _id?: string } = {}
   ) {
     
     // assign initial props
@@ -66,7 +68,17 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
       })
     }
 
-    checkAgainstSchema(true)
+    try {
+      checkAgainstSchema(true)
+    } catch (err) {
+      const why = err instanceof ActiveClassError
+        ? err.why
+        : err.message
+      throw new ActiveClassError({
+        what: `Could not construct ${this.constructor.name}`,
+        why
+      })
+    }
 
     // @ts-ignore : possibly infinitely deep :(
     const { pendingSetters } = setupSyncing({ record, checkAgainstSchema })

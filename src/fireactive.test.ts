@@ -28,7 +28,7 @@ describe('ActiveClass', () => {
 
       test("AND an error is thrown if required fields are not passed", () => {
         // @ts-ignore : checking for an error
-        expect(() => new Player({ age: 3 })).toThrow(/missing the required property/)
+        expect(() => new Player({ age: 3 })).toThrow("The required property 'name' is missing")
       })
 
       test("AND an error is thrown if a field is passed of the wrong type", () => {

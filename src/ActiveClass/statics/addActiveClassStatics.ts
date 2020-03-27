@@ -2,6 +2,7 @@ import { whereEq } from 'ramda'
 import { ActiveClass, ActiveRecord } from "../../types/class.types";
 import { getFirebaseDatabase } from "../../initialize/initialize";
 import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
+import ActiveClassError from '../Error/ActiveClassError';
 
 /**
  * Adds default class methods and properties onto the `ActiveClass`
@@ -36,11 +37,21 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
 
   // main
   ActiveClass.create = async function (props): Promise<ActiveRecord<Schema>> {
-    const record = new this({ ...props })
-    const _id = record.getId()
-    record.syncOpts({ fromDb: true, toDb: true }) // sync by default when using `create`
-    await record.ref().set({ ...props, _id })
-    return record
+    try {
+      const record = new this({ ...props })
+      const _id = record.getId()
+      record.syncOpts({ fromDb: true, toDb: true }) // sync by default when using `create`
+      await record.ref().set({ ...props, _id })
+      return record
+    } catch (err) {
+      const why = err instanceof ActiveClassError
+        ? err.why
+        : err.message
+      throw new ActiveClassError({
+        what: `Failed to create ${this.name}`,
+        why
+      })
+    }
   }
 
   ActiveClass.delete = async function(props): Promise<number> {
