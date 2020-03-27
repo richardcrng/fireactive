@@ -9,6 +9,7 @@
     "build:types": "tsc",
     "prepublishOnly": "npm run build",
     "test": "jest --runInBand --watch",
+    "tests": "jest --runInBand --detectOpenHandles",
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch"
   },
