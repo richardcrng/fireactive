@@ -2,6 +2,7 @@ import { get, set } from 'lodash'
 import { ActiveRecord } from '../../types/class.types'
 import { RecordSchema } from '../../types/schema.types';
 import { FieldIdentifier } from '../../types/field.types';
+import ActiveClassError from '../Error/ActiveClassError';
 
 interface A<Schema extends RecordSchema> {
   schema: Schema,
@@ -12,6 +13,9 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
   schema,
   schemaKeyPath
 }: A<Schema>) {
+
+  const defaultErrorWhat = `Could not set or update ${this.constructor.name}`
+
   /**
    * Check the current value at the current schema key path.
    *  Wrap in a function as we don't want to only retrieve
@@ -27,7 +31,10 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
   }
 
   if (get(schemaFieldDef, 'required') && typeof currentValAtPath() === 'undefined') {
-    throw new Error(`Failed to instantiate or update ${this.constructor.name}: missing the required property '${schemaKeyPath.join('.')}'`)
+    throw new ActiveClassError({
+      what: defaultErrorWhat,
+      why: `The required property '${schemaKeyPath.join('.')}' is missing`
+    })
   }
 
   if (currentValAtPath() == null) {
@@ -64,7 +71,10 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
     }
 
     if (!doesMatch) {
-      throw new Error(`Failed to instantiate or update ${this.constructor.name}: property ${schemaKeyPath.join('.')} is of the wrong type`)
+      throw new ActiveClassError({
+        what: defaultErrorWhat,
+        why: `The property '${schemaKeyPath.join('.')}' is of the wrong type`
+      })
     }
   }
 }

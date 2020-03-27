@@ -5,6 +5,7 @@ import { remove, set, unset } from 'lodash'
 import onChange from 'on-change'
 import { ActiveRecord } from '../../types/class.types'
 import { RecordSchema } from '../../types/schema.types'
+import ActiveClassError from '../Error/ActiveClassError'
 
 interface KWArgs<Schema extends RecordSchema> {
   record: ActiveRecord<Schema>,
@@ -44,7 +45,10 @@ function withOnChangeListener<Schema extends RecordSchema>({
       } else {
         set(this, path, prevVal)
       }
-      throw err
+
+      throw ActiveClassError.from(err, {
+        what: `${this.constructor.name} could not accept the value '${val}' (${typeof val}) at path '${path}'`
+      })
     }
 
     if (record.syncOpts().toDb) {

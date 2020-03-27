@@ -1,5 +1,6 @@
 import ActiveClass from '.';
 import Schema from '../Schema';
+import ActiveClassError from './Error/ActiveClassError';
 
 describe('ActiveClass: creating an ActiveClass', () => {
   const className = 'Car'
@@ -10,12 +11,27 @@ describe('ActiveClass: creating an ActiveClass', () => {
   }
   const BaseCar = ActiveClass(className, schema)
 
-  it('created class knows its name', () => {
-    expect(BaseCar.name).toBe(className)
+  describe('happy creation path', () => {
+    it('created class knows its name', () => {
+      expect(BaseCar.name).toBe(className)
+    })
+
+    it('created class knows its database key', () => {
+      expect(BaseCar.key).toBe(`${className}s`)
+    })
   })
 
-  it('created class knows its database key', () => {
-    expect(BaseCar.key).toBe(`${className}s`)
+  describe('sad creation path', () => {
+    it('throws an error when missing required properties', () => {
+      expect.assertions(2)
+      try {
+        // @ts-ignore
+        new BaseCar({})
+      } catch (err) {
+        expect(err).toBeInstanceOf(ActiveClassError)
+        expect(err.message).toMatch(`Could not construct ${className}. The required property 'brand' is missing`)
+      }
+    })
   })
 
   describe('.toObject', () => {
@@ -134,31 +150,28 @@ describe('ActiveClass: integration test', () => {
 
       describe('sad path', () => {
         it('throws an error when an implicitly required field is not supplied', () => {
-          expect.assertions(4)
+          expect.assertions(1)
           try {
             // @ts-ignore : checking static type error leads to creation error
             new Player({ isCool: true })
           } catch (err) {
-            expect(err.message).toMatch(/instantiate/)
-            expect(err.message).toMatch(/Player/)
-            expect(err.message).toMatch(/required/)
-            expect(err.message).toMatch(/'name'/)
+            expect(err.message).toMatch(`Could not construct Player. The required property 'name' is missing`)
           }
         })
 
         it('throws an error when fields supplied are of wrong type', () => {
           // @ts-ignore : checking static type error leads to creation error
-          expect(() => new Player({ name: 4, age: 4, isCool: true })).toThrow(/type/)
+          expect(() => new Player({ name: 4, age: 4, isCool: true })).toThrow(`Could not construct Player. The property 'name' is of the wrong type`)
         })
 
         it('throws an error when the `create` method is tried without a database connection', () => {
-          expect(Player.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow(/connect/)
+          expect(Player.create({ name: 'Pedro', age: 3, isCool: true })).rejects.toThrow('Failed to create Player. Could not connect to your Firebase database. This might be because you have not initialized your Firebase app')
         })
 
         it('throws an error when a type is set to a non-schema compatible value', () => {
           const player = new Player({ name: 'Pedro', age: 4 })
           // @ts-ignore : check static error -> runtime error
-          expect(() => { player.age = 'four' }).toThrow(/type/)
+          expect(() => { player.age = 'four' }).toThrow("Player could not accept the value 'four' (string) at path 'age'. The property 'age' is of the wrong type")
           expect(player.age).not.toBe('four')
         })
       })
