@@ -21,7 +21,8 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
   }
 
   ActiveClass.ref = function(path?: string): firebase.database.Reference {
-    const tableRef = this.getDb().ref(this.key)
+    const db = this.getDb()
+    const tableRef = db.ref(this.key)
     return path
       ? tableRef.child(path)
       : tableRef
