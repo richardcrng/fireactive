@@ -87,8 +87,15 @@ moll.role // => 'admin'
 ### Type safety
 ```js
 await User.create({ role: 'admin' })
-// => ActiveClassError: Could not create User. The required property 'name' is missing
+// => ActiveClassError: Could not create User.
+//      The required property 'name' is missing
 
 await User.create({ name: 'Meg', role: 'superuser' })
-// => ActiveClassError: Could not create User. The property 'role' is of the wrong type
+// => ActiveClassError: Could not create User.
+//      The property 'role' is of the wrong type
+
+await moll.role = 'superuser'
+// => ActiveClassError: User could not accept the value
+//      "superuser" (string) at path 'role'. The
+//      propety 'role' is of the wrong type
 ```
