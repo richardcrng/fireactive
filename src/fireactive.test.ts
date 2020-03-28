@@ -3,7 +3,6 @@ import setupTestServer from './utils/setupTestServer'
 
 describe('ActiveClass', () => {
   describe("GIVEN a model name of 'players' and a schema", () => {
-    const modelName = 'player'
     const schema = {
       name: Schema.string,
       age: Schema.number,
