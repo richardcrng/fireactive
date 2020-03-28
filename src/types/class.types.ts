@@ -175,6 +175,20 @@ export interface ActiveClass<S extends RecordSchema> {
   findOne(props: Partial<ObjectFromRecord<S>>): Promise<ActiveRecord<S> | null>,
 
   /**
+   * Create an `ActiveRecord` from some props, such that it
+   *  is syncing to and from the database.
+   * 
+   * This is equivalent to using the `new` constructor
+   *  (except an `_id` **must** be provided) and immediately
+   *  turning on syncing to and from the database (hence
+   *  why `_id` is necessary).
+   * 
+   * @param props 
+   * @returns the `ActiveRecord`
+   */
+  from(props: ObjectFromRecord<S> & { _id: string }): ActiveRecord<S>,
+
+  /**
    * Return the Firebase Real-Time Database instance and interface
    * @returns `firebase.database.Database`
    */
