@@ -1,6 +1,6 @@
 {
   "name": "fireactive",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Realtime, strongly-typed ODM for Firebase Realtime Database",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
     "test": "jest --runInBand --watch",
     "tests": "jest --runInBand --detectOpenHandles",
     "type-check": "tsc --noEmit",
-    "type-check:watch": "npm run type-check -- --watch"
+    "type-check:watch": "npm run type-check --watch"
   },
   "author": "Richard Ng",
   "license": "MIT",
