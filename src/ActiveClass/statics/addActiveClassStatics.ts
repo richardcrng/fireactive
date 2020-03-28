@@ -46,9 +46,8 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
   ActiveClass.create = async function (props): Promise<ActiveRecord<Schema>> {
     try {
       const record = new this({ ...props })
-      const _id = record.getId()
       record.syncOpts({ fromDb: true, toDb: true }) // sync by default when using `create`
-      await record.ref().set({ ...props, _id })
+      await record.ref().set(record.toObject())
       return record
     } catch (err) {
       throw ActiveClassError.from(err, {
