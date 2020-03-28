@@ -11,7 +11,7 @@
     "test": "jest --runInBand --watch",
     "tests": "jest --runInBand --detectOpenHandles",
     "type-check": "tsc --noEmit",
-    "type-check:watch": "npm run type-check -- --watch"
+    "type-check:watch": "npm run type-check --watch"
   },
   "author": "Richard Ng",
   "license": "MIT",
