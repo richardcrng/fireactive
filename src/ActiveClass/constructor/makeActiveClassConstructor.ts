@@ -18,9 +18,9 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
   className?: string
 ) => {
   /**
-   * A constructor function for a Fireactive Base Class.
+   * A constructor function for a Fireactive `ActiveRecord`.
    */
-  function constructActiveClass (
+  function ActiveRecord (
     this: ActiveRecord<Schema>,
     // @ts-ignore : allow instantiation with no argument
     props: ToCreateRecord<Schema> & { _id?: string } = {}
@@ -91,10 +91,10 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
    */
 
   if (className) {
-    Object.defineProperty(constructActiveClass, 'name', { value: className })
+    Object.defineProperty(ActiveRecord, 'name', { value: className })
   }
   
-  Object.defineProperty(constructActiveClass, 'key', {
+  Object.defineProperty(ActiveRecord, 'key', {
     get(this: ActiveClass<Schema>) {
       return plural(this.name)
     }
@@ -102,7 +102,7 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
 
   
 
-  return constructActiveClass
+  return ActiveRecord
 }
 
 export default makeActiveClassConstructor
