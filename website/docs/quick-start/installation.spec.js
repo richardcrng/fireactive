@@ -1,4 +1,5 @@
-const { ActiveClass, Schema, initialize, testDatabase } = require('../../../src/');
+const { ActiveClass, Schema, initialize } = require('../../../src/');
+const { testDatabase } = require('../../../src/utils/setupTestServer');
 const ActiveClassError = require('../../../src/ActiveClass/Error/ActiveClassError').default
 
 describe('Usage', () => {
