@@ -5,23 +5,25 @@ import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/sche
 import checkPrimitive from './checkPrimitive';
 import withOnChangeListener from './withOnChangeListener';
 import setupSyncing from './setupSyncing';
+import ActiveClassError from '../Error/ActiveClassError';
 
 /**
  * Creates a constructor function for a `RecordModel<Schema>`
  * 
- * @param className - The name of the model, used as a basis for the Firebase table name
  * @param schema - The schema that the model uses
+ * @param className - The name of the model, used as a basis for the Firebase table name
  */
 const makeActiveClassConstructor = <Schema extends RecordSchema>(
-  className: string,
-  schema: Schema
+  schema: Schema,
+  className?: string
 ) => {
   /**
    * A constructor function for a Fireactive Base Class.
    */
   function constructActiveClass (
     this: ActiveRecord<Schema>,
-    props: ToCreateRecord<Schema> & { _id?: string }
+    // @ts-ignore : allow instantiation with no argument
+    props: ToCreateRecord<Schema> & { _id?: string } = {}
   ) {
     
     // assign initial props
@@ -42,7 +44,7 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
     const iterativelyCheckAgainstSchema = (schemaKeyPath: string[]) => {
       if (schemaFieldIdentified(schemaKeyPath)) {
         // @ts-ignore : infinitely deep :(
-        checkPrimitive.bind(this)({ schema, schemaKeyPath, className })
+        checkPrimitive.bind(this)({ schema, schemaKeyPath })
       } else {
         // probably an object
         if (typeof get(this, schemaKeyPath) === 'undefined') {
@@ -66,7 +68,13 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
       })
     }
 
-    checkAgainstSchema(true)
+    try {
+      checkAgainstSchema(true)
+    } catch (err) {
+      throw ActiveClassError.from(err, {
+        what: `Could not construct ${this.constructor.name}`
+      })
+    }
 
     // @ts-ignore : possibly infinitely deep :(
     const { pendingSetters } = setupSyncing({ record, checkAgainstSchema })
@@ -81,7 +89,11 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
    *  Not sure why, but seems plausible that it might happen, e.g. to
    *  deliberately change which database is used.
    */
-  Object.defineProperty(constructActiveClass, 'name', { value: className })
+
+  if (className) {
+    Object.defineProperty(constructActiveClass, 'name', { value: className })
+  }
+  
   Object.defineProperty(constructActiveClass, 'key', {
     get(this: ActiveClass<Schema>) {
       return plural(this.name)

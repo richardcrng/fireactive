@@ -1,4 +1,4 @@
-import firebase from 'firebase'
+import firebase from 'firebase/app'
 import { FirebaseConfig } from "../types/firebase.types"
 
 let app: firebase.app.App
@@ -12,7 +12,7 @@ export default function initialize(config: Partial<FirebaseConfig>) {
 
 export const getFirebaseApp = (): firebase.app.App => {
   if (!app) {
-    throw new Error("Cannot find a Firebase app. Try calling fireactive.initialize to initialize your app. If that still doesn't work... 🤷")
+    throw new Error("Cannot find a Firebase app. Try calling Fireactive.initialize to initialize your app. If that still doesn't work... 🤷")
   }
   return app
 }
@@ -23,6 +23,6 @@ export const getFirebaseDatabase = (): firebase.database.Database => {
     }
     return realtimeDatabase
   } catch (err) {
-    throw new Error('Could not connect to your Firebase database. This might be because you have not initialized your Firebase app. Try calling fireactive.initialize')
+    throw new Error('Could not connect to your Firebase database. This might be because you have not initialized your Firebase app. Try calling Fireactive.initialize')
   }
 }

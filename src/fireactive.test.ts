@@ -14,7 +14,7 @@ describe('ActiveClass', () => {
     }
 
     describe("WHEN the model name and schema are passed to record", () => {
-      const Player = ActiveClass(modelName, schema)
+      class Player extends ActiveClass(schema) {}
 
       test("THEN the result is a class that can create new instances", () => {
         const player = new Player({ name: 'Pedro', age: 3, isCool: true })
@@ -28,7 +28,7 @@ describe('ActiveClass', () => {
 
       test("AND an error is thrown if required fields are not passed", () => {
         // @ts-ignore : checking for an error
-        expect(() => new Player({ age: 3 })).toThrow(/missing the required property/)
+        expect(() => new Player({ age: 3 })).toThrow("The required property 'name' is missing")
       })
 
       test("AND an error is thrown if a field is passed of the wrong type", () => {

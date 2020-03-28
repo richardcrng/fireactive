@@ -208,4 +208,8 @@ export interface ActiveClass<S extends RecordSchema> {
    * @returns the updated `ActiveRecord` if there is one, or `null` otherwise
    */
   updateOne(props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<ActiveRecord<S> | null>,
+
+
+  value(props: Partial<ObjectFromRecord<S>>): Promise<ObjectFromRecord<S> | null>
+  values(props?: Partial<ObjectFromRecord<S>>): Promise<ObjectFromRecord<S>[]>,
 }

@@ -1,7 +1,7 @@
 {
   "name": "fireactive",
-  "version": "0.1.0",
-  "description": "An ORM for Firebase Real-Time Database",
+  "version": "0.1.6",
+  "description": "Realtime, strongly-typed ODM for Firebase Realtime Database",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -9,6 +9,7 @@
     "build:types": "tsc",
     "prepublishOnly": "npm run build",
     "test": "jest --runInBand --watch",
+    "tests": "jest --runInBand --detectOpenHandles",
     "type-check": "tsc --noEmit",
     "type-check:watch": "npm run type-check -- --watch"
   },
@@ -21,7 +22,6 @@
     "@types/pluralize": "0.0.29",
     "@types/ramda": "^0.26.43",
     "@types/ws": "^7.2.3",
-    "firebase-server": "^1.1.0",
     "jest": "^25.1.0",
     "ts-jest": "^25.2.1",
     "typescript": "^3.5.3",
@@ -29,7 +29,8 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
-    "firebase": "^7.9.3",
+    "firebase": "^7.12.0",
+    "firebase-server": "^1.1.0",
     "lodash": "^4.17.15",
     "on-change": "^1.8.1",
     "pluralize": "^8.0.0",
