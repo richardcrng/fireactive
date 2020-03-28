@@ -1,4 +1,5 @@
 import firebase from 'firebase/app'
+import 'firebase/database'
 import { FirebaseConfig } from "../types/firebase.types"
 
 let app: firebase.app.App
