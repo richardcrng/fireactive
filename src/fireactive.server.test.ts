@@ -1,5 +1,6 @@
 import { ActiveClass, Schema, initialize } from './fireactive'
 import 'dotenv/config'
+import sleep from './utils/sleep'
 
 const schema = {
   name: Schema.string,
@@ -57,6 +58,7 @@ describe('CRUD', () => {
     describe('syncing', () => {
       it('fromDb is on by default', async (done) => {
         await player.ref().update({ children: 5 })
+        await sleep(200)
         expect(player.children).toBe(5)
         done()
       })
