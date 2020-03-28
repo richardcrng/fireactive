@@ -52,4 +52,20 @@ describe('Creating an entry', () => {
     expect(playerInDb.parents).toBeUndefined()
     done()
   })
+
+  describe('syncing', () => {
+    it('fromDb is on by default', async (done) => {
+      await player.ref().update({ children: 5 })
+      expect(player.children).toBe(5)
+      done()
+    })
+
+    it('toDb is on by default', async (done) => {
+      player.parents = 1
+      await player.pendingSetters()
+      const parentsSnapshot = await player.ref('parents').once('value')
+      expect(parentsSnapshot.val()).toBe(1)
+      done()
+    })
+  })
 })
