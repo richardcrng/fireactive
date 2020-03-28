@@ -12,6 +12,13 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
 ): void => {
 
   // utilities
+  ActiveClass.from = function(props) {
+    // @ts-ignore
+    const record = new this(props)
+    record.syncOpts({ fromDb: true, toDb: true })
+    return record
+  }
+
   ActiveClass.getDb = function () {
     const database = getFirebaseDatabase()
     if (!database) {
@@ -81,19 +88,20 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
   ActiveClass.find = async function(props): Promise<ActiveRecord<Schema>[]> {
     const matchingVals = await this.values(props)
     // @ts-ignore
-    return matchingVals.map(props => new this(props))
+    return matchingVals.map(props => {
+      // @ts-ignore
+      return this.from(props)
+    })
   }
 
   ActiveClass.findById = async function(id: string): Promise<ActiveRecord<Schema> | null> {
-    const db = this.getDb()
-
     if (!id) return null
 
     const snapshotAtId = await this.ref(id).once('value')
     const valAtId = snapshotAtId.val()
     if (valAtId) {
-      const player = new this(valAtId)
-      return player
+      // @ts-ignore
+      return this.from(valAtId)
     } else {
       return null
     }
@@ -103,7 +111,7 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     const firstMatch = await this.value(props)
     if (!firstMatch) return null
     // @ts-ignore
-    return new this(firstMatch)
+    return this.from(firstMatch)
   }
 
   ActiveClass.update = async function(props, newProps): Promise<ActiveRecord<Schema>[]> {
@@ -112,8 +120,10 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     await Promise.all(updatedVals.map(async (val) => {
       if (val._id) await this.ref(val._id).update(newProps)
     }))
-    // @ts-ignore
-    return updatedVals.map(val => new this(val))
+    return updatedVals.map(val => {
+      // @ts-ignore
+      return this.from(val)
+    })
   }
 
   ActiveClass.updateOne = async function (props, newProps): Promise<ActiveRecord<Schema> | null> {
@@ -122,7 +132,7 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     const updatedMatch = { ...firstMatch, ...newProps }
     if (firstMatch && firstMatch._id) await this.ref(firstMatch._id).update(newProps)
     // @ts-ignore
-    return new this(updatedMatch)
+    return this.from(updatedMatch)
   }
 }
 

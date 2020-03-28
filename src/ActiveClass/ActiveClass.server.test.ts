@@ -13,7 +13,7 @@ describe('ActiveClass: with server connection', () => {
     age: Schema.number
   }
   class Player extends ActiveClass(playerSchema) {}
-  let player: InstanceType<typeof Player>
+  let player: Player
 
   const superheroSchema = {
     allies: {
@@ -31,7 +31,7 @@ describe('ActiveClass: with server connection', () => {
     collectibles: Schema.indexed.boolean
   }
   class SuperHero extends ActiveClass(superheroSchema) {}
-  let superHero: InstanceType<typeof SuperHero>
+  let superHero: SuperHero
 
   let dbVals: any
 
