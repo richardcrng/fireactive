@@ -329,21 +329,38 @@ describe('ActiveClass: with server connection', () => {
     describe('#findOne', () => {
       const createDataOne = { name: 'Billybo', age: 29 }
       const createDataTwo = { name: 'Cassanda', age: 29 }
+      let idOne: string
+      let playerOne: Player
       beforeAll(async (done) => {
-        await pushWithId(Player.ref(), createDataOne)
+        idOne = await pushWithId(Player.ref(), createDataOne)
+        await pushWithId(Player.ref(), createDataTwo)
         done()
       })
 
       it('finds the first record that matches the data', async (done) => {
-        const player = await Player.findOne({ age: 29 }) as InstanceType<typeof Player>
-        expect(player.name).toBe(createDataOne.name)
-        expect(player.name).not.toBe(createDataTwo.name)
+        playerOne = await Player.findOne({ age: 29 }) as Player
+        expect(playerOne.name).toBe(createDataOne.name)
+        expect(playerOne.name).not.toBe(createDataTwo.name)
         done()
       })
 
       it('returns null if there is no matching record', async (done) => {
         const player = await Player.findOne({ age: 30 })
         expect(player).toBeNull()
+        done()
+      })
+
+      it('syncs fromDb by default', async (done) => {
+        await playerOne.ref('name').set('Bollybi')
+        expect(playerOne.name).toBe('Bollybi')
+        done()
+      })
+
+      it('syncs toDb by default', async (done) => {
+        playerOne.age = 44
+        await playerOne.pendingSetters()
+        const snapshot = await playerOne.ref().once('value')
+        expect(snapshot.val().age).toBe(44)
         done()
       })
     })
