@@ -4,6 +4,7 @@ title: Connecting to Firebase
 sidebar_label: Connecting to Firebase
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -161,3 +162,8 @@ admins[1].name // => 'Chuck Norris'
 </JsTsTabs>
 
 There are also static methods `.findOne` or `.findById`, which return a single ActiveRecord.
+
+## Realtime syncing to and from the database
+By default, ActiveRecords created through static ActiveClass methods (like `.create`, `.find`, `.findOne`...) sync realtime changes both *to* and *from* the Firebase Realtime Database.
+
+<img alt="Fireactive Realtime Syncing" src={useBaseUrl('img/fireactive-syncing.gif')} />
