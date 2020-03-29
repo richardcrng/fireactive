@@ -102,7 +102,7 @@ However, notice that using the `new` keyword like this means that:
 - the data has not yet been inserted into the database; and that
 - by default, therefore, there is no syncing to or from the database for this `User`.
 
-We can confirm this by checking the `_id` property and using the default `.syncOpts` prototype method:
+We can confirm this by checking the `_id` property and using the default ActiveClass prototype `.syncOpts` method:
 
 <JsTsTabs>
 <TabItem value="js">
@@ -123,7 +123,7 @@ user.syncOpts() // => { fromDb: false, toDb: false }
 </TabItem>
 </JsTsTabs>
 
-Trying to save our user to the database using the default prototype `save` method will fail without initializing a connection to the Firebase Realtime Database:
+Trying to save our user to the database using the default ActiveClass prototype `.save` method will fail without initializing a connection to the Firebase Realtime Database:
 
 
 <JsTsTabs>
