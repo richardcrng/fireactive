@@ -1,7 +1,7 @@
 ---
-id: your-first-schema
-title: Your First Schema
-sidebar_label: Your first schema
+id: schema-101
+title: Schema 101
+sidebar_label: Schema 101
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
