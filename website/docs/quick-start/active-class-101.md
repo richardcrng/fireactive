@@ -24,6 +24,13 @@ export const JsTsTabs = ({ children }) => (
 
 A Fireactive ActiveClass comes with lots of convenient prototype and static methods to make it easy to create, update and sync data to and from your Firebase Realtime Database.
 
+:::tip ActiveClass? ActiveRecord?
+This documentation distinguishes between:
+
+1. An *ActiveClass*, which is an ES6 Class that extends `ActiveClass(someSchema)`; and
+2. An *ActiveRecord*, which is *instance* of some ActiveClass.
+:::
+
 ## ES6 Classes with `ActiveClass`
 
 ### Extending using your `Schema`
