@@ -2,7 +2,7 @@ import { ActiveClass } from '../../../src/'
 import ActiveClassError from '../../../src/ActiveClass/Error/ActiveClassError'
 import { userSchema } from './schema-101.spec'
 
-class User extends ActiveClass(userSchema) {
+export class User extends ActiveClass(userSchema) {
   // optionally, add your own methods, e.g.
 
   promote() {
