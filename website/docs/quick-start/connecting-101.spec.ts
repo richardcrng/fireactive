@@ -27,4 +27,11 @@ describe('Basic operations with Firebase', () => {
     expect(typeof chuck._id).toBe('string')
     done()
   })
+
+  test('Fetching data with `.find`', async (done) => {
+    const admins = await User.find({ role: 'admin' })
+    expect(admins[0].name).toBe('Richard')
+    expect(admins[1].name).toBe('Chuck Norris')
+    done()
+  })
 })

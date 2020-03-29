@@ -130,3 +130,34 @@ chuck._id // => "-JhQ76OEK_848CkIFhAq" (or similar)
 
 </TabItem>
 </JsTsTabs>
+
+### Fetching data with `.find`
+
+You can read data from your database with the static `.find` method on an ActiveClass.
+
+For example, we've created two different users who are both admins - let's retrieve them both.
+
+<JsTsTabs>
+<TabItem value="js">
+
+```js
+// `.find` returns an array of matches
+const admins = User.find({ role: 'admin' })
+admins[0].name // => 'Richard'
+admins[1].name // => 'Chuck Norris'
+```
+
+</TabItem>
+<TabItem value="ts">
+
+```ts
+// `.find` returns an array of matches
+const admins = User.find({ role: 'admin' })
+admins[0].name // => 'Richard'
+admins[1].name // => 'Chuck Norris'
+```
+
+</TabItem>
+</JsTsTabs>
+
+There are also static methods `.findOne` or `.findById`, which return a single ActiveRecord.
