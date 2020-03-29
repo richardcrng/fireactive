@@ -158,7 +158,7 @@ export type ActiveClass<S extends RecordSchema> = {
    * @param props 
    * @returns an array of `ActiveRecord<S>`
    */
-  find<ThisClass extends SomeClass = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>): Promise<InstanceType<ThisClass>[]>,
+  find<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>): Promise<InstanceType<ThisClass>[]>,
 
   /**
    * Find a single ActiveRecord in the database by id
