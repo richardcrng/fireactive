@@ -20,11 +20,14 @@ const addActiveClassStatics = <Schema extends RecordSchema, ThisClass extends Ac
   }
 
   ActiveClass.getDb = function () {
-    const database = getFirebaseDatabase()
-    if (!database) {
-      throw new Error('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
+    try {
+      const database = getFirebaseDatabase()
+      return database
+    } catch (err) {
+      throw ActiveClassError.from(err, {
+        what: `Could not find the Firebase Realtime Database for your ${this.name} data`
+      })
     }
-    return database
   }
 
   ActiveClass.ref = function(path?: string): firebase.database.Reference {
