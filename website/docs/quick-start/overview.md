@@ -55,15 +55,12 @@ const userSchema = {
   isVerified: Schema.boolean({ default: false }) // defaults to false
 }
 
-// Create an active class based on this schema
+// Create an `ActiveClass` based on this schema
 class User extends ActiveClass(userSchema) {}
 ```
 
 </TabItem>
 <TabItem value="ts">
-A lot of the typings are given by default.
-<br />
-<br />
 
 ```ts
 import { ActiveClass, Schema } from 'fireactive'
@@ -76,7 +73,7 @@ const userSchema = {
   isVerified: Schema.boolean({ default: false }) // defaults to false
 }
 
-// Create an active class based on this schema
+// Create an `ActiveClass` based on this schema
 class User extends ActiveClass(userSchema) {}
 ```
 

@@ -56,7 +56,7 @@ export class User extends ActiveClass(userSchema) {
   */
     
   //  Optionally, add further methods yourself, e.g.
-  upgrade() {
+  promote() {
     this.role = 'admin'
   }
 }
@@ -80,7 +80,7 @@ moll.age // => undefined
 moll.role // => 'basic'
 moll.isVerified // => false: uses default schema value
 
-moll.upgrade()
+moll.promote()
 moll.role // => 'admin'
 ```
 

@@ -18,7 +18,7 @@ describe('Usage', () => {
     */
 
     //  Optionally, add further methods yourself, e.g.
-    upgrade() {
+    promote() {
       this.role = 'admin'
     }
   }
@@ -46,7 +46,7 @@ describe('Usage', () => {
     expect(moll.isVerified).toBe(false)
 
     // @ts-ignore
-    moll.upgrade()
+    moll.promote()
     expect(moll.role).toBe('admin')
     done()
   })
