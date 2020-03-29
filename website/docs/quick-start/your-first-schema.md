@@ -1,7 +1,7 @@
 ---
 id: your-first-schema
-title: Your first schema
-sidebar_label: Your First Schema
+title: Your First Schema
+sidebar_label: Your first schema
 ---
 
 ## Why use a `Schema`?

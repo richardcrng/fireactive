@@ -1,6 +1,8 @@
 import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps, FirebaseTable } from "./schema.types"
 import { SyncOpts } from "./sync.types"
 
+type SomeClass<T = any> = { new(...args: any[]): T; };
+
 /**
  * An `ActiveRecord<S>` _instance_ of the `ActiveClass<S>`. 
  * This interface holds the instance methods and properties.
@@ -94,12 +96,13 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
  * 
  * @template S - a RecordSchema
  */
-export interface ActiveClass<S extends RecordSchema> {
+export type ActiveClass<S extends RecordSchema> = {
   /**
    * Create an instance of the ActiveRecord -
    *  not yet saved to the database
    */
   new(props: ToCreateRecord<S> & { _id?: string }): ActiveRecord<S>,
+
   prototype: ActiveRecord<S>,
 
   /**
@@ -128,7 +131,7 @@ export interface ActiveClass<S extends RecordSchema> {
    * @param props Properties to create the Record with
    * @returns a `Promise` that resolves into the created record
    */
-  create(props: ToCreateRecord<S> & { _id?: string }): Promise<ActiveRecord<S>>,
+  create<ThisClass extends SomeClass = ActiveClass<S>>(this: ThisClass, props: ToCreateRecord<S> & { _id?: string }): Promise<InstanceType<ThisClass>>,
 
   /**
    * Delete all `ActiveRecord`s from the database that

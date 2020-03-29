@@ -74,14 +74,14 @@ initialize({
 })
 
 // using top-level await for readability
-const moll = await User.create({ name: 'Moll', role: 'basic' })
-moll.name // => 'Moll'
-moll.age // => undefined
-moll.role // => 'basic'
-moll.isVerified // => false: uses default schema value
+const user = await User.create({ name: 'Moll', role: 'basic' })
+user.name // => 'Moll'
+user.age // => undefined
+user.role // => 'basic'
+user.isVerified // => false: uses default schema value
 
-moll.promote()
-moll.role // => 'admin'
+user.promote()
+user.role // => 'admin'
 ```
 
 ### Type safety
@@ -94,7 +94,7 @@ await User.create({ name: 'Meg', role: 'superuser' })
 // => ActiveClassError: Could not create User.
 //      The property 'role' is of the wrong type
 
-await moll.role = 'superuser'
+await user.role = 'superuser'
 // => ActiveClassError: User could not accept the value
 //      "superuser" (string) at path 'role'. The
 //      propety 'role' is of the wrong type
