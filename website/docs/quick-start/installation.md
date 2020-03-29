@@ -94,7 +94,7 @@ await User.create({ name: 'Meg', role: 'superuser' })
 // => ActiveClassError: Could not create User.
 //      The property 'role' is of the wrong type
 
-await user.role = 'superuser'
+user.role = 'superuser'
 // => ActiveClassError: User could not accept the value
 //      "superuser" (string) at path 'role'. The
 //      propety 'role' is of the wrong type
