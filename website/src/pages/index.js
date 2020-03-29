@@ -71,13 +71,16 @@ function Home() {
                 'button button--outline button--secondary button--lg',
                 styles.getStarted,
               )}
-              to={useBaseUrl('docs/doc1')}>
+              to={useBaseUrl('quick-start/overview')}>
               Get Started
             </Link>
           </div>
         </div>
       </header>
       <main>
+        <div style={{ textAlign: 'center', padding: '1em' }}>
+          <img src={useBaseUrl('img/fireactive-syncing.gif')} />
+        </div>
         {features && features.length && (
           <section className={styles.features}>
             <div className="container">
