@@ -57,7 +57,7 @@ initialize({
 
 ### Saving data with `.save`
 
-Now you have made a connection to your Firebase Realtime Database, you can [save an ActiveClass instance without throwing the error we saw before](active-class-101.md):
+Now you have made a connection to your Firebase Realtime Database, you can [save a given ActiveRecord without throwing the error we saw before](active-class-101.md):
 
 <JsTsTabs>
 <TabItem value="js">
@@ -94,7 +94,7 @@ richard._id // => "-JhLeOlGIEjaIOFHR0xd" (or similar)
 
 ### Inserting data with `.create`
 
-Rather than using the `new` operator and then separately calling `.save`, you can use `.create` to achieve both in one line:
+Rather than using the `new` operator to instantiate an ActiveRecord and then separately calling `.save`, you can use `.create` to achieve both in one line:
 
 <JsTsTabs>
 <TabItem value="js">
