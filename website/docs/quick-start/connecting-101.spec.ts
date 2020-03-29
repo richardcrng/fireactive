@@ -12,12 +12,19 @@ describe('Basic operations with Firebase', () => {
     expect(app).toBe(firebase.app())
   })
 
-  it('Saving data with `.save`', async (done) => {
-    const user = new User({ name: 'Richard', role: 'admin' })
-    expect(user._id).toBeUndefined()
-    await user.save()
-    expect(user._id).toBeDefined()
-    expect(typeof user._id).toBe('string')
+  test('Saving data with `.save`', async (done) => {
+    const richard = new User({ name: 'Richard', role: 'admin' })
+    expect(richard._id).toBeUndefined()
+    await richard.save()
+    expect(richard._id).toBeDefined()
+    expect(typeof richard._id).toBe('string')
+    done()
+  })
+
+  test('Inserting data with `.create`', async (done) => {
+    const chuck = await User.create({ name: 'Chuck Norris', role: 'admin' })
+    expect(chuck._id).toBeDefined()
+    expect(typeof chuck._id).toBe('string')
     done()
   })
 })

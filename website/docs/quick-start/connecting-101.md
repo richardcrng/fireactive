@@ -63,10 +63,10 @@ Now you have made a connection to your Firebase Realtime Database, you can [save
 <TabItem value="js">
 
 ```js
-const user = new User({ name: 'Richard', role: 'admin' })
-user._id // => undefined
-await user.save()
-user._id // => "-JhLeOlGIEjaIOFHR0xd" (or similar)
+const richard = new User({ name: 'Richard', role: 'admin' })
+richard._id // => undefined
+await richard.save()
+richard._id // => "-JhLeOlGIEjaIOFHR0xd" (or similar)
 /* 
   When our User is saved into the Firebase
     Realtime Database, it gains an `_id`
@@ -78,14 +78,54 @@ user._id // => "-JhLeOlGIEjaIOFHR0xd" (or similar)
 <TabItem value="ts">
 
 ```ts
-const user = new User({ name: 'Richard' })
-await user.save()
-user._id // => "-JhLeOlGIEjaIOFHR0xd" (or similar)
+const richard = new User({ name: 'Richard', role: 'admin' })
+richard._id // => undefined
+await richard.save()
+richard._id // => "-JhLeOlGIEjaIOFHR0xd" (or similar)
 /* 
   When our User is saved into the Firebase
     Realtime Database, it gains an `_id`
     if it didn't already have one before.
 */
+```
+
+</TabItem>
+</JsTsTabs>
+
+### Inserting data with `.create`
+
+Rather than using the `new` operator and then separately calling `.save`, you can use `.create` to achieve both in one line:
+
+<JsTsTabs>
+<TabItem value="js">
+
+```js
+/*
+  `.create` returns a promise that resolves when
+    the data has been written to the database
+*/
+const chuck = await User.create({ name: 'Chuck Norris', role: 'admin' })
+/* 
+  Our User has an `_id` because it is already
+    saved in the Firebase Realtime Database.
+*/
+chuck._id // => "-JhQ76OEK_848CkIFhAq" (or similar)
+```
+
+</TabItem>
+<TabItem value="ts">
+
+```ts
+/*
+  `.create` returns a promise that resolves when
+    the data has been written to the database
+*/
+const chuck = await User.create({ name: 'Chuck Norris', role: 'admin' })
+/* 
+  Our User has an `_id` because it is already
+    saved in the Firebase Realtime Database.
+*/
+chuck._id // => "-JhQ76OEK_848CkIFhAq" (or similar)
 ```
 
 </TabItem>
