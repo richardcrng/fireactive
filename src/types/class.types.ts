@@ -158,7 +158,7 @@ export type ActiveClass<S extends RecordSchema> = {
    * @param props 
    * @returns an array of `ActiveRecord<S>`
    */
-  find(props: Partial<ObjectFromRecord<S>>): Promise<ActiveRecord<S>[]>,
+  find<ThisClass extends SomeClass = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>): Promise<InstanceType<ThisClass>[]>,
 
   /**
    * Find a single ActiveRecord in the database by id
@@ -166,7 +166,7 @@ export type ActiveClass<S extends RecordSchema> = {
    * @param id - id of the ActiveRecord to find
    * @returns the `ActiveRecord` found, or `null` if none
    */
-  findById(id: string): Promise<ActiveRecord<S> | null>,
+  findById<ThisClass extends SomeClass = ActiveClass<S>>(this: ThisClass, id: string): Promise<InstanceType<ThisClass> | null>,
 
   /**
    * Find a single ActiveRecord in the database by
@@ -175,7 +175,7 @@ export type ActiveClass<S extends RecordSchema> = {
    * @param props 
    * @returns the `ActiveRecord` found, or `null` if no record was found
    */
-  findOne(props: Partial<ObjectFromRecord<S>>): Promise<ActiveRecord<S> | null>,
+  findOne<ThisClass extends SomeClass = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>): Promise<InstanceType<ThisClass> | null>,
 
   /**
    * Create an `ActiveRecord` from some props, such that it
@@ -189,7 +189,7 @@ export type ActiveClass<S extends RecordSchema> = {
    * @param props 
    * @returns the `ActiveRecord`
    */
-  from(props: ObjectFromRecord<S> & { _id: string }): ActiveRecord<S>,
+  from<ThisClass extends SomeClass = ActiveClass<S>>(this: ThisClass, props: ObjectFromRecord<S> & { _id: string }): InstanceType<ThisClass>,
 
   /**
    * Return the Firebase Real-Time Database instance and interface
@@ -214,7 +214,7 @@ export type ActiveClass<S extends RecordSchema> = {
    * @param updateProps - props to update
    * @returns an array of `ActiveRecord<S>` that were updated
    */
-  update(props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<ActiveRecord<S>[]>
+  update<ThisClass extends SomeClass = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<InstanceType<ThisClass>[]>
 
   /**
    * Update a single ActiveRecord in the database by
@@ -224,7 +224,7 @@ export type ActiveClass<S extends RecordSchema> = {
    * @param props 
    * @returns the updated `ActiveRecord` if there is one, or `null` otherwise
    */
-  updateOne(props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<ActiveRecord<S> | null>,
+  updateOne<ThisClass extends SomeClass = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<InstanceType<ThisClass> | null>,
 
 
   value(props: Partial<ObjectFromRecord<S>>): Promise<ObjectFromRecord<S> | null>
