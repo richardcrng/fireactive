@@ -40,7 +40,6 @@ describe('Usage', () => {
     expect(user.age).toBeUndefined()
     expect(user.role).toBe('basic')
     expect(user.isVerified).toBe(false)
-
     user.promote()
     expect(user.role).toBe('admin')
     done()
