@@ -1,14 +1,33 @@
 import firebase from 'firebase/app'
-import { initialize } from '../../../src/'
-import { User } from './active-class-101.spec'
+import { ActiveClass, Schema, initialize } from '../../../src/'
 import { testDatabase } from '../../../src/utils/setupTestServer'
 
+const userSchema = {
+  name: Schema.string,  // users must have a name
+  age: Schema.number({ optional: true }), // age is optional
+  role: Schema.enum(['admin', 'basic']), // role must be 'admin' or 'basic'
+  isVerified: Schema.boolean({ default: false }) // defaults to false
+}
+
+class User extends ActiveClass(userSchema) {
+  // optionally, add your own methods, e.g.
+
+  promote() {
+    this.role = 'admin'
+  }
+}
 
 const { databaseURL } = testDatabase()
 
+const app = initialize({ databaseURL })
+
+afterAll(async (done) => {
+  await app.delete()
+  done()
+})
+
 describe('Basic operations with Firebase', () => {
   test('connecting with `initialize`', () => {
-    const app = initialize({ databaseURL })
     expect(app).toBe(firebase.app())
   })
 

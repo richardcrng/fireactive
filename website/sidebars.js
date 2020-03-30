@@ -1,7 +1,7 @@
 module.exports = {
   someSidebar: {
     "Quick Start": [
-      'quick-start/overview',
+      'overview',
       'quick-start/installation',
       'quick-start/schema-101',
       'quick-start/active-class-101',

@@ -1,8 +1,14 @@
-import { ActiveClass } from '../../../src/'
+import { ActiveClass, Schema } from '../../../src/'
 import ActiveClassError from '../../../src/ActiveClass/Error/ActiveClassError'
-import { userSchema } from './schema-101.spec'
 
-export class User extends ActiveClass(userSchema) {
+const userSchema = {
+  name: Schema.string,  // users must have a name
+  age: Schema.number({ optional: true }), // age is optional
+  role: Schema.enum(['admin', 'basic']), // role must be 'admin' or 'basic'
+  isVerified: Schema.boolean({ default: false }) // defaults to false
+}
+
+class User extends ActiveClass(userSchema) {
   // optionally, add your own methods, e.g.
 
   promote() {
