@@ -1,6 +1,6 @@
 import { Schema } from '../../../src/'
 
-export const userSchema = {
+const userSchema = {
   name: Schema.string,  // users must have a name
   age: Schema.number({ optional: true }), // age is optional
   role: Schema.enum(['admin', 'basic']), // role must be 'admin' or 'basic'
