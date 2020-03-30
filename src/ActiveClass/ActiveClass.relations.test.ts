@@ -4,6 +4,7 @@ import pushWithId from '../utils/pushWithId';
 import setupTestServer from '../utils/setupTestServer';
 import '../utils/toEqSerialize'
 import ActiveClassError from './Error';
+import relations from './relations';
 
 const { server, db } = setupTestServer()
 
@@ -18,23 +19,20 @@ const gameSchema = {
 }
 
 class Player extends ActiveClass(playerSchema) {
-  async votingFor(): Promise<Player | null> {
-    try {
-      const target = await Player.findById(this.votingForId as string)
-      return target ? target : null
-    } catch (err) {
-      return null
-    }
-  }
+  votingFor = relations.findById(
+    'Player',
+    () => this.votingForId as string
+  )
 }
+relations.store(Player)
 
 class Game extends ActiveClass(gameSchema) {
-  async players(): Promise<Player[]> {
-    const promises = Object.keys(this.playerIds).map(id => Player.findById(id))
-    const res = await Promise.all(promises)
-    return res.filter(val => val) as Player[]
-  }
+  players = relations.findByIds(
+    'Player',
+    () => Object.keys(this.playerIds)
+  )
 }
+relations.store(Game)
 
 let richard: Player
 let rachel: Player
