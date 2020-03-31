@@ -20,22 +20,22 @@ const gameSchema = {
 }
 
 class Player extends ActiveClass(playerSchema) {
-  votingFor = relations.findById<Player, typeof Player>(
+  votingFor = relations.findById<Player, Player>(
     'Player',
     () => this.votingForId
   )
 
-  game = relations.findById<Player, typeof Game>('Game', 'gameId')
+  game = relations.findById<Player, Game>('Game', 'gameId')
 }
 relations.store(Player)
 
 class Game extends ActiveClass(gameSchema) {
-  players = relations.findByIds<Game, typeof Player>(
+  players = relations.findByIds<Game, Player>(
     'Player',
     () => Object.keys(this.playerIds)
   )
 
-  host = relations.findById<Game>(Player, 'hostId')
+  host = relations.findById<Game, Player>(Player, 'hostId')
 }
 relations.store(Game)
 

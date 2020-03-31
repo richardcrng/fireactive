@@ -1,11 +1,11 @@
 import { ClassDefinition } from "./class.types";
 
-export interface LazyHasOne<RelatingInstance, RelatedClass extends ClassDefinition> {
-  (this: RelatingInstance): Promise<InstanceType<RelatedClass> | null>
+export interface LazyHasOne<RelatingInstance, RelatedInstance> {
+  (this: RelatingInstance): Promise<RelatedInstance | null>
 }
 
-export interface LazyHasMany<RelatingInstance, RelatedClass extends ClassDefinition> {
-  (this: RelatingInstance): Promise<InstanceType<RelatedClass>[]>
+export interface LazyHasMany<RelatingInstance, RelatedInstance> {
+  (this: RelatingInstance): Promise<RelatedInstance[]>
 }
 
 export type Relatable<ThisClass extends ClassDefinition = ClassDefinition> = string | ThisClass
