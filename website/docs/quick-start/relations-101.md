@@ -190,8 +190,11 @@ class Book extends ActiveClass(bookSchema) {
    * The first type parameter is used to constrain the prop
    *  provided - e.g. 'author_id' will throw a static error,
    *  since there is no key of 'author_id' on a Book instance.
+   * 
+   * The second type parameter tells TypeScript what type
+   *  the promise will resolve with.
    */
-  author = relations.findById<Book>(Author, 'authorId')
+  author = relations.findById<Book, Author>(Author, 'authorId')
 }
 ```
 
@@ -229,7 +232,7 @@ const animalFarm = await Book.create({
 const animalFarmAuthor = await animalFarm.author()
 
 animalFarmAuthor.firstName // => 'George'
-animalFarmAuthor.secodnName = // => 'Orwell'
+animalFarmAuthor.secondName = // => 'Orwell'
 ```
 
 </TabItem>
@@ -272,6 +275,16 @@ const animalFarm = await Book.create({
 //  so executing it returns a promise
 const animalFarmAuthor = await animalFarm.author()
 
+/**
+ * If you have strictNullChecks enabled, TS
+ *  will warn that `animalFarmAuthor` is possibly
+ *  null (which is correct in general - we can't
+ *  guarantee in general at runtime that a book's
+ *  `authorId` property exists amongst Authors).
+ * 
+ * Employ your favourite strategy for dealing with
+ *  a possible null value... 
+ */ 
 animalFarmAuthor.firstName // => 'George'
 animalFarmAuthor.secodnName = // => 'Orwell'
 ```
