@@ -15,6 +15,7 @@ const playerSchema = {
 }
 
 const gameSchema = {
+  hostId: Schema.string,
   playerIds: Schema.indexed.boolean // dict of player ids
 }
 
@@ -33,6 +34,8 @@ class Game extends ActiveClass(gameSchema) {
     'Player',
     () => Object.keys(this.playerIds)
   )
+
+  host = relations.findById<typeof Game>(Player, 'hostId')
 }
 relations.store(Game)
 
@@ -48,15 +51,20 @@ test('one-to-one relationship', async (done) => {
 })
 
 test('one-to-many relationship', async (done) => {
-  const game = await Game.create({ playerIds: {
-    [richard.getId()]: true,
-    [rachel.getId()]: true
-  }})
+  const game = await Game.create({
+    hostId: rachel.getId(),
+    playerIds: {
+      [richard.getId()]: true,
+      [rachel.getId()]: true
+    }
+  })
   richard.gameId = game.getId()
   await richard.pendingSetters()
   const players = await game.players()
   expect(players).toEqSerialize([richard, rachel])
   const richardsGame = await richard.game()
   expect(richardsGame).toEqSerialize(game)
+  const host = await game.host()
+  expect(host).toEqSerialize(rachel)
   done()
 })

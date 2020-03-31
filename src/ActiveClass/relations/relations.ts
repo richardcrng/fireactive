@@ -20,7 +20,7 @@ export const store = (ActiveClass: ClassDefinition, key?: string): void => {
   classes[key || ActiveClass.name] = ActiveClass
 }
 
-export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, prop: keyof InstanceType<RelatingClass>): LazyHasOne<RelatingClass, RelatedClass>
+export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition = ClassDefinition>(related: Relatable, prop: keyof InstanceType<RelatingClass>): LazyHasOne<RelatingClass, RelatedClass>
 
 export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, cb: () => string | undefined): LazyHasOne<RelatingClass, RelatedClass>
 
