@@ -7,3 +7,5 @@ export interface LazyHasOne<RelatingClass extends ClassDefinition, RelatedClass 
 export interface LazyHasMany<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition> {
   (this: InstanceType<RelatingClass>): Promise<InstanceType<RelatedClass>[]>
 }
+
+export type Relatable<ThisClass extends ClassDefinition = ClassDefinition> = string | ThisClass

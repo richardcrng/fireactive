@@ -1,3 +1,3 @@
-import * as relations from './relations'
+import * as relations from './exports'
 
 export default relations
