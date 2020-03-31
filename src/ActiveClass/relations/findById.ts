@@ -15,7 +15,7 @@ import { LazyHasOne } from "../../types/relations.types"
  * 
  * @returns a `LazyHasOne` relation
  */
-export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition = ClassDefinition>(related: Relatable, prop: keyof InstanceType<RelatingClass>): LazyHasOne<RelatingClass, RelatedClass>
+export function findById<RelatingInstance, RelatedClass extends ClassDefinition = ClassDefinition>(related: Relatable, prop: keyof RelatingInstance): LazyHasOne<RelatingInstance, RelatedClass>
 
 /**
  * Create a `LazyHasOne` relation between a relating `ActiveClass`
@@ -29,7 +29,7 @@ export function findById<RelatingClass extends ClassDefinition, RelatedClass ext
  *
  * @returns a `LazyHasOne` relation
  */
-export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, cb: () => string | undefined): LazyHasOne<RelatingClass, RelatedClass>
+export function findById<RelatingInstance, RelatedClass extends ClassDefinition>(related: Relatable, cb: () => string | undefined): LazyHasOne<RelatingInstance, RelatedClass>
 
 /**
  * Create a `LazyHasOne` relation between a relating `ActiveClass`
@@ -43,10 +43,10 @@ export function findById<RelatingClass extends ClassDefinition, RelatedClass ext
  *
  * @returns a `LazyHasOne` relation
  */
-export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, path: string[]): LazyHasOne<RelatingClass, RelatedClass>
+export function findById<RelatingInstance, RelatedClass extends ClassDefinition>(related: Relatable, path: string[]): LazyHasOne<RelatingInstance, RelatedClass>
 
-export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, lookup: keyof InstanceType<RelatingClass> | string[] | Function): LazyHasOne<RelatingClass, RelatedClass> {
-  return async function (this: InstanceType<RelatingClass>) {
+export function findById<RelatingInstance, RelatedClass extends ClassDefinition>(related: Relatable, lookup: keyof RelatingInstance | string[] | Function): LazyHasOne<RelatingInstance, RelatedClass> {
+  return async function (this: RelatingInstance) {
     const id: string = typeof lookup === 'function' ? lookup()
       : Array.isArray(lookup) ? get(this, lookup)
         : get(this, lookup)

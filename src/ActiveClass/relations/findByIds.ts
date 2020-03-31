@@ -2,8 +2,8 @@ import { retrieve, Relatable } from "./relations"
 import { ClassDefinition, ActiveClass } from "../../types/class.types"
 import { LazyHasMany } from "../../types/relations.types"
 
-export function findByIds<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, cb: () => string[]): LazyHasMany<RelatingClass, RelatedClass> {
-  return async function (this: InstanceType<RelatingClass>) {
+export function findByIds<RelatingInstance, RelatedClass extends ClassDefinition>(related: Relatable, cb: () => string[]): LazyHasMany<RelatingInstance, RelatedClass> {
+  return async function (this: RelatingInstance) {
     const ids = cb()
     const RelatedClass = retrieve(related) as ActiveClass
     const promises = ids.map(id => RelatedClass.findById(id))
