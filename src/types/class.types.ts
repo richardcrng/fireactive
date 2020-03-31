@@ -1,7 +1,7 @@
 import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps, FirebaseTable } from "./schema.types"
 import { SyncOpts } from "./sync.types"
 
-export type ClassConstructor<T = unknown> = { new(...args: any[]): T; };
+export type ClassDefinition<T = unknown> = { new(...args: any[]): T; };
 
 /**
  * An `ActiveRecord<S>` _instance_ of the `ActiveClass<S>`. 

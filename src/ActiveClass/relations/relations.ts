@@ -1,17 +1,17 @@
 import { get } from 'lodash'
-import { ActiveClass, ClassConstructor } from "../../types/class.types";
+import { ActiveClass, ClassDefinition } from "../../types/class.types";
 
-type Relatable<ThisClass extends ClassConstructor = ClassConstructor> = string | ThisClass
+type Relatable<ThisClass extends ClassDefinition = ClassDefinition> = string | ThisClass
 
-export interface LazyHasOne<RelatingClass extends ClassConstructor, RelatedClass extends ClassConstructor> {
+export interface LazyHasOne<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition> {
   (this: InstanceType<RelatingClass>): Promise<InstanceType<RelatedClass> | null>
 }
 
-export interface LazyHasMany<RelatingClass extends ClassConstructor, RelatedClass extends ClassConstructor> {
+export interface LazyHasMany<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition> {
   (this: InstanceType<RelatingClass>): Promise<InstanceType<RelatedClass>[]>
 }
 
-const classes: { [className: string]: ClassConstructor } = {}
+const classes: { [className: string]: ClassDefinition } = {}
 
 const retrieve = <RelatedClass>(related: Relatable): RelatedClass => {
   if (typeof related !== 'string') {
@@ -23,17 +23,17 @@ const retrieve = <RelatedClass>(related: Relatable): RelatedClass => {
   }
 }
 
-export const store = (ActiveClass: ClassConstructor, key?: string): void => {
+export const store = (ActiveClass: ClassDefinition, key?: string): void => {
   classes[key || ActiveClass.name] = ActiveClass
 }
 
-export function findById<RelatingClass extends ClassConstructor, RelatedClass extends ClassConstructor>(related: Relatable, cb: () => string | undefined): LazyHasOne<RelatingClass, RelatedClass>
+export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, cb: () => string | undefined): LazyHasOne<RelatingClass, RelatedClass>
 
-export function findById<RelatingClass extends ClassConstructor, RelatedClass extends ClassConstructor>(related: Relatable, prop: string): LazyHasOne<RelatingClass, RelatedClass>
+export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, prop: string): LazyHasOne<RelatingClass, RelatedClass>
 
-export function findById<RelatingClass extends ClassConstructor, RelatedClass extends ClassConstructor>(related: Relatable, path: string[]): LazyHasOne<RelatingClass, RelatedClass>
+export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, path: string[]): LazyHasOne<RelatingClass, RelatedClass>
 
-export function findById<RelatingClass extends ClassConstructor, RelatedClass extends ClassConstructor>(related: Relatable, lookup: string | string[] | Function): LazyHasOne<RelatingClass, RelatedClass> {
+export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, lookup: string | string[] | Function): LazyHasOne<RelatingClass, RelatedClass> {
   return async function(this: InstanceType<RelatingClass>) {
     const id: string = typeof lookup === 'function' ? lookup()
       : Array.isArray(lookup) ? get(this, lookup)
@@ -48,7 +48,7 @@ export function findById<RelatingClass extends ClassConstructor, RelatedClass ex
 }
 
 
-export function findByIds<RelatingClass extends ClassConstructor, RelatedClass extends ClassConstructor>(related: Relatable, cb: () => string[]): LazyHasMany<RelatingClass, RelatedClass> {
+export function findByIds<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, cb: () => string[]): LazyHasMany<RelatingClass, RelatedClass> {
   return async function(this: InstanceType<RelatingClass>) {
     const ids = cb()
     const RelatedClass = retrieve(related) as ActiveClass
