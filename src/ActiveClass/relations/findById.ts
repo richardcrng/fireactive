@@ -15,7 +15,7 @@ import { LazyHasOne } from "../../types/relations.types"
  * 
  * @returns a `LazyHasOne` relation
  */
-export function findById<RelatingInstance, RelatedInstance>(related: Relatable, prop: keyof RelatingInstance): LazyHasOne<RelatingInstance, RelatedInstance>
+export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable, prop: keyof RelatingInstance): LazyHasOne<RelatingInstance, RelatedInstance>
 
 /**
  * Create a `LazyHasOne` relation between a relating `ActiveClass`
@@ -29,7 +29,7 @@ export function findById<RelatingInstance, RelatedInstance>(related: Relatable, 
  *
  * @returns a `LazyHasOne` relation
  */
-export function findById<RelatingInstance, RelatedInstance>(related: Relatable, cb: () => string | undefined): LazyHasOne<RelatingInstance, RelatedInstance>
+export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable, cb: () => string | undefined): LazyHasOne<RelatingInstance, RelatedInstance>
 
 /**
  * Create a `LazyHasOne` relation between a relating `ActiveClass`
@@ -43,9 +43,9 @@ export function findById<RelatingInstance, RelatedInstance>(related: Relatable, 
  *
  * @returns a `LazyHasOne` relation
  */
-export function findById<RelatingInstance, RelatedInstance>(related: Relatable, path: string[]): LazyHasOne<RelatingInstance, RelatedInstance>
+export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable, path: string[]): LazyHasOne<RelatingInstance, RelatedInstance>
 
-export function findById<RelatingInstance, RelatedInstance>(related: Relatable, lookup: keyof RelatingInstance | string[] | Function): LazyHasOne<RelatingInstance, RelatedInstance> {
+export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable, lookup: keyof RelatingInstance | string[] | Function): LazyHasOne<RelatingInstance, RelatedInstance> {
   return async function (this: RelatingInstance) {
     const id: string = typeof lookup === 'function' ? lookup()
       : Array.isArray(lookup) ? get(this, lookup)
