@@ -1,13 +1,13 @@
 import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps, FirebaseTable } from "./schema.types"
 import { SyncOpts } from "./sync.types"
 
-export type SomeClass<T = any> = { new(...args: any[]): T; };
+export type ClassConstructor<T = unknown> = { new(...args: any[]): T; };
 
 /**
  * An `ActiveRecord<S>` _instance_ of the `ActiveClass<S>`. 
  * This interface holds the instance methods and properties.
  */
-export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
+export type ActiveRecord<S extends RecordSchema = RecordSchema> = ObjectFromRecord<S> & {
   constructor: ActiveClass<S>
 
   /**
@@ -96,7 +96,7 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
  * 
  * @template S - a RecordSchema
  */
-export type ActiveClass<S extends RecordSchema> = {
+export type ActiveClass<S extends RecordSchema = RecordSchema> = {
   /**
    * Create an instance of the ActiveRecord -
    *  not yet saved to the database
