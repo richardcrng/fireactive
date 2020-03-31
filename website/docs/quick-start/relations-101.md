@@ -268,25 +268,28 @@ const orwell = await Author.create({
  */ 
 const animalFarm = await Book.create({
   title: 'Animal Farm: A Fairy Story',
-  authorId: orwell._id as string // or orwell.getId()
+  authorId: orwell._id as string // better: orwell.getId()
 })
 
 // we defined author as a LazyHasOne relation,
 //  so executing it returns a promise
 const animalFarmAuthor = await animalFarm.author()
 
+
 /**
- * If you have strictNullChecks enabled, TS
- *  will warn that `animalFarmAuthor` is possibly
- *  null (which is correct in general - we can't
- *  guarantee in general at runtime that a book's
- *  `authorId` property exists amongst Authors).
+ * If you have strictNullChecks enabled, TS will
+ *  correctly warn that `animalFarmAuthor` is possibly
+ *  null (since we can't guarantee in general at runtime
+ *  that a book's `authorId` property exists amongst
+ *  the database's Authors).
  * 
  * Employ your favourite strategy for dealing with
  *  a possible null value... 
  */ 
-animalFarmAuthor.firstName // => 'George'
-animalFarmAuthor.secodnName = // => 'Orwell'
+if (animalFarmAuthor) {
+  animalFarmAuthor.firstName // => 'George'
+  animalFarmAuthor.secondName // => 'Orwell'
+}
 ```
 
 </TabItem>
