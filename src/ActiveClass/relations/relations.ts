@@ -1,15 +1,8 @@
 import { get } from 'lodash'
 import { ActiveClass, ClassDefinition } from "../../types/class.types";
+import { LazyHasOne, LazyHasMany } from '../../types/relations.types';
 
 type Relatable<ThisClass extends ClassDefinition = ClassDefinition> = string | ThisClass
-
-export interface LazyHasOne<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition> {
-  (this: InstanceType<RelatingClass>): Promise<InstanceType<RelatedClass> | null>
-}
-
-export interface LazyHasMany<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition> {
-  (this: InstanceType<RelatingClass>): Promise<InstanceType<RelatedClass>[]>
-}
 
 const classes: { [className: string]: ClassDefinition } = {}
 
