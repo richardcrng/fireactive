@@ -22,6 +22,8 @@ export const JsTsTabs = ({ children }) => (
 
 ## Why use relations?
 
+### Flatten data in your database
+
 The official Firebase docs on **['Best practices for data structure'](https://firebase.google.com/docs/database/web/structure-data#best_practices_for_data_structure)** explicitly advise *against* nested data.
 
 Instead, Firebase recommends *'flattened'* (or 'denormalized') data structures.
@@ -111,3 +113,12 @@ This is based off the [flattened data structure example](https://firebase.google
 
 </TabItem>
 </Tabs>
+
+### Inbuilt relation helpers
+
+To make this easier, Fireactive provides *relations* to:
+- encourage best practices in normalized data; and
+- make it easier to fetch related data.
+
+
+
