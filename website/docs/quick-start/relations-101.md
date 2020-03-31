@@ -120,5 +120,166 @@ To make this easier, Fireactive provides *relations* to:
 - encourage best practices in normalized data; and
 - make it easier to fetch related data.
 
+## One-to-one (storing an id)
+
+Let's suppose we want to model a relationship between Authors and Books. For simplicity's sake, we'll assume a book only has a single Author.
+
+We'll model this by creating a way for a given Book instance to easily fetch its related Author from the database via a known `_id`.
+
+### Setup: Schemas and ActiveClasses
+
+We'll create two schemas:
+
+1. An author schema, holding first name and last name; and
+2. A book schema, holding a title and author id.
+
+<JsTsTabs>
+<TabItem value="js">
+
+```js
+import { ActiveClass, Schema, relations } from 'fireactive'
+
+const authorSchema = {
+  firstName: Schema.string,
+  lastName: Schema.string
+}
+
+const bookSchema = {
+  title: Schema.string,
+  authorId: Schema.string // this will reference an author
+}
+
+class Author extends ActiveClass(authorSchema) {}
+
+class Book extends ActiveClass(bookSchema) {
+  /**
+   * Have the `book.author` property be a `LazyHasOne`
+   *  relation from `book` (instance of `Book`) to a
+   *  specific instance of `Author`, via the `book.authorId`
+   *  property (used on `Author.findById`).
+   */
+  author = relations.findById(Author, 'authorId')
+}
+```
+
+</TabItem>
+<TabItem value="ts">
+
+```ts
+import { ActiveClass, Schema, relations } from 'fireactive'
+
+const authorSchema = {
+  firstName: Schema.string,
+  lastName: Schema.string
+}
+
+const bookSchema = {
+  title: Schema.string,
+  authorId: Schema.string // this will reference an author
+}
+
+class Author extends ActiveClass(authorSchema) {}
+
+class Book extends ActiveClass(bookSchema) {
+  /**
+   * Have the `book.author` property be a `LazyHasOne`
+   *  relation from `book` (instance of `Book`) to a
+   *  specific instance of `Author`, via the `book.authorId`
+   *  property (used on `Author.findById`).
+   * 
+   * The first type parameter is used to constrain the prop
+   *  provided - e.g. 'author_id' will throw a static error,
+   *  since there is no key of 'author_id' on a Book instance.
+   */
+  author = relations.findById<Book>(Author, 'authorId')
+}
+```
+
+</TabItem>
+</JsTsTabs>
+
+### Execution: awaiting a promise
+
+Relations are lazy by default, which means they only load the related data when explicitly required to. 
+
+<JsTsTabs>
+<TabItem value="js">
+
+```js
+import { initialize } from 'fireactive'
+import { Author, Book } from '../path/to/models' // or wherever
+
+// initialize with your own database url
+//  to use an ActiveClass's `.create` 
+initialize({ databaseURL: process.env.DATABASE_URL })
+
+// Author.create resolves when database has been written to
+const orwell = await Author.create({
+  firstName: 'George',
+  lastName: 'Orwell'
+})
+
+const animalFarm = await Book.create({
+  title: 'Animal Farm: A Fairy Story',
+  authorId: orwell._id
+})
+
+// we defined author as a LazyHasOne relation,
+//  so executing it returns a promise
+const animalFarmAuthor = await animalFarm.author()
+
+animalFarmAuthor.firstName // => 'George'
+animalFarmAuthor.secodnName = // => 'Orwell'
+```
+
+</TabItem>
+<TabItem value="ts">
+
+```ts
+import { initialize } from 'fireactive'
+import { Author, Book } from '../path/to/models' // or wherever
+
+// initialize with your own database url
+//  to use an ActiveClass's `.create` 
+initialize({ databaseURL: process.env.DATABASE_URL })
+
+// Author.create resolves when database has been written to
+const orwell = await Author.create({
+  firstName: 'George',
+  lastName: 'Orwell'
+})
 
 
+/**
+ * Note that an ActiveRecord's _id has type of
+ *  string | undefined, because it is sometimes
+ *  undefined (e.g. if you use the `new` operator
+ *  and haven't yet saved it to the database).
+ * 
+ * However, according to our bookSchema, a book *must*
+ *  have an `authorId`, which needs to be a string.
+ * 
+ * You can either cast the _id property to a string,
+ *  or alternatively use .getId() which returns a
+ *  string (or else throws a runtime error).
+ */ 
+const animalFarm = await Book.create({
+  title: 'Animal Farm: A Fairy Story',
+  authorId: orwell._id as string // or orwell.getId()
+})
+
+// we defined author as a LazyHasOne relation,
+//  so executing it returns a promise
+const animalFarmAuthor = await animalFarm.author()
+
+animalFarmAuthor.firstName // => 'George'
+animalFarmAuthor.secodnName = // => 'Orwell'
+```
+
+</TabItem>
+</JsTsTabs>
+
+
+## One-to-many (indexing)
+
+## Avoiding circular imports
