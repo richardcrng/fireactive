@@ -27,13 +27,13 @@ export const store = (ActiveClass: ClassDefinition, key?: string): void => {
   classes[key || ActiveClass.name] = ActiveClass
 }
 
-export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, cb: () => string | undefined): LazyHasOne<RelatingClass, RelatedClass>
+export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, prop: keyof InstanceType<RelatingClass>): LazyHasOne<RelatingClass, RelatedClass>
 
-export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, prop: string): LazyHasOne<RelatingClass, RelatedClass>
+export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, cb: () => string | undefined): LazyHasOne<RelatingClass, RelatedClass>
 
 export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, path: string[]): LazyHasOne<RelatingClass, RelatedClass>
 
-export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, lookup: string | string[] | Function): LazyHasOne<RelatingClass, RelatedClass> {
+export function findById<RelatingClass extends ClassDefinition, RelatedClass extends ClassDefinition>(related: Relatable, lookup: keyof InstanceType<RelatingClass> | string[] | Function): LazyHasOne<RelatingClass, RelatedClass> {
   return async function(this: InstanceType<RelatingClass>) {
     const id: string = typeof lookup === 'function' ? lookup()
       : Array.isArray(lookup) ? get(this, lookup)

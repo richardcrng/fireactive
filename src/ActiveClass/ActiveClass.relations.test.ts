@@ -23,6 +23,8 @@ class Player extends ActiveClass(playerSchema) {
     'Player',
     () => this.votingForId
   )
+
+  game = relations.findById<typeof Player, typeof Game>('Game', 'gameId')
 }
 relations.store(Player)
 
@@ -50,7 +52,11 @@ test('one-to-many relationship', async (done) => {
     [richard.getId()]: true,
     [rachel.getId()]: true
   }})
+  richard.gameId = game.getId()
+  await richard.pendingSetters()
   const players = await game.players()
   expect(players).toEqSerialize([richard, rachel])
+  const richardsGame = await richard.game()
+  expect(richardsGame).toEqSerialize(game)
   done()
 })
