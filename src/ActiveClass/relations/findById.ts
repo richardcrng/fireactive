@@ -1,6 +1,6 @@
 import { get } from 'lodash'
 import { Relatable, retrieve } from './relations'
-import { ActiveClass } from "../../types/class.types"
+import { ActiveClass, ClassDefinition } from "../../types/class.types"
 import { LazyHasOne } from "../../types/relations.types"
 
 /**
@@ -12,10 +12,12 @@ import { LazyHasOne } from "../../types/relations.types"
  * 
  * @param related The related `ActiveClass` or its name
  * @param prop The prop field 
+ * @template RelatingInstance - The instance which owns the relation
+ * @template RelatedInstance - The instance which is being related to
  * 
  * @returns a `LazyHasOne` relation
  */
-export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable, prop: keyof RelatingInstance): LazyHasOne<RelatingInstance, RelatedInstance>
+export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable<ClassDefinition<RelatedInstance>>, prop: keyof RelatingInstance): LazyHasOne<RelatingInstance, RelatedInstance>
 
 /**
  * Create a `LazyHasOne` relation between a relating `ActiveClass`
@@ -26,10 +28,12 @@ export function findById<RelatingInstance, RelatedInstance = unknown>(related: R
  *
  * @param related The related `ActiveClass` or its name
  * @param cb A function that returns a string `_id`
+ * @template RelatingInstance - The instance which owns the relation
+ * @template RelatedInstance - The instance which is being related to
  *
  * @returns a `LazyHasOne` relation
  */
-export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable, cb: () => string | undefined): LazyHasOne<RelatingInstance, RelatedInstance>
+export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable<ClassDefinition<RelatedInstance>>, cb: () => string | undefined): LazyHasOne<RelatingInstance, RelatedInstance>
 
 /**
  * Create a `LazyHasOne` relation between a relating `ActiveClass`
@@ -40,12 +44,14 @@ export function findById<RelatingInstance, RelatedInstance = unknown>(related: R
  *
  * @param related The related `ActiveClass` or its name
  * @param prop The prop field
+ * @template RelatingInstance - The instance which owns the relation
+ * @template RelatedInstance - The instance which is being related to
  *
  * @returns a `LazyHasOne` relation
  */
-export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable, path: string[]): LazyHasOne<RelatingInstance, RelatedInstance>
+export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable<ClassDefinition<RelatedInstance>>, path: string[]): LazyHasOne<RelatingInstance, RelatedInstance>
 
-export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable, lookup: keyof RelatingInstance | string[] | Function): LazyHasOne<RelatingInstance, RelatedInstance> {
+export function findById<RelatingInstance, RelatedInstance = unknown>(related: Relatable<ClassDefinition<RelatedInstance>>, lookup: keyof RelatingInstance | string[] | Function): LazyHasOne<RelatingInstance, RelatedInstance> {
   return async function (this: RelatingInstance) {
     const id: string = typeof lookup === 'function' ? lookup()
       : Array.isArray(lookup) ? get(this, lookup)

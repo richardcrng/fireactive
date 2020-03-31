@@ -35,7 +35,7 @@ class Game extends ActiveClass(gameSchema) {
     () => Object.keys(this.playerIds)
   )
 
-  host = relations.findById<Game, Player>(Player, 'hostId')
+  host = relations.findById<Game>(Player, 'hostId')
 }
 relations.store(Game)
 
