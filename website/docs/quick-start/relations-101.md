@@ -278,13 +278,13 @@ const animalFarmAuthor = await animalFarm.author()
 
 /**
  * If you have strictNullChecks enabled, TS will
- *  correctly warn that `animalFarmAuthor` is possibly
- *  null (since we can't guarantee in general at runtime
+ *  warn that `animalFarmAuthor` is possibly null
+ *  (since we can't guarantee in general at runtime
  *  that a book's `authorId` property exists amongst
  *  the database's Authors).
  * 
- * Employ your favourite strategy for dealing with
- *  a possible null value... 
+ * Using the findByIdOrFail relation will ensure
+ *  that the return value is an Author
  */ 
 if (animalFarmAuthor) {
   animalFarmAuthor.firstName // => 'George'
