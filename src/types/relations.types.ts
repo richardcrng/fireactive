@@ -4,6 +4,10 @@ export interface LazyHasOne<RelatingInstance, RelatedInstance> {
   (this: RelatingInstance): Promise<RelatedInstance | null>
 }
 
+export interface LazyHasOneOrFail<RelatingInstance, RelatedInstance> {
+  (this: RelatingInstance): Promise<RelatedInstance>
+}
+
 export interface LazyHasMany<RelatingInstance, RelatedInstance> {
   (this: RelatingInstance): Promise<RelatedInstance[]>
 }
