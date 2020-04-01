@@ -169,6 +169,15 @@ export type ActiveClass<S extends RecordSchema = RecordSchema> = {
   findById<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, id: string): Promise<InstanceType<ThisClass> | null>,
 
   /**
+   * Find a single ActiveRecord in the database by id
+   *  and throw an error if it does not exist
+   * 
+   * @param id - id of the ActiveRecord to find
+   * @returns the `ActiveRecord` found
+   */
+  findByIdOrFail<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, id: string): Promise<InstanceType<ThisClass>>,
+
+  /**
    * Find a single ActiveRecord in the database by
    *  retrieving the first that matches the passed in `props`
    * 
