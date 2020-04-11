@@ -25,6 +25,7 @@ export type FieldDefinition<T = any, R extends boolean = boolean, D extends bool
     // if not indexed, then it's number, boolean, enum or string
     : FieldOptions<T> & {
       _fieldIdentifier: T extends number ? FieldIdentifier.number
+      : T extends true ? FieldIdentifier.true
       : T extends boolean ? FieldIdentifier.boolean
       // we pass an array for an enum
       : T extends Array<infer E> ? FieldIdentifier.enum
@@ -37,7 +38,8 @@ export type FieldDefinition<T = any, R extends boolean = boolean, D extends bool
       & (T extends Array<infer E> ? { vals: E[] } : {})
 
 export type FieldType<FI, T = unknown> =
-  FI extends FieldIdentifier.boolean ? boolean
+  FI extends FieldIdentifier.true ? true
+    : FI extends FieldIdentifier.boolean ? boolean
     : FI extends boolean ? boolean
     : FI extends FieldIdentifier.number ? number
     : FI extends number ? number
@@ -54,12 +56,14 @@ export enum FieldIdentifier {
   number = 'NUMBER_FIELD_IDENTIFIER',
   boolean = 'BOOLEAN_FIELD_IDENTIFIER',
   enum = 'ENUM_FIELD_IDENTIFIER',
-  indexed = 'INDEXED_FIELD_IDENTIFIER'
+  indexed = 'INDEXED_FIELD_IDENTIFIER',
+  true = 'TRUE_FIELD_IDENTIFIER'
 }
 
 export type TypeFromIdentifier<T, U = unknown> =
   T extends FieldIdentifier.string ? string
   : T extends FieldIdentifier.number ? number
+  : T extends FieldIdentifier.true ? true
   : T extends FieldIdentifier.boolean ? boolean
   // if it's an enum, hopefully we pass along the enum values...
   : T extends FieldIdentifier.enum ? U

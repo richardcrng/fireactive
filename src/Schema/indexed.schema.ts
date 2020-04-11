@@ -29,13 +29,24 @@ const indexNumber = (): IndexedFieldDefinition<number> => ({
 })
 const indexedNumber = Object.assign(indexNumber, indexNumber())
 
+const indexTrue = (): IndexedFieldDefinition<true> => ({
+  _fieldIdentifier: FieldIdentifier.indexed,
+  indexed: {
+    _fieldIdentifier: FieldIdentifier.true,
+    _hasDefault: true,
+    required: true
+  }
+})
+const indexedTrue = Object.assign(indexTrue, indexTrue())
+
 const indexed = {
   _fieldIdentifier: FieldIdentifier.indexed,
   string: indexedString,
   boolean: indexedBoolean,
   number: indexedNumber,
   enumr: indexedEnum,
-  enum: indexedEnum
+  enum: indexedEnum,
+  true: indexedTrue
 }
 
 export default indexed

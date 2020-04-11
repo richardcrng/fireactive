@@ -114,6 +114,19 @@ const addActiveClassStatics = <Schema extends RecordSchema, ThisClass extends Ac
   }
 
   // @ts-ignore : inheritance
+  ActiveClass.findByIdOrFail = async function (id: string): Promise<ActiveRecord<Schema>> {
+    const record = await this.findById(id)
+    if (record) {
+      return record
+    } else {
+      throw new ActiveClassError({
+        what: `Could not find a ${this.name} with that id`,
+        why: `No ${this.name} with that id exists in the connected Firebase Realtime Database`
+      })
+    }
+  }
+
+  // @ts-ignore : inheritance
   ActiveClass.findOne = async function(props): Promise<ActiveRecord<Schema> | null> {
     const firstMatch = await this.value(props)
     if (!firstMatch) return null
