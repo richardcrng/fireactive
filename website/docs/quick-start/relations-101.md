@@ -130,8 +130,8 @@ We'll model this by creating a way for a given Book instance to easily fetch its
 
 We'll create two schemas:
 
-1. An author schema, holding first name and last name; and
-2. A book schema, holding a title and author id.
+1. An author schema, holding an author's first name and last name; and
+2. A book schema, holding a book's title and the id of the author who wrote it.
 
 <JsTsTabs>
 <TabItem value="js">
@@ -149,7 +149,15 @@ const bookSchema = {
   authorId: Schema.string // this will reference an author
 }
 
-class Author extends ActiveClass(authorSchema) {}
+class Author extends ActiveClass(authorSchema) {
+  /**
+   * We can optionally add our own methods, e.g.
+   *  maybe a getter / virtual property for 'name'
+   */ 
+  get name() {
+    return `${this.firstName} ${this.lastName}`
+  }
+}
 
 class Book extends ActiveClass(bookSchema) {
   /**
@@ -178,7 +186,15 @@ const bookSchema = {
   authorId: Schema.string // this will reference an author
 }
 
-class Author extends ActiveClass(authorSchema) {}
+class Author extends ActiveClass(authorSchema) {
+  /**
+   * We can optionally add our own methods, e.g.
+   *  maybe a getter / virtual property for 'name'
+   */ 
+  get name(): string {
+    return `${this.firstName} ${this.lastName}`
+  }
+}
 
 class Book extends ActiveClass(bookSchema) {
   /**
@@ -192,7 +208,9 @@ class Book extends ActiveClass(bookSchema) {
    *  since there is no key of 'author_id' on a Book instance.
    * 
    * The second type parameter tells TypeScript what type
-   *  the promise will resolve with.
+   *  the promise will resolve with. (It's not always the type
+   *  of the first argument - the API also supports passing in
+   *  the string 'Author' instead of the whole classs)
    */
   author = relations.findById<Book, Author>(Author, 'authorId')
 }
@@ -233,6 +251,186 @@ const animalFarmAuthor = await animalFarm.author()
 
 animalFarmAuthor.firstName // => 'George'
 animalFarmAuthor.secondName = // => 'Orwell'
+animalFarmAuthor.name // => 'George Orwell'
+```
+
+</TabItem>
+<TabItem value="ts">
+
+```ts
+import { initialize } from 'fireactive'
+import { Author, Book } from '../path/to/models' // or wherever
+
+// initialize with your own database url
+//  to use an ActiveClass's `.create` 
+initialize({ databaseURL: process.env.DATABASE_URL })
+
+// Author.create resolves when database has been written to
+const orwell = await Author.create({
+  firstName: 'George',
+  lastName: 'Orwell'
+})
+
+
+/**
+ * Note that an ActiveRecord's _id has type of
+ *  string | undefined, because it is sometimes
+ *  undefined (e.g. if you use the `new` operator
+ *  and haven't yet saved it to the database).
+ * 
+ * However, according to our bookSchema, a book *must*
+ *  have an `authorId`, which needs to be a string.
+ * 
+ * You can either cast the _id property to a string,
+ *  or alternatively use .getId() which returns a
+ *  string (or else throws a runtime error).
+ */ 
+const animalFarm = await Book.create({
+  title: 'Animal Farm: A Fairy Story',
+  authorId: orwell._id as string // better: orwell.getId()
+})
+
+// we defined author as a LazyHasOne relation,
+//  so executing it returns a promise
+const animalFarmAuthor = await animalFarm.author()
+
+
+/**
+ * If you have strictNullChecks enabled, TS will
+ *  warn that `animalFarmAuthor` is possibly null
+ *  (since we can't guarantee in general at runtime
+ *  that a book's `authorId` property exists amongst
+ *  the database's Authors).
+ * 
+ * Using the findByIdOrFail relation will ensure
+ *  that the return value is an Author
+ */ 
+if (animalFarmAuthor) {
+  animalFarmAuthor.firstName // => 'George'
+  animalFarmAuthor.secondName // => 'Orwell'
+  animalFarmAuthor.name // => 'George Orwell'
+}
+```
+
+</TabItem>
+</JsTsTabs>
+
+
+## One-to-many (indexing)
+
+Let's build on our previous one-to-one example by introducing Series (representing a book series). A single Series can have many books, and might have multiple authors (e.g. the 'For Dummies' series has multiple different authors depending on the topic).
+
+### Setup: Schemas and ActiveClasses
+
+We'll add one schema for a Series.
+
+A series should have a series name, as well as information about the books that it contains.
+
+Following the Firebase recommendations, we'll be storing data (in a flattened form using indexes)[#flatten-data-in-your-database].
+
+For example, rather than storing book ids as an array of strings (such as `['book01', 'book32', 'book77']`), we'll store the same information in an object where the values don't matter (so we'll just use `true` for simplicity): what matters is the presence of the keys, i.e. `{ book01: true, book32: true, book77: true }`.
+
+This makes it more efficient to check whether a given string (or id) exists, since it can just check whether the key exists (instead of iterating through the array to check each value individually).
+
+<JsTsTabs>
+<TabItem value="js">
+
+```js
+import { ActiveClass, Schema, relations } from 'fireactive'
+
+const seriesSchema = {
+  name: Schema.string,
+  bookIds: Schema.indexed.true // indexed with true as the values
+}
+
+class Series extends ActiveClass(seriesSchema) {
+  /**
+   * Have the `series.books` property be a `LazyHasMany`
+   *  relation from `series` (instance of `Series`) to a
+   *  specific instance of `Author`, via the keys of
+   *  `series.bookIds`
+   */
+  books = relations.findByIds(Book, () => Object.keys(this.bookIds))
+}
+```
+
+</TabItem>
+<TabItem value="ts">
+
+```ts
+import { ActiveClass, Schema, relations } from 'fireactive'
+
+const seriesSchema = {
+  name: Schema.string,
+  bookIds: Schema.indexed.true // indexed with true as the values
+}
+
+class Series extends ActiveClass(seriesSchema) {
+  /**
+   * Have the `series.books` property be a `LazyHasMany`
+   *  relation from `series` (instance of `Series`) to a
+   *  specific instance of `Author`, via the keys of
+   *  `series.bookIds`
+   */
+  books = relations.findByIds<Series, Book>(Book, () => Object.keys(this.bookIds))
+}
+```
+
+</TabItem>
+</JsTsTabs>
+
+### Execution: awaiting a promise
+
+Relations are lazy by default, which means they only load the related data when explicitly required to. 
+
+<JsTsTabs>
+<TabItem value="js">
+
+```js
+import { initialize } from 'fireactive'
+import { Author, Book, Series } from '../path/to/models' // or wherever
+
+// initialize with your own database url
+//  to use an ActiveClass's `.create` 
+initialize({ databaseURL: process.env.DATABASE_URL })
+
+// Author.create resolves when database has been written to
+const adamFowler = await Author.create({
+  firstName: 'Adam',
+  lastName: 'Fowler'
+})
+
+const noSqlForDummies = await Book.create({
+  title: 'NoSQL For Dummies',
+  authorId: adamFowler._id
+})
+
+const emilyVanderVeer = await Author.create({
+  firstName: 'Emily',
+  lastName: 'Vander Veer'
+})
+
+const jsForDummies = await Book.create({
+  title: 'JavaScript For Dummies',
+  authorId: emilyVanderVeer._id
+})
+
+const dummiesSeries = await Series.create({
+  name: 'For Dummies',
+  bookIds: {
+    [noSqlForDummies._id]: true,
+    [jsForDummies._id]: true
+  }
+})
+
+// we defined books as a LazyHasMany relation,
+//  so executing it returns a promise
+const dummiesBooks = await dummiesSeries.books()
+
+dummiesBooks[0].title // => 'NoSQL For Dummies'
+dummiesBooks[1].title // => 'JavaScript For Dummies'
+
+
 ```
 
 </TabItem>
@@ -294,8 +492,5 @@ if (animalFarmAuthor) {
 
 </TabItem>
 </JsTsTabs>
-
-
-## One-to-many (indexing)
 
 ## Avoiding circular imports

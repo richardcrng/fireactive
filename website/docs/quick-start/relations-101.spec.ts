@@ -12,7 +12,11 @@ const bookSchema = {
   authorId: Schema.string
 }
 
-class Author extends ActiveClass(authorSchema) { }
+class Author extends ActiveClass(authorSchema) {
+  get name(): string {
+    return `${this.firstName} ${this.lastName}`
+  }
+}
 
 class Book extends ActiveClass(bookSchema) {
   author = relations.findById<Book, Author>(Author, 'authorId')
@@ -40,10 +44,11 @@ describe('Execution: awaiting a promise', () => {
     })
 
     const animalFarmAuthor = await animalFarm.author()
-    expect.assertions(2)
+    expect.assertions(3)
     if (animalFarmAuthor) {
       expect(animalFarmAuthor.firstName).toBe('George')
       expect(animalFarmAuthor.lastName).toBe('Orwell')
+      expect(animalFarmAuthor.name).toBe('George Orwell')
     }
     done()
   })
