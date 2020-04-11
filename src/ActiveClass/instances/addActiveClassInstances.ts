@@ -2,6 +2,7 @@ import { ActiveClass } from "../../types/class.types";
 import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
 import isNull from "../../utils/isNull";
 import { SyncOpts } from "../../types/sync.types";
+import ActiveClassError from "../Error";
 
 /**
  * Adds default instance methods and properties onto the `ActiveClass`'s prototype
@@ -42,8 +43,12 @@ const addActiveClassInstances = <Schema extends RecordSchema>(
 
   ActiveClass.prototype.save = async function(): Promise<ObjectFromRecord<Schema>> {
     const valsToSet = this.toObject()
-    await this.ref().set(valsToSet)
-    return valsToSet
+    try {
+      await this.ref().set(valsToSet)
+      return valsToSet
+    } catch (err) {
+      throw ActiveClassError.from(err, { what: `Failed to save ${this.constructor.name} into database` })
+    }
   };
 
   ActiveClass.prototype.saveAndSync = async function(syncOpts?: SyncOpts): Promise<ObjectFromRecord<Schema>> {

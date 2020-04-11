@@ -48,6 +48,8 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
         doesMatch = typeof currentValAtPath() === 'string'; break
       case FieldIdentifier.number:
         doesMatch = typeof currentValAtPath() === 'number'; break
+      case FieldIdentifier.true:
+        doesMatch = currentValAtPath() === true; break
       case FieldIdentifier.boolean:
         doesMatch = typeof currentValAtPath() === 'boolean'; break
       case FieldIdentifier.enum:
@@ -61,6 +63,8 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
               return typeof val === 'string'
             case FieldIdentifier.number:
               return typeof val === 'number'
+            case FieldIdentifier.true:
+              return val === true
             case FieldIdentifier.boolean:
               return typeof val === 'boolean'
             case FieldIdentifier.enum:

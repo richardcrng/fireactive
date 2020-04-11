@@ -326,6 +326,34 @@ describe('ActiveClass: with server connection', () => {
       })
     })
 
+    describe('#findByIdOrFail', () => {
+      const createData = { name: 'Alfred', age: 39 }
+      let id: string
+      beforeAll(async (done) => {
+        id = await pushWithId(Player.ref(), createData)
+        done()
+      })
+
+      it('finds a record that matches the id', async (done) => {
+        const player = await Player.findById(id) as InstanceType<typeof Player>
+        expect(player._id).toBe(id)
+        expect(player.name).toBe(createData.name)
+        expect(player.age).toBe(createData.age)
+        done()
+      })
+
+      it('throws an error if there is no matching record', async (done) => {
+        expect.assertions(2)
+        try {
+          await Player.findByIdOrFail('this is definitely not a valid id, as if')
+        } catch (err) {
+          expect(err).toBeInstanceOf(ActiveClassError)
+          expect(err.message).toBe('Could not find a Player with that id. No Player with that id exists in the connected Firebase Realtime Database')
+          done()
+        }
+      })
+    })
+
     describe('#findOne', () => {
       const createDataOne = { name: 'Billybo', age: 29 }
       const createDataTwo = { name: 'Cassanda', age: 29 }

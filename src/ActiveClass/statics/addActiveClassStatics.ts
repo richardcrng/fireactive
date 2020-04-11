@@ -7,8 +7,8 @@ import ActiveClassError from '../Error/ActiveClassError';
 /**
  * Adds default class methods and properties onto the `ActiveClass`
  */
-const addActiveClassStatics = <Schema extends RecordSchema>(
-  ActiveClass: ActiveClass<Schema>
+const addActiveClassStatics = <Schema extends RecordSchema, ThisClass extends ActiveClass<Schema> = ActiveClass<Schema>>(
+  ActiveClass: ThisClass
 ): void => {
 
   // utilities
@@ -20,11 +20,14 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
   }
 
   ActiveClass.getDb = function () {
-    const database = getFirebaseDatabase()
-    if (!database) {
-      throw new Error('Cannot get Firebase Real-Time Database instance: have you intialised the Firebase connection?')
+    try {
+      const database = getFirebaseDatabase()
+      return database
+    } catch (err) {
+      throw ActiveClassError.from(err, {
+        what: `Could not find the Firebase Realtime Database for your ${this.name} data`
+      })
     }
-    return database
   }
 
   ActiveClass.ref = function(path?: string): firebase.database.Reference {
@@ -50,6 +53,8 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
   }
 
   // main
+
+  // @ts-ignore : inheritance
   ActiveClass.create = async function (props): Promise<ActiveRecord<Schema>> {
     try {
       const record = new this({ ...props })
@@ -84,6 +89,7 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     }
   }
 
+  // @ts-ignore : inheritance
   ActiveClass.find = async function(props): Promise<ActiveRecord<Schema>[]> {
     const matchingVals = await this.values(props)
     // @ts-ignore
@@ -93,6 +99,7 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     })
   }
 
+  // @ts-ignore : inheritance
   ActiveClass.findById = async function(id: string): Promise<ActiveRecord<Schema> | null> {
     if (!id) return null
 
@@ -106,6 +113,20 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     }
   }
 
+  // @ts-ignore : inheritance
+  ActiveClass.findByIdOrFail = async function (id: string): Promise<ActiveRecord<Schema>> {
+    const record = await this.findById(id)
+    if (record) {
+      return record
+    } else {
+      throw new ActiveClassError({
+        what: `Could not find a ${this.name} with that id`,
+        why: `No ${this.name} with that id exists in the connected Firebase Realtime Database`
+      })
+    }
+  }
+
+  // @ts-ignore : inheritance
   ActiveClass.findOne = async function(props): Promise<ActiveRecord<Schema> | null> {
     const firstMatch = await this.value(props)
     if (!firstMatch) return null
@@ -113,6 +134,7 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     return this.from(firstMatch)
   }
 
+  // @ts-ignore : inheritance
   ActiveClass.update = async function(props, newProps): Promise<ActiveRecord<Schema>[]> {
     const matchingVals = await this.values(props)
     const updatedVals = matchingVals.map(val => ({ ...val, ...newProps }))
@@ -125,6 +147,7 @@ const addActiveClassStatics = <Schema extends RecordSchema>(
     })
   }
 
+  // @ts-ignore : inheritance
   ActiveClass.updateOne = async function (props, newProps): Promise<ActiveRecord<Schema> | null> {
     const firstMatch = await this.value(props)
     if (!firstMatch) return null

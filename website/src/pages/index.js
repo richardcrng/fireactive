@@ -8,44 +8,32 @@ import styles from './styles.module.css';
 
 const features = [
   {
-    title: <>Easy to Use</>,
-    imageUrl: 'img/undraw_docusaurus_mountain.svg',
+    title: <>Realtime Data</>,
+    imageUrl: 'img/fireactive-realtime.gif',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        <b>Stay in sync with your database.</b> By default, all data fetched updates to and from your Firebase Realtime Database, with no further setup needed.
       </>
     ),
   },
   {
-    title: <>Focus on What Matters</>,
-    imageUrl: 'img/undraw_docusaurus_tree.svg',
+    title: <>Strongly Typed</>,
+    imageUrl: 'img/fireactive-typesafe.gif',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        <b>Preserve your database structure.</b> Runtime errors in JavaScript and static errors in TypeScript if data doesn't conform to your schema.
       </>
     ),
-  },
-  {
-    title: <>Powered by React</>,
-    imageUrl: 'img/undraw_docusaurus_react.svg',
-    description: (
-      <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
-      </>
-    ),
-  },
+  }
 ];
 
 function Feature({imageUrl, title, description}) {
   const imgUrl = useBaseUrl(imageUrl);
   return (
-    <div className={classnames('col col--4', styles.feature)}>
+    <div className={classnames('col col--6', styles.feature)}>
       {imgUrl && (
-        <div className="text--center">
-          <img className={styles.featureImage} src={imgUrl} alt={title} />
+        <div style={{ padding: '1em' }}>
+          <img style={{ width: '450px' }} src={imgUrl} alt={title} />
         </div>
       )}
       <h3>{title}</h3>
@@ -71,13 +59,16 @@ function Home() {
                 'button button--outline button--secondary button--lg',
                 styles.getStarted,
               )}
-              to={useBaseUrl('docs/doc1')}>
+              to={useBaseUrl('docs/overview')}>
               Get Started
             </Link>
           </div>
         </div>
       </header>
       <main>
+        {/* <div style={{ textAlign: 'center', padding: '1em' }}>
+          <img src={useBaseUrl('img/fireactive-syncing.gif')} />
+        </div> */}
         {features && features.length && (
           <section className={styles.features}>
             <div className="container">

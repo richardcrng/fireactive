@@ -1,6 +1,6 @@
-const { ActiveClass, Schema, initialize } = require('../../../src/');
-const { testDatabase } = require('../../../src/utils/setupTestServer');
-const ActiveClassError = require('../../../src/ActiveClass/Error/ActiveClassError').default
+import { ActiveClass, Schema, initialize } from '../../../src/'
+import { testDatabase } from '../../../src/utils/setupTestServer'
+import ActiveClassError from '../../../src/ActiveClass/Error/ActiveClassError'
 
 describe('Usage', () => {
   // A schema for the User class
@@ -18,14 +18,10 @@ describe('Usage', () => {
     */
 
     //  Optionally, add further methods yourself, e.g.
-    upgrade() {
+    promote() {
       this.role = 'admin'
     }
   }
-
-  it('trivial', () => {
-    expect(4).toBe(4)
-  })
 
   const { databaseURL } = testDatabase()
 
@@ -36,22 +32,23 @@ describe('Usage', () => {
     done()
   })
 
-  test('Instantiating an `ActiveClass`', async (done) => {
-    const moll = await User.create({ name: 'Moll', role: 'basic' })
-    expect(moll.name).toBe('Moll') // => 'Moll'
-    expect(moll.age).toBeUndefined()
-    expect(moll.role).toBe('basic')
-    expect(moll.isVerified).toBe(false)
+  let user: User
 
-    // @ts-ignore
-    moll.upgrade()
-    expect(moll.role).toBe('admin')
+  test('Instantiating an `ActiveClass`', async (done) => {
+    user = await User.create({ name: 'Moll', role: 'basic' })
+    expect(user.name).toBe('Moll') // => 'Moll'
+    expect(user.age).toBeUndefined()
+    expect(user.role).toBe('basic')
+    expect(user.isVerified).toBe(false)
+    user.promote()
+    expect(user.role).toBe('admin')
     done()
   })
 
   test('Type safety', async (done) => {
-    expect.assertions(4)
+    expect.assertions(6)
     try {
+      // @ts-ignore: check static error -> runtime error
       await User.create({ role: 'admin' })
     } catch (err) {
       expect(err).toBeInstanceOf(ActiveClassError)
@@ -64,6 +61,14 @@ describe('Usage', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(ActiveClassError)
       expect(err.message).toMatch("Could not create User. The property 'role' is of the wrong type")
+    }
+
+    try {
+      // @ts-ignore: check static -> runtime error
+      user.role = 'superuser'
+    } catch (err) {
+      expect(err).toBeInstanceOf(ActiveClassError)
+      expect(err.message).toMatch(`User could not accept the value "superuser" (string) at path 'role'. The property 'role' is of the wrong type`)
     }
 
     done()

@@ -1,11 +1,13 @@
 import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps, FirebaseTable } from "./schema.types"
 import { SyncOpts } from "./sync.types"
 
+export type ClassDefinition<T = unknown> = { new(...args: any[]): T; };
+
 /**
  * An `ActiveRecord<S>` _instance_ of the `ActiveClass<S>`. 
  * This interface holds the instance methods and properties.
  */
-export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
+export type ActiveRecord<S extends RecordSchema = RecordSchema> = ObjectFromRecord<S> & {
   constructor: ActiveClass<S>
 
   /**
@@ -94,12 +96,13 @@ export type ActiveRecord<S extends RecordSchema> = ObjectFromRecord<S> & {
  * 
  * @template S - a RecordSchema
  */
-export interface ActiveClass<S extends RecordSchema> {
+export type ActiveClass<S extends RecordSchema = RecordSchema> = {
   /**
    * Create an instance of the ActiveRecord -
    *  not yet saved to the database
    */
   new(props: ToCreateRecord<S> & { _id?: string }): ActiveRecord<S>,
+
   prototype: ActiveRecord<S>,
 
   /**
@@ -128,7 +131,7 @@ export interface ActiveClass<S extends RecordSchema> {
    * @param props Properties to create the Record with
    * @returns a `Promise` that resolves into the created record
    */
-  create(props: ToCreateRecord<S> & { _id?: string }): Promise<ActiveRecord<S>>,
+  create<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: ToCreateRecord<S> & { _id?: string }): Promise<InstanceType<ThisClass>>,
 
   /**
    * Delete all `ActiveRecord`s from the database that
@@ -155,7 +158,7 @@ export interface ActiveClass<S extends RecordSchema> {
    * @param props 
    * @returns an array of `ActiveRecord<S>`
    */
-  find(props: Partial<ObjectFromRecord<S>>): Promise<ActiveRecord<S>[]>,
+  find<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>): Promise<InstanceType<ThisClass>[]>,
 
   /**
    * Find a single ActiveRecord in the database by id
@@ -163,7 +166,16 @@ export interface ActiveClass<S extends RecordSchema> {
    * @param id - id of the ActiveRecord to find
    * @returns the `ActiveRecord` found, or `null` if none
    */
-  findById(id: string): Promise<ActiveRecord<S> | null>,
+  findById<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, id: string): Promise<InstanceType<ThisClass> | null>,
+
+  /**
+   * Find a single ActiveRecord in the database by id
+   *  and throw an error if it does not exist
+   * 
+   * @param id - id of the ActiveRecord to find
+   * @returns the `ActiveRecord` found
+   */
+  findByIdOrFail<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, id: string): Promise<InstanceType<ThisClass>>,
 
   /**
    * Find a single ActiveRecord in the database by
@@ -172,7 +184,7 @@ export interface ActiveClass<S extends RecordSchema> {
    * @param props 
    * @returns the `ActiveRecord` found, or `null` if no record was found
    */
-  findOne(props: Partial<ObjectFromRecord<S>>): Promise<ActiveRecord<S> | null>,
+  findOne<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>): Promise<InstanceType<ThisClass> | null>,
 
   /**
    * Create an `ActiveRecord` from some props, such that it
@@ -186,7 +198,7 @@ export interface ActiveClass<S extends RecordSchema> {
    * @param props 
    * @returns the `ActiveRecord`
    */
-  from(props: ObjectFromRecord<S> & { _id: string }): ActiveRecord<S>,
+  from<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: ObjectFromRecord<S> & { _id: string }): InstanceType<ThisClass>,
 
   /**
    * Return the Firebase Real-Time Database instance and interface
@@ -211,7 +223,7 @@ export interface ActiveClass<S extends RecordSchema> {
    * @param updateProps - props to update
    * @returns an array of `ActiveRecord<S>` that were updated
    */
-  update(props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<ActiveRecord<S>[]>
+  update<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<InstanceType<ThisClass>[]>
 
   /**
    * Update a single ActiveRecord in the database by
@@ -221,7 +233,7 @@ export interface ActiveClass<S extends RecordSchema> {
    * @param props 
    * @returns the updated `ActiveRecord` if there is one, or `null` otherwise
    */
-  updateOne(props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<ActiveRecord<S> | null>,
+  updateOne<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<InstanceType<ThisClass> | null>,
 
 
   value(props: Partial<ObjectFromRecord<S>>): Promise<ObjectFromRecord<S> | null>

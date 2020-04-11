@@ -247,7 +247,6 @@ describe('ActiveClass: integration test', () => {
     })
 
     describe('indexed', () => {
-      const userClassName = 'User'
       const userSchema = {
         username: Schema.string,
         friends: Schema.indexed.string,
@@ -255,9 +254,8 @@ describe('ActiveClass: integration test', () => {
       }
       class User extends ActiveClass(userSchema) {}
 
-      const otherClassName = 'Other'
       const otherSchema = {
-        keys: Schema.indexed.boolean,
+        keys: Schema.indexed.true,
         counts: Schema.indexed.number
       }
       class Other extends ActiveClass(otherSchema) {}
