@@ -1,4 +1,3 @@
-import firebase from 'firebase/app'
 import { ActiveClass, Schema, initialize, relations } from '../../../../src/'
 import { testDatabase } from '../../../../src/utils/setupTestServer'
 
