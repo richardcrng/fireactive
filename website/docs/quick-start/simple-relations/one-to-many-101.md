@@ -20,7 +20,7 @@ export const JsTsTabs = ({ children }) => (
   </Tabs>
 )
 
-Let's build on our previous one-to-one example by introducing Series (representing a book series). A single Series can have many books, and might have multiple authors (e.g. the 'For Dummies' series has multiple different authors depending on the topic).
+Let's build on [our previous one-to-one example](one-to-one-101.md) by introducing Series (representing a book series). A single Series can have many books, and might have multiple authors (e.g. the 'For Dummies' series has multiple different authors depending on the topic).
 
 ## Setup: Schemas and ActiveClasses
 
