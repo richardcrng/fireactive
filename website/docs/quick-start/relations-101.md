@@ -400,14 +400,14 @@ const adamFowler = await Author.create({
   lastName: 'Fowler'
 })
 
-const noSqlForDummies = await Book.create({
-  title: 'NoSQL For Dummies',
-  authorId: adamFowler._id
-})
-
 const emilyVanderVeer = await Author.create({
   firstName: 'Emily',
   lastName: 'Vander Veer'
+})
+
+const noSqlForDummies = await Book.create({
+  title: 'NoSQL For Dummies',
+  authorId: adamFowler._id
 })
 
 const jsForDummies = await Book.create({
@@ -429,8 +429,6 @@ const dummiesBooks = await dummiesSeries.books()
 
 dummiesBooks[0].title // => 'NoSQL For Dummies'
 dummiesBooks[1].title // => 'JavaScript For Dummies'
-
-
 ```
 
 </TabItem>
@@ -438,56 +436,50 @@ dummiesBooks[1].title // => 'JavaScript For Dummies'
 
 ```ts
 import { initialize } from 'fireactive'
-import { Author, Book } from '../path/to/models' // or wherever
+import { Author, Book, Series } from '../path/to/models' // or wherever
 
 // initialize with your own database url
 //  to use an ActiveClass's `.create` 
 initialize({ databaseURL: process.env.DATABASE_URL })
 
 // Author.create resolves when database has been written to
-const orwell = await Author.create({
-  firstName: 'George',
-  lastName: 'Orwell'
+const adamFowler = await Author.create({
+  firstName: 'Adam',
+  lastName: 'Fowler'
 })
 
-
-/**
- * Note that an ActiveRecord's _id has type of
- *  string | undefined, because it is sometimes
- *  undefined (e.g. if you use the `new` operator
- *  and haven't yet saved it to the database).
- * 
- * However, according to our bookSchema, a book *must*
- *  have an `authorId`, which needs to be a string.
- * 
- * You can either cast the _id property to a string,
- *  or alternatively use .getId() which returns a
- *  string (or else throws a runtime error).
- */ 
-const animalFarm = await Book.create({
-  title: 'Animal Farm: A Fairy Story',
-  authorId: orwell._id as string // better: orwell.getId()
+const emilyVanderVeer = await Author.create({
+  firstName: 'Emily',
+  lastName: 'Vander Veer'
 })
 
-// we defined author as a LazyHasOne relation,
+// we'll use .getId() which is typed as string
+//  but you could cast ._id to string
+
+const noSqlForDummies = await Book.create({
+  title: 'NoSQL For Dummies',
+  authorId: adamFowler.getId()
+})
+
+const jsForDummies = await Book.create({
+  title: 'JavaScript For Dummies',
+  authorId: emilyVanderVeer.getId()
+})
+
+const dummiesSeries = await Series.create({
+  name: 'For Dummies',
+  bookIds: {
+    [noSqlForDummies.getId()]: true,
+    [jsForDummies.getId()]: true
+  }
+})
+
+// we defined books as a LazyHasMany relation,
 //  so executing it returns a promise
-const animalFarmAuthor = await animalFarm.author()
+const dummiesBooks = await dummiesSeries.books()
 
-
-/**
- * If you have strictNullChecks enabled, TS will
- *  warn that `animalFarmAuthor` is possibly null
- *  (since we can't guarantee in general at runtime
- *  that a book's `authorId` property exists amongst
- *  the database's Authors).
- * 
- * Using the findByIdOrFail relation will ensure
- *  that the return value is an Author
- */ 
-if (animalFarmAuthor) {
-  animalFarmAuthor.firstName // => 'George'
-  animalFarmAuthor.secondName // => 'Orwell'
-}
+dummiesBooks[0].title // => 'NoSQL For Dummies'
+dummiesBooks[1].title // => 'JavaScript For Dummies'
 ```
 
 </TabItem>

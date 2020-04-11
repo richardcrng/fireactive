@@ -31,7 +31,7 @@ afterAll(async (done) => {
   done()
 })
 
-describe('Execution: awaiting a promise', () => {
+describe('One-to-one', () => {
   test('Relation is lazy and a promise', async (done) => {
     const orwell = await Author.create({
       firstName: 'George',
@@ -50,6 +50,52 @@ describe('Execution: awaiting a promise', () => {
       expect(animalFarmAuthor.lastName).toBe('Orwell')
       expect(animalFarmAuthor.name).toBe('George Orwell')
     }
+    done()
+  })
+})
+
+const seriesSchema = {
+  name: Schema.string,
+  bookIds: Schema.indexed.true
+}
+
+class Series extends ActiveClass(seriesSchema) {
+  books = relations.findByIds<Series, Book>(Book, () => Object.keys(this.bookIds))
+}
+
+describe('One-to-many', () => {
+  test('Relation is lazy and a promise that returns an array', async (done) => {
+    const adamFowler = await Author.create({
+      firstName: 'Adam',
+      lastName: 'Fowler'
+    })
+
+    const emilyVanderVeer = await Author.create({
+      firstName: 'Emily',
+      lastName: 'Vander Veer'
+    })
+
+    const noSqlForDummies = await Book.create({
+      title: 'NoSQL For Dummies',
+      authorId: adamFowler.getId()
+    })
+
+    const jsForDummies = await Book.create({
+      title: 'JavaScript For Dummies',
+      authorId: emilyVanderVeer.getId()
+    })
+
+    const dummiesSeries = await Series.create({
+      name: 'For Dummies',
+      bookIds: {
+        [noSqlForDummies.getId()]: true,
+        [jsForDummies.getId()]: true
+      }
+    })
+
+    const dummiesBooks = await dummiesSeries.books()
+    expect(dummiesBooks[0].title).toBe('NoSQL For Dummies')
+    expect(dummiesBooks[1].title).toBe('JavaScript For Dummies')
     done()
   })
 })
