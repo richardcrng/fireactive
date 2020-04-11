@@ -4,6 +4,7 @@ import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import Feature from '../lib/molecules/Feature'
 import styles from './styles.module.css';
 
 const features = [
@@ -26,21 +27,6 @@ const features = [
     ),
   }
 ];
-
-function Feature({imageUrl, title, description}) {
-  const imgUrl = useBaseUrl(imageUrl);
-  return (
-    <div className={classnames('col col--6', styles.feature)}>
-      {imgUrl && (
-        <div style={{ padding: '1em' }}>
-          <img style={{ width: '450px' }} src={imgUrl} alt={title} />
-        </div>
-      )}
-      <h3>{title}</h3>
-      <p>{description}</p>
-    </div>
-  );
-}
 
 function Home() {
   const context = useDocusaurusContext();
