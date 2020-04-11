@@ -130,6 +130,8 @@ user.syncOpts() // => { fromDb: false, toDb: false }
 </TabItem>
 </JsTsTabs>
 
+#### Protip: remember to `initialize`
+
 Trying to save our user to the database using the default ActiveClass prototype `.save` method will fail without initializing a connection to the Firebase Realtime Database:
 
 
@@ -162,4 +164,4 @@ await user.save()
 </TabItem>
 </JsTsTabs>
 
-So, let's try following the error and doing just that: initializing a connection via `Fireactive.initialize`!
+So, let's try following the error and doing just that: [initializing a connection via `Fireactive.initialize`](connecting-101.md)!

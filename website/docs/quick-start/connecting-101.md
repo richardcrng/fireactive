@@ -58,7 +58,7 @@ initialize({
 
 ### Saving data with `.save`
 
-Now you have made a connection to your Firebase Realtime Database, you can [save a given ActiveRecord without throwing the error we saw before](active-class-101.md):
+Now you have made a connection to your Firebase Realtime Database, you can save a given ActiveRecord without [throwing the error we saw before](active-class-101.md#protip-remember-to-initialize):
 
 <JsTsTabs>
 <TabItem value="js">
