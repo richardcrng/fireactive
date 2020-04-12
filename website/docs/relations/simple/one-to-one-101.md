@@ -118,6 +118,16 @@ class Book extends ActiveClass(bookSchema) {
 </TabItem>
 </JsTsTabs>
 
+:::caution Beware circular imports
+The above example uses relations defined between two classes in the same file.
+
+It is important to be careful when defining relations between classes in multiple files, as you may inadvertently end up with some [circular imports](https://stackoverflow.com/questions/38841469/how-to-fix-this-es6-module-circular-dependency).
+
+Fireactive provides a way to escape this through an alternative `relations` API, where you pass in a string as the first argument rather than a class (removing the need to import a class from one file into another).
+
+This is documented in ['Circular Relations'](circular-relations.md).
+:::
+
 ## Execution: awaiting a promise
 
 Relations are lazy by default, which means they only load the related data when explicitly required to. 

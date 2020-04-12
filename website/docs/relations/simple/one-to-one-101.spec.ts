@@ -1,4 +1,4 @@
-import { ActiveClass, Schema, initialize, relations } from '../../../../src/'
+import { ActiveClass, Schema, initialize, relations } from '../../../../src'
 import { testDatabase } from '../../../../src/utils/setupTestServer'
 
 const authorSchema = {
