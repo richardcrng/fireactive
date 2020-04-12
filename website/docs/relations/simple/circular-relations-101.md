@@ -20,170 +20,122 @@ export const JsTsTabs = ({ children }) => (
   </Tabs>
 )
 
-Let's build on [our previous one-to-one example](one-to-one-101.md) by introducing Series (representing a book series). A single Series can have many books, and might have multiple authors (e.g. the 'For Dummies' series has multiple different authors depending on the topic).
+## Problem: circular imports
 
-## Setup: Schemas and ActiveClasses
+When two of your ActiveClasses are meant to reciprocally relate to each other, you may encounter a problem of circular imports.
 
-We'll add one schema for a Series.
+For example, consider the below two classes defined in separate folders. For the purposes of simplicity, we are assuming:
+- People own at most one pet; and
+- Pets have at most one owner (who is a person).
 
-A series should have a series name, as well as information about the books that it contains.
+<Tabs
+  defaultValue="person"
+  values={[
+    { label: 'src/models/person.js', value: 'person', },
+    { label: 'src/models/animal.js', value: 'animal', }
+  ]}
+>
+  <TabItem value="person">
 
-Following the Firebase recommendations, we'll be storing data [in a flattened form using indexes](structuring-relations.md#flatten-data-in-your-database).
+  ```js
+  import { ActiveClass, Schema, relations } from 'fireactive'
+  import Animal from './animal'
 
-For example, rather than storing book ids as an array of strings (such as `['book01', 'book32', 'book77']`), we'll store the same information in an object where the values don't matter (so we'll just use `true` for simplicity): what matters is the presence of the keys, i.e. `{ book01: true, book32: true, book77: true }`.
-
-This makes it more efficient to check whether a given string (or id) exists, since it can just check whether the key exists (instead of iterating through the array to check each value individually).
-
-<JsTsTabs>
-<TabItem value="js">
-
-```js
-import { ActiveClass, Schema, relations } from 'fireactive'
-
-const seriesSchema = {
-  name: Schema.string,
-  bookIds: Schema.indexed.true // indexed with true as the values
-}
-
-class Series extends ActiveClass(seriesSchema) {
-  /**
-   * Have the `series.books` property be a `LazyHasMany`
-   *  relation from `series` (instance of `Series`) to a
-   *  specific instance of `Author`, via the keys of
-   *  `series.bookIds`
-   */
-  books = relations.findByIds(Book, () => Object.keys(this.bookIds))
-}
-```
-
-</TabItem>
-<TabItem value="ts">
-
-```ts
-import { ActiveClass, Schema, relations } from 'fireactive'
-
-const seriesSchema = {
-  name: Schema.string,
-  bookIds: Schema.indexed.true // indexed with true as the values
-}
-
-class Series extends ActiveClass(seriesSchema) {
-  /**
-   * Have the `series.books` property be a `LazyHasMany`
-   *  relation from `series` (instance of `Series`) to a
-   *  specific instance of `Author`, via the keys of
-   *  `series.bookIds`
-   */
-  books = relations.findByIds<Series, Book>(Book, () => Object.keys(this.bookIds))
-}
-```
-
-</TabItem>
-</JsTsTabs>
-
-## Execution: awaiting a promise
-
-Relations are lazy by default, which means they only load the related data when explicitly required to. 
-
-<JsTsTabs>
-<TabItem value="js">
-
-```js
-import { initialize } from 'fireactive'
-import { Author, Book, Series } from '../path/to/models' // or wherever
-
-// initialize with your own database url
-//  to use an ActiveClass's `.create` 
-initialize({ databaseURL: process.env.DATABASE_URL })
-
-// Author.create resolves when database has been written to
-const adamFowler = await Author.create({
-  firstName: 'Adam',
-  lastName: 'Fowler'
-})
-
-const emilyVanderVeer = await Author.create({
-  firstName: 'Emily',
-  lastName: 'Vander Veer'
-})
-
-const noSqlForDummies = await Book.create({
-  title: 'NoSQL For Dummies',
-  authorId: adamFowler._id
-})
-
-const jsForDummies = await Book.create({
-  title: 'JavaScript For Dummies',
-  authorId: emilyVanderVeer._id
-})
-
-const dummiesSeries = await Series.create({
-  name: 'For Dummies',
-  bookIds: {
-    [noSqlForDummies._id]: true,
-    [jsForDummies._id]: true
+  const personSchema = {
+    name: Schema.string,
+    age: Schema.number,
+    petId: Schema.string
   }
-})
 
-// we defined books as a LazyHasMany relation,
-//  so executing it returns a promise
-const dummiesBooks = await dummiesSeries.books()
-
-dummiesBooks[0].title // => 'NoSQL For Dummies'
-dummiesBooks[1].title // => 'JavaScript For Dummies'
-```
-
-</TabItem>
-<TabItem value="ts">
-
-```ts
-import { initialize } from 'fireactive'
-import { Author, Book, Series } from '../path/to/models' // or wherever
-
-// initialize with your own database url
-//  to use an ActiveClass's `.create` 
-initialize({ databaseURL: process.env.DATABASE_URL })
-
-// Author.create resolves when database has been written to
-const adamFowler = await Author.create({
-  firstName: 'Adam',
-  lastName: 'Fowler'
-})
-
-const emilyVanderVeer = await Author.create({
-  firstName: 'Emily',
-  lastName: 'Vander Veer'
-})
-
-// we'll use .getId() which is typed as string
-//  but you could cast ._id to string
-
-const noSqlForDummies = await Book.create({
-  title: 'NoSQL For Dummies',
-  authorId: adamFowler.getId()
-})
-
-const jsForDummies = await Book.create({
-  title: 'JavaScript For Dummies',
-  authorId: emilyVanderVeer.getId()
-})
-
-const dummiesSeries = await Series.create({
-  name: 'For Dummies',
-  bookIds: {
-    [noSqlForDummies.getId()]: true,
-    [jsForDummies.getId()]: true
+  class Person extends ActiveClass(personSchema) {
+    pet = relations.findById(Animal, 'petId')
   }
-})
 
-// we defined books as a LazyHasMany relation,
-//  so executing it returns a promise
-const dummiesBooks = await dummiesSeries.books()
+  export default Person
+  ```
 
-dummiesBooks[0].title // => 'NoSQL For Dummies'
-dummiesBooks[1].title // => 'JavaScript For Dummies'
-```
+  </TabItem>
+  <TabItem value="animal">
 
-</TabItem>
-</JsTsTabs>
+  ```js
+  import { ActiveClass, Schema, relations } from 'fireactive'
+  import Person from './person'
+
+  const animalSchema = {
+    name: Schema.string,
+    age: Schema.number,
+    ownerId: Schema.string
+  }
+
+  class Animal extends ActiveClass(animalSchema) {
+    owner = relations.findById(Person, 'ownerId')
+  }
+
+  export default Animal
+  ```
+
+  </TabItem>
+</Tabs>
+
+Because `person.js` imports from `animal.js`, which imports from `person.js`... we can get stuck in some messy [circular imports](https://stackoverflow.com/questions/38841469/how-to-fix-this-es6-module-circular-dependency).
+
+## One fix: `relations.store`
+You can reorganise your code to get around this, but there is an alternative solution provided by Fireactive.
+
+To make a class available as a relation (without needing to be imported), pass it as an argument to `relations.store`, and then you can set up a relation using the string name of that class:
+
+<Tabs
+  defaultValue="person"
+  values={[
+    { label: 'src/models/person.js', value: 'person', },
+    { label: 'src/models/animal.js', value: 'animal', }
+  ]}
+>
+  <TabItem value="person">
+
+  ```js {11,15}
+  import { ActiveClass, Schema, relations } from 'fireactive'
+
+  const personSchema = {
+    name: Schema.string,
+    age: Schema.number,
+    petId: Schema.string
+  }
+
+  class Person extends ActiveClass(personSchema) {
+    // pass the string 'Animal' instead of the class
+    pet = relations.findById('Animal', 'petId')
+  }
+
+  // store the Person class so other classes can relate to it
+  relations.store(Person)
+
+  export default Person
+  ```
+
+  </TabItem>
+  <TabItem value="animal">
+
+  ```js {11,15}
+  import { ActiveClass, Schema, relations } from 'fireactive'
+
+  const animalSchema = {
+    name: Schema.string,
+    age: Schema.number,
+    ownerId: Schema.string
+  }
+
+  class Animal extends ActiveClass(animalSchema) {
+    // pass the string 'Person' instead of the class
+    owner = relations.findById('Person', 'ownerId')
+  }
+
+  // store the Animal class so other classes can relate to it
+  relations.store(Animal)
+
+  export default Animal
+  ```
+
+  </TabItem>
+</Tabs>
 
