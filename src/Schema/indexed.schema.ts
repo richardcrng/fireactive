@@ -44,7 +44,6 @@ const indexed = {
   string: indexedString,
   boolean: indexedBoolean,
   number: indexedNumber,
-  enumr: indexedEnum,
   enum: indexedEnum,
   true: indexedTrue
 }
