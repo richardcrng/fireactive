@@ -176,7 +176,6 @@ describe('ActiveClass: integration test', () => {
     })
 
     describe('enum', () => {
-      const className = 'User'
       const schema = {
         username: Schema.string,
         role: Schema.enum(['admin', 'regular']),
@@ -314,7 +313,6 @@ describe('ActiveClass: integration test', () => {
     })
 
     describe('nested schema', () => {
-      const className = 'Venue'
       const schema = {
         name: Schema.string,
         hours: {
