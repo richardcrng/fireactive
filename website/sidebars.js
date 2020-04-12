@@ -14,6 +14,17 @@ module.exports = {
           'relations/simple/circular-relations'
         ]
       }
-    ]
+    ],
+    "API": [
+      {
+        "Schema": [
+          'schema/overview',
+          'schema/boolean',
+          'schema/enum',
+          'schema/number',
+          'schema/string'
+        ]
+      }
+    ] 
   },
 };
