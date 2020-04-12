@@ -44,7 +44,7 @@ For example, consider the below two classes defined in separate folders. For the
   const personSchema = {
     name: Schema.string,
     age: Schema.number,
-    petId: Schema.string
+    petId: Schema.string({ optional: true }) // not all people have pets
   }
 
   class Person extends ActiveClass(personSchema) {
@@ -99,7 +99,7 @@ To make a class available as a relation (without needing to be imported), pass i
   const personSchema = {
     name: Schema.string,
     age: Schema.number,
-    petId: Schema.string
+    petId: Schema.string({ optional: true })
   }
 
   class Person extends ActiveClass(personSchema) {
