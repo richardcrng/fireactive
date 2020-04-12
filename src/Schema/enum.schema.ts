@@ -3,8 +3,8 @@ import { FieldOptions, FieldDefinition, FieldIdentifier } from "../types/field.t
 
 // Overloads for required with default: i.e. it exists on document but need not be passed in
 function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T> & { required: true, default: T }): FieldDefinition<T[], true, true>
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { optional: false, default: TextDecoder }): FieldDefinition<T[], true, true>;
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { default: TextDecoder }): FieldDefinition<T[], true, true>;
+function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { optional: false, default: T }): FieldDefinition<T[], true, true>;
+function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { default: T }): FieldDefinition<T[], true, true>;
 
 // Overloads for required with no default: i.e. it exists on document and must be passed in
 function enumr<T extends string | number = string>(enumVals: readonly T[],): FieldDefinition<T[], true, false>
