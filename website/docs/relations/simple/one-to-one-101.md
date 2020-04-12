@@ -5,21 +5,8 @@ sidebar_label: One-to-One (storing an id)
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-
-export const JsTsTabs = ({ children }) => (
-  <Tabs
-    defaultValue="js"
-    values={[
-      { label: 'JavaScript', value: 'js', },
-      { label: 'TypeScript', value: 'ts', }
-    ]}
-  >
-    {children}
-  </Tabs>
-)
-
+import JsTsTabs from '../../../src/lib/atoms/JsTsTabs';
 
 Let's suppose we want to model a relationship between Authors and Books. For simplicity's sake, we'll assume a book only has a single Author.
 

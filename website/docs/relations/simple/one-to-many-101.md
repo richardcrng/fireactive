@@ -5,20 +5,8 @@ sidebar_label: One-to-Many (indexing keys)
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-
-export const JsTsTabs = ({ children }) => (
-  <Tabs
-    defaultValue="js"
-    values={[
-      { label: 'JavaScript', value: 'js', },
-      { label: 'TypeScript', value: 'ts', }
-    ]}
-  >
-    {children}
-  </Tabs>
-)
+import JsTsTabs from '../../../src/lib/atoms/JsTsTabs';
 
 Let's build on [our previous one-to-one example](one-to-one-101.md) by introducing Series (representing a book series). A single Series can have many books, and might have multiple authors (e.g. the 'For Dummies' series has multiple different authors depending on the topic).
 
