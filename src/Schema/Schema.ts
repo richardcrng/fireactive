@@ -4,16 +4,14 @@ import boolean from './boolean.schema';
 import enumr from './enum.schema';
 import indexed from './indexed.schema';
 
-// export enumr as both enum and enumr
-// because enum is a reserved keyword in enum
-//  -> allow both Schema.enum and also destructuring enumr
+// enum is a reserved keyword in TS
+// so some renaming is required
 
 const Schema = {
   string,
   number,
   boolean,
   enum: enumr,
-  enumr,
   indexed
 }
 
@@ -21,7 +19,6 @@ export {
   number,
   string,
   boolean,
-  enumr,
   enumr as enum,
   indexed
 }
