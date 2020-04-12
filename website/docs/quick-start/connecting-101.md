@@ -38,7 +38,7 @@ import { initialize } from 'fireactive'
 initialize({
   // put your database url below
   databaseURL: 'https://some-database-url.firebaseio.com'
-})
+}) // => returns Firebase app instance
 ```
 
 </TabItem>

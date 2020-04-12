@@ -54,7 +54,7 @@ import { userSchema } from '../wherever'
 class User extends ActiveClass(userSchema) {
   // optionally, add your own methods, e.g.
 
-  promote() {
+  promote(): string {
     this.role = 'admin'
   }
 }
