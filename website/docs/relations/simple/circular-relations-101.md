@@ -88,7 +88,8 @@ To make a class available as a relation (without needing to be imported), pass i
   defaultValue="person"
   values={[
     { label: 'src/models/person.js', value: 'person', },
-    { label: 'src/models/animal.js', value: 'animal', }
+    { label: 'src/models/animal.js', value: 'animal', },
+    { label: 'Demo', value: 'demo' }
   ]}
 >
   <TabItem value="person">
@@ -134,6 +135,37 @@ To make a class available as a relation (without needing to be imported), pass i
   relations.store(Animal)
 
   export default Animal
+  ```
+
+  </TabItem>
+  <TabItem value="demo">
+
+  ```js
+  import { initialize } from 'fireactive'
+  import Animal from '../models/animal'
+  import Person from '../models/person'
+  
+  // initialize with your own database url
+  initialize({ databaseURL: process.env.DATABASE_URL })
+
+  const sam = await Person.create({
+    name: 'Sam Coates',
+    age: 14
+  })
+
+  const oldYeller = await Animal.create({
+    name: 'Old Yeller',
+    age: 5,
+    ownerId: sam.getId()
+  })
+
+  sam.petId = oldYeller.getId()
+
+  const samsPet = await sam.pet()
+  const yellersOwner = await oldYeller.owner()
+
+  samsPet.name // => 'Old Yeller'
+  yellersOwner.name // => 'Sam Coates'
   ```
 
   </TabItem>
