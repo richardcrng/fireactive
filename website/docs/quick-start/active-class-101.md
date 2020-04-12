@@ -5,20 +5,8 @@ sidebar_label: Creating an ActiveClass
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-
-export const JsTsTabs = ({ children }) => (
-  <Tabs
-    defaultValue="js"
-    values={[
-      { label: 'JavaScript', value: 'js', },
-      { label: 'TypeScript', value: 'ts', }
-    ]}
-  >
-    {children}
-  </Tabs>
-)
+import JsTsTabs from '../../src/lib/atoms/JsTsTabs';
 
 ## Why use an ActiveClass?
 

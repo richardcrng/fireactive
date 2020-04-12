@@ -1,12 +1,11 @@
 ---
-id: overview
-title: Overview
-sidebar_label: Overview
+id: basic-types
+title: Basic Schema Types
+sidebar_label: Basic Schema Types
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import JsTsTabs from '../src/lib/atoms/JsTsTabs'
 
 ## Why?
 
@@ -36,7 +35,13 @@ Fireactive is a strongly-typed Object Document Mapper with realtime syncing enab
 
 This is achieved through *Schema*-based *ActiveClass*es.
 
-<JsTsTabs>
+<Tabs
+  defaultValue="js"
+  values={[
+    { label: 'JavaScript', value: 'js', },
+    { label: 'TypeScript', value: 'ts', }
+  ]}
+>
 <TabItem value="js">
 
 ```js
@@ -73,7 +78,7 @@ class User extends ActiveClass(userSchema) {}
 ```
 
 </TabItem>
-</JsTsTabs>
+</Tabs>
 
 A Fireactive `ActiveClass` provides some helpful static and prototype methods by default, although you are free to add your own in when extending.
 
