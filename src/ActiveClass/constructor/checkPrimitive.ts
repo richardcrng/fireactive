@@ -37,7 +37,7 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
     })
   }
 
-  if (currentValAtPath() == null) {
+  if (currentValAtPath() === undefined) {
     if (schemaFieldDef && schemaFieldDef._fieldIdentifier === FieldIdentifier.indexed) {
       set(this, schemaKeyPath, {})
     }
