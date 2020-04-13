@@ -13,3 +13,6 @@ new Lightbulb()
 
 // @dts-jest:fail
 new Lightbulb({})
+
+// @dts-jest:fail
+new Lightbulb({ isOn: 'yes' })
