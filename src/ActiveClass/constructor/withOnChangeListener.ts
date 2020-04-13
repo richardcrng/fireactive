@@ -46,7 +46,9 @@ function withOnChangeListener<Schema extends RecordSchema>({
     const shouldCheck = existsOnSchemaDirectly || ancestorIsAnIndex
 
     try {
-      if (shouldCheck) checkAgainstSchema()
+      if (shouldCheck) {
+        checkAgainstSchema()
+      }
     } catch (err) {
       // revert to previous value
       if (prevVal === 'undefined') {
