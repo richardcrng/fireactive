@@ -6,7 +6,7 @@ const lightbulbSchema = {
 
 class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
-// @dts-jest:group Static errors
+// @dts-jest:group Basic creation
 {
   // @dts-jest:fail
   new Lightbulb()
@@ -22,13 +22,21 @@ class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
   // @dts-jest:fail
   new Lightbulb({ isOn: true, randomProp: true })
-}
 
-// @dts-jest:group works
-{
   // @dts-jest:pass
   new Lightbulb({ isOn: true })
 
   // @dts-jest:pass
   new Lightbulb({ isOn: false })
+}
+
+// @dts-jest:group Basic assignment
+{
+  const lightbulb = new Lightbulb({ isOn: true })
+
+  // @dts-jest:pass
+  lightbulb.isOn = false
+
+  // @dts-jest:fail
+  lightbulb.isOn = 'true'
 }

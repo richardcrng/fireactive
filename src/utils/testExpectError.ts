@@ -8,7 +8,7 @@ interface Opts<EC = ClassDefinition<Error>> {
 const testExpectError = (
   description: string,
   cb: () => void | Promise<void>,
-  { message, constructor }: Opts
+  { message, constructor }: Opts = { message: undefined, constructor: undefined }
 ) => {
   const expectedAssertions = message ? 2 : 1
 
