@@ -119,6 +119,8 @@ Let's configure our lightbulb schema a bit:
 * `isLED`, should be an optional property;
 * `isSmart`, should default to `false` *and* be an optional property.
 
+Optional properties can be `undefined`, but required properties cannot.
+
 <Tabs
   defaultValue="js"
   values={[
@@ -133,20 +135,20 @@ import { ActiveClass, Schema } from 'fireactive'
 
 const lightbulbSchema = {
   isOn: Schema.boolean({ default: false }),
-  isLED: Schema.boolean({ optional: true }) // or required: false,
+  isLED: Schema.boolean({ optional: true }), // or required: false,
   isSmart: Schema.boolean({ optional: true, default: false })
 }
 
 class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
-const bulbOne = new Lightbulb({ isOn: true })
+const bulbOne = new Lightbulb({})
 bulbOne.isOn // => false
 bulbOne.isLED // => undefined
 bulbOne.isSmart // => false
 
 bulbOne.isOn = undefined // ActiveClassError
-bulbOne.isLED = undefined // => undefined
-bulbOne.isSMart = undefined // => undefined
+bulbOne.isLED = undefined // works
+bulbOne.isSMart = undefined // works
 ```
 
 </TabItem>

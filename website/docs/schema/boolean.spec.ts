@@ -60,3 +60,21 @@ describe('Basic example', () => {
     }, { message: `Lightbulb could not accept the value "true" (string) at path 'isOn'. The property 'isOn' is of the wrong type`, constructor: ActiveClassError })
   })
 })
+
+describe('Configuration', () => {
+  const lightbulbSchema = {
+    isOn: Schema.boolean({ default: false }),
+    isLED: Schema.boolean({ optional: true }), // or required: false,
+    isSmart: Schema.boolean({ optional: true, default: false })
+  }
+
+  class Lightbulb extends ActiveClass(lightbulbSchema) {}
+
+  const bulbOne = new Lightbulb({})
+  
+  test('Initial values', () => {
+    expect(bulbOne.isOn).toBe(false)
+    expect(bulbOne.isLED).toBeUndefined()
+    expect(bulbOne.isSmart).toBe(false)
+  })
+})
