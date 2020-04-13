@@ -21,6 +21,7 @@ module.exports = {
           'schema/overview',
           'schema/boolean',
           'schema/enum',
+          'schema/indexed',
           'schema/number',
           'schema/string'
         ]

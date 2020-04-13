@@ -59,11 +59,8 @@ let userSchema = {
 Note that `optional: true` and `required: false` achieve the same thing, so you can use whichever you prefer the semantics of.
 
 ## Available types
-### Basic
 - [`Schema.boolean`](boolean.md)
 - [`Schema.enum`](enum.md)
+- [`Schema.indexed`](indexed.md)
 - [`Schema.number`](number.md)
 - [`Schema.string`](string.md)
-
-### Complex
-- [`Schema.indexed`](indexed.md)
