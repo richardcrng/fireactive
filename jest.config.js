@@ -63,6 +63,7 @@ module.exports = {
       "compiler_options": {
         "module": 'commonjs',
         "strict": true,
+        // "strictNullChecks": true,
         "target": "es6",
         "esModuleInterop": true
       }

@@ -46,7 +46,7 @@ const lightbulbSchema = {
 class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
 new Lightbulb() // (ts 2554) Expected 1 arguments, but got 0
-new Lightbulb({}) // (ts 2354) Property 'isOn' is missing in type '{}' but required in...
+new Lightbulb({}) // (ts 2354) Property 'isOn' is missing in type '{}' but required in... [assuming strictNullChecks]
 new Lightbulb({ isOn: 'yes' }) // (ts 2322) Type 'string' is not assignable to type 'boolean'
 new Lightbulb({ isOn: null }) // (ts 2322) Type 'null' is not assignable to type 'boolean'
 
