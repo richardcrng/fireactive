@@ -19,6 +19,9 @@ class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
   // @dts-jest:fail
   new Lightbulb({ isOn: null })
+
+  // @dts-jest:fail
+  new Lightbulb({ isOn: true, randomProp: true })
 }
 
 // @dts-jest:group works
