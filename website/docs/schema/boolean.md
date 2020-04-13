@@ -30,10 +30,10 @@ const lightbulbSchema = {
 
 class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
-new Lightbulb() // Could not construct Lightbulb. The required property 'isOn' is missing
-new Lightbulb({}) // Could not construct Lightbulb. The required property 'isOn' is missing
-new Lightbulb({ isOn: 'yes' }) // Could not construct Lightbulb. The property 'isOn' is of the wrong type
-new Lightbulb({ isOn: null }) // Could not construct Lightbulb. The property 'isOn' is of the wrong type
+new Lightbulb() // ActiveClassError: Could not construct Lightbulb. The required property 'isOn' is missing
+new Lightbulb({}) // ActiveClassError: Could not construct Lightbulb. The required property 'isOn' is missing
+new Lightbulb({ isOn: 'yes' }) // ActiveClassError: Could not construct Lightbulb. The property 'isOn' is of the wrong type
+new Lightbulb({ isOn: null }) // ActiveClassError: Could not construct Lightbulb. The property 'isOn' is of the wrong type
 
 new Lightbulb({ isOn: true, randomProp: true }) // works (but randomProp gets ignored as it is not on the schema)
 
