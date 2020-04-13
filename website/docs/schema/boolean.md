@@ -70,7 +70,6 @@ new Lightbulb({ isOn: false }) // works
 </Tabs>
 
 ### Assignment
-#### Assignment outside the schema
 <Tabs
   defaultValue="js"
   values={[
@@ -90,7 +89,7 @@ const lightbulbSchema = {
 class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
 const lightbulb = new Lightbulb({ isOn: true })
-lightbulb.isOn = false // => false
+lightbulb.isOn = false // works
 lightbulb.isOn = 'true' // ActiveClassError: Lightbulb could not accept the value "true" (string) at path 'isOn'. The property 'isOn' is of the wrong type
 ```
 
@@ -107,7 +106,7 @@ const lightbulbSchema = {
 class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
 const lightbulb = new Lightbulb({ isOn: true })
-lightbulb.isOn = false // => false
+lightbulb.isOn = false // works
 lightbulb.isOn = 'true' // (ts 2322) Type '"true"' is not assignable to type 'boolean'
 ```
 
