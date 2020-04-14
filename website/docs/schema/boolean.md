@@ -146,9 +146,14 @@ bulbOne.isOn // => false
 bulbOne.isLED // => undefined
 bulbOne.isSmart // => false
 
-bulbOne.isOn = undefined // ActiveClassError
-bulbOne.isLED = undefined // works
-bulbOne.isSMart = undefined // works
+bulbOne.isOn = undefined
+bulbOne.isOn // => false (default kicks in when undefined)
+bulbOne.isOn = null // ActiveClassError
+
+bulbOne.isLED = undefined
+bulbOne.isLED // => false (default kicks in when undefined)
+bulbOne.isLED = null
+bulbOne.isLED // => null (default does not kick in when undefined)
 ```
 
 </TabItem>

@@ -87,11 +87,11 @@ export type RecordField<FD> =
     : FD extends IndexedFieldDefinition<infer T>
       ? TypeFromIdentifier<FieldIdentifier.indexed, T>
     // handle enum cases: is it optional?
-    : FD extends { _fieldIdentifier: infer C, vals: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined
+    : FD extends { _fieldIdentifier: infer C, vals: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined | null
     // required enum
     : FD extends { _fieldIdentifier: infer C, vals: Array<infer E> } ? TypeFromIdentifier<C, E>
     // if FD.required === false, then the record might not have the property
-    : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
+    : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined | null
     // else if it has `_fieldIdentifier`, then it is a necessary primitive field
     : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
     // else it is an object of RecordFields, some of which might be optional

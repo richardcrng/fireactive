@@ -14,7 +14,7 @@ const testExpectError = (
 
   if (cb.constructor.name === 'AsyncFunction') {
     test(description, async (done) => {
-      // expect.assertions(expectedAssertions)
+      expect.assertions(expectedAssertions)
       try {
         await cb()
       } catch (err) {
@@ -25,7 +25,7 @@ const testExpectError = (
     })
   } else {
     test(description, () => {
-      // expect.assertions(expectedAssertions) TODO: investigate why this doesn't work?
+      expect.assertions(expectedAssertions) // TODO: investigate why this doesn't work?
       try {
         cb()
       } catch (err) {
