@@ -1,5 +1,4 @@
 import { ActiveClass, Schema } from '../../../src'
-import { ActiveClass as AC } from '../../../src/types/class.types'
 
 const simpleSchema = {
   isOn: Schema.boolean
