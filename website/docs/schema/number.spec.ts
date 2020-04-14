@@ -63,75 +63,75 @@ describe('Basic example', () => {
   })
 })
 
-// describe('Configuration', () => {
-//   const buildingSchema = {
-//     floors: Schema.number,
-//     isEco: Schema.number({ default: false }),
-//     isLED: Schema.number({ optional: true }), // or required: false,
-//     isSmart: Schema.number({ optional: true, default: false })
-//   }
+describe('Configuration', () => {
+  const buildingSchema = {
+    floors: Schema.number,
+    doors: Schema.number({ default: 1 }),
+    rooms: Schema.number({ optional: true }), // or required: false,
+    chimneys: Schema.number({ optional: true, default: 2 })
+  }
 
-//   class Building extends ActiveClass(buildingSchema) {}
+  class Building extends ActiveClass(buildingSchema) {}
 
-//   const building = new Building({ floors: false })
+  const building = new Building({ floors: 4 })
   
-//   test('Initial values', () => {
-//     expect(building.floors).toBe(false)
-//     expect(building.isEco).toBe(false)
-//     expect(building.isLED).toBeUndefined()
-//     expect(building.isSmart).toBe(false)
-//   })
+  test('Initial values', () => {
+    expect(building.floors).toBe(4)
+    expect(building.doors).toBe(1)
+    expect(building.rooms).toBeUndefined()
+    expect(building.chimneys).toBe(2)
+  })
 
-//   describe('Required with no default', () => {
-//     testExpectError('throws error when assigned undefined', () => {
-//       // @ts-ignore
-//       building.floors = undefined
-//     }, { message: `Building could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing`, constructor: ActiveClassError })
+  describe('Required with no default', () => {
+    testExpectError('throws error when assigned undefined', () => {
+      // @ts-ignore
+      building.floors = undefined
+    }, { message: `Building could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing`, constructor: ActiveClassError })
 
-//     testExpectError('throws error when assigned null', () => {
-//       // @ts-ignore
-//       building.floors = null
-//     }, { message: `Building could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type`, constructor: ActiveClassError })
-//   })
+    testExpectError('throws error when assigned null', () => {
+      // @ts-ignore
+      building.floors = null
+    }, { message: `Building could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type`, constructor: ActiveClassError })
+  })
 
-//   describe('Required with default', () => {    
-//     it('defaults when assigned undefined', () => {
-//       // @ts-ignore
-//       building.isEco = undefined
-//       expect(building.isEco).toBe(false)
-//     })
+  describe('Required with default', () => {    
+    it('defaults when assigned undefined', () => {
+      // @ts-ignore
+      building.doors = undefined
+      expect(building.doors).toBe(1)
+    })
 
-//     testExpectError('throws error when assigned null', () => {
-//       // @ts-ignore
-//       building.isEco = null
-//     }, { message: `Building could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type`, constructor: ActiveClassError })
-//   })
+    testExpectError('throws error when assigned null', () => {
+      // @ts-ignore
+      building.doors = null
+    }, { message: `Building could not accept the value null (object) at path 'doors'. The property 'doors' is of the wrong type`, constructor: ActiveClassError })
+  })
 
-//   describe('Optional with no default', () => {
-//     it('does not default or throw error when assigned undefined', () => {
-//       // @ts-ignore
-//       building.isLED = undefined
-//       expect(building.isLED).toBeUndefined()
-//     })
+  describe('Optional with no default', () => {
+    it('does not default or throw error when assigned undefined', () => {
+      // @ts-ignore
+      building.rooms = undefined
+      expect(building.rooms).toBeUndefined()
+    })
 
-//     it('does not default or throw error when assigned null', () => {
-//       // @ts-ignore
-//       building.isLED = null
-//       expect(building.isLED).toBeNull()
-//     })
-//   })
+    it('does not default or throw error when assigned null', () => {
+      // @ts-ignore
+      building.rooms = null
+      expect(building.rooms).toBeNull()
+    })
+  })
 
-//   describe('Optional with default', () => {
-//     it('defaults when assigned undefined', () => {
-//       // @ts-ignore
-//       building.isSmart = undefined
-//       expect(building.isSmart).toBe(false)
-//     })
+  describe('Optional with default', () => {
+    it('defaults when assigned undefined', () => {
+      // @ts-ignore
+      building.chimneys = undefined
+      expect(building.chimneys).toBe(2)
+    })
 
-//     it('does not default or throw error when assigned null', () => {
-//       // @ts-ignore
-//       building.isSmart = null
-//       expect(building.isSmart).toBeNull()
-//     })
-//   })
-// })
+    it('does not default or throw error when assigned null', () => {
+      // @ts-ignore
+      building.chimneys = null
+      expect(building.chimneys).toBeNull()
+    })
+  })
+})

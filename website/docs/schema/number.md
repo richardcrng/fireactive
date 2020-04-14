@@ -127,9 +127,9 @@ Default values are used when a field's value would otherwise be `undefined`.
 Only optional properties can be assigned `null` (i.e. the deliberate ommission of a value).
 
 Let's add some additionl properties to our building schema to demonstrate:
-* `isEco` should default to `false`;
-* `isLED`, should be an optional property;
-* `isSmart`, should default to `false` *and* be an optional property.
+* `doors` should default to `1`;
+* `rooms`, should be an optional property;
+* `chimneys`, should default to `2` *and* be an optional property.
 
 <Tabs
   defaultValue="js"
@@ -150,39 +150,39 @@ import { ActiveClass, Schema } from 'fireactive'
 
 const buildingSchema = {
   floors: Schema.number,
-  isEco: Schema.number({ default: false }),
-  isLED: Schema.number({ optional: true }), // or required: false,
-  isSmart: Schema.number({ optional: true, default: false })
+  doors: Schema.number({ default: 1 }),
+  rooms: Schema.number({ optional: true }), // or required: false,
+  chimneys: Schema.number({ optional: true, default: 2 })
 }
 
 class Building extends ActiveClass(buildingSchema) {}
 
-const building = new Building({ floors: false })
-building.floors // => false
-building.isEco // => false
-building.isLED // => undefined
-building.isSmart // => false
+const building = new Building({ floors: 4 })
+building.floors // => 4
+building.doors // => 1
+building.rooms // => undefined
+building.chimneys // => 2
 
 /* floors: required and no default */
 building.floors = undefined // ActiveClassError: Building could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing
 building.floors = null // ActiveClassError: Building could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type
 
-/* isEco: required and has default */
-building.isEco = undefined
-building.isEco // => false (default kicks in when undefined)
-building.isEco = null // ActiveClassError: Building could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type
+/* doors: required and has default */
+building.doors = undefined
+building.doors // => false (default kicks in when undefined)
+building.doors = null // ActiveClassError: Building could not accept the value null (object) at path 'doors'. The property 'doors' is of the wrong type
 
-/* isLED: optional and has no default */
-building.isLED = undefined
-building.isLED // => undefined (optional, so doesn't throw, and has no default to kick in)
-building.isLED = null
-building.isLED // => null (optional, so doesn't throw and can be null)
+/* rooms: optional and has no default */
+building.rooms = undefined
+building.rooms // => undefined (optional, so doesn't throw, and has no default to kick in)
+building.rooms = null
+building.rooms // => null (optional, so doesn't throw and can be null)
 
-/* isSmart: optional and has default */
-building.isSmart = undefined
-building.isSmart // => false (default kicks in when undefined)
-building.isSmart = null
-building.isSmart // => null (optional, so doesn't throw and can be null)
+/* chimneys: optional and has default */
+building.chimneys = undefined
+building.chimneys // => false (default kicks in when undefined)
+building.chimneys = null
+building.chimneys // => null (optional, so doesn't throw and can be null)
 ```
 
 </TabItem>
@@ -198,34 +198,34 @@ import { ActiveClass, Schema } from 'fireactive'
 
 const buildingSchema = {
   floors: Schema.number,
-  isEco: Schema.number({ default: false }),
-  isLED: Schema.number({ optional: true }), // or required: false,
-  isSmart: Schema.number({ optional: true, default: false })
+  doors: Schema.number({ default: false }),
+  rooms: Schema.number({ optional: true }), // or required: false,
+  chimneys: Schema.number({ optional: true, default: false })
 }
 
 class Building extends ActiveClass(buildingSchema) {}
 
 const building = new Building({ floors: false })
 building.floors // => false
-building.isEco // => false
-building.isLED // => undefined
-building.isSmart // => false
+building.doors // => false
+building.rooms // => undefined
+building.chimneys // => false
 
 /* floors: required and no default */
 building.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number'
 building.floors = null // (ts 2322) Type 'null' is not assignable to type 'number'
 
-/* isEco: required and has default */
-building.isEco = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number'
-building.isEco = null // (ts 2322) Type 'null' is not assignable to type 'number'
+/* doors: required and has default */
+building.doors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number'
+building.doors = null // (ts 2322) Type 'null' is not assignable to type 'number'
 
-/* isLED: optional and has no default */
-building.isLED = undefined // compiles
-building.isLED = null // compiles
+/* rooms: optional and has no default */
+building.rooms = undefined // compiles
+building.rooms = null // compiles
 
-/* isSmart: optional and has default */
-building.isSmart = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number | null'
-building.isSmart = null // compiles
+/* chimneys: optional and has default */
+building.chimneys = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number | null'
+building.chimneys = null // compiles
 ```
 
 </TabItem>
