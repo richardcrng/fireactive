@@ -30,16 +30,16 @@ class BuildingSimple extends ActiveClass(simpleSchema) {}
   new BuildingSimple({ floors: 9 })
 }
 
-// // @dts-jest:group Basic assignment
-// {
-//   const lightbulb = new BuildingSimple({ floors: true })
+// @dts-jest:group Basic assignment
+{
+  const building = new BuildingSimple({ floors: 4 })
 
-//   // @dts-jest:pass
-//   lightbulb.floors = false
+  // @dts-jest:pass
+  building.floors = 5
 
-//   // @dts-jest:fail
-//   lightbulb.floors = 'true'
-// }
+  // @dts-jest:fail
+  building.floors = '5'
+}
 
 // const configuredSchema = {
 //   floors: Schema.number,
@@ -54,29 +54,29 @@ class BuildingSimple extends ActiveClass(simpleSchema) {}
 
 // // @dts-jest:group Configuration
 // {
-//   const lightbulb = new LightbulbConfigured({ floors: true })
+//   const building = new LightbulbConfigured({ floors: true })
 
 //   // @dts-jest:fail
-//   lightbulb.floors = undefined
+//   building.floors = undefined
 
 //   // @dts-jest:fail
-//   lightbulb.floors = null
+//   building.floors = null
 
 //   // @dts-jest:fail
-//   lightbulb.isEco = undefined
+//   building.isEco = undefined
 
 //   // @dts-jest:fail
-//   lightbulb.isEco = null
+//   building.isEco = null
 
 //   // @dts-jest:pass
-//   lightbulb.isLED = undefined
+//   building.isLED = undefined
 
 //   // @dts-jest:pass
-//   lightbulb.isLED = null
+//   building.isLED = null
 
 //   // @dts-jest:fail
-//   lightbulb.isSmart = undefined
+//   building.isSmart = undefined
 
 //   // @dts-jest:pass
-//   lightbulb.isSmart = null
+//   building.isSmart = null
 // }

@@ -107,9 +107,9 @@ const buildingSchema = {
 
 class Building extends ActiveClass(buildingSchema) {}
 
-const building = new Building({ floors: true })
-building.floors = false // compiles
-building.floors = 'true' // (ts 2322) Type '"true"' is not assignable to type 'number'
+const building = new Building({ floors: 4 })
+building.floors = 5 // compiles
+building.floors = '5' // (ts 2322) Type '"5"' is not assignable to type 'number'
 building.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number'
 building.floors = null // (ts 2322) Type 'null' is not assignable to type 'number'
 ```
