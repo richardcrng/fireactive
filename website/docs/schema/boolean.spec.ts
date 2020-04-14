@@ -91,6 +91,20 @@ describe('Configuration', () => {
     }, { message: `Lightbulb could not accept the value null (object) at path 'isOn'. The property 'isOn' is of the wrong type`, constructor: ActiveClassError })
   })
 
+  describe('Optional with no default', () => {
+    test('Optional property does not default when assigned undefined', () => {
+      // @ts-ignore
+      bulbOne.isLED = undefined
+      expect(bulbOne.isLED).toBeUndefined()
+    })
+
+    test('Optional property does not default when assigned null', () => {
+      // @ts-ignore
+      bulbOne.isLED = null
+      expect(bulbOne.isLED).toBeNull()
+    })
+  })
+
   test('Optional property does not default when undefined', () => {
     // @ts-ignore
     bulbOne.isSmart = undefined
