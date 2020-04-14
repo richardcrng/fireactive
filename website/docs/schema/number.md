@@ -88,11 +88,11 @@ const buildingSchema = {
 
 class Building extends ActiveClass(buildingSchema) {}
 
-const lightbulb = new Building({ floors: true })
-lightbulb.floors = false // works
-lightbulb.floors = 'true' // ActiveClassError: Building could not accept the value "true" (string) at path 'floors'. The property 'floors' is of the wrong type
-lightbulb.floors = undefined // ActiveClassError: Building could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing
-lightbulb.floors = null // ActiveClassError: Building could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type
+const building = new Building({ floors: 4 })
+building.floors = 5 // works
+building.floors = '5' // ActiveClassError: Building could not accept the value "true" (string) at path 'floors'. The property 'floors' is of the wrong type
+building.floors = undefined // ActiveClassError: Building could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing
+building.floors = null // ActiveClassError: Building could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type
 ```
 
 </TabItem>
@@ -107,11 +107,11 @@ const buildingSchema = {
 
 class Building extends ActiveClass(buildingSchema) {}
 
-const lightbulb = new Building({ floors: true })
-lightbulb.floors = false // compiles
-lightbulb.floors = 'true' // (ts 2322) Type '"true"' is not assignable to type 'number'
-lightbulb.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number'
-lightbulb.floors = null // (ts 2322) Type 'null' is not assignable to type 'number'
+const building = new Building({ floors: true })
+building.floors = false // compiles
+building.floors = 'true' // (ts 2322) Type '"true"' is not assignable to type 'number'
+building.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number'
+building.floors = null // (ts 2322) Type 'null' is not assignable to type 'number'
 ```
 
 </TabItem>
@@ -126,7 +126,7 @@ Default values are used when a field's value would otherwise be `undefined`.
 
 Only optional properties can be assigned `null` (i.e. the deliberate ommission of a value).
 
-Let's add some additionl properties to our lightbulb schema to demonstrate:
+Let's add some additionl properties to our building schema to demonstrate:
 * `isEco` should default to `false`;
 * `isLED`, should be an optional property;
 * `isSmart`, should default to `false` *and* be an optional property.
@@ -157,32 +157,32 @@ const buildingSchema = {
 
 class Building extends ActiveClass(buildingSchema) {}
 
-const lightbulb = new Building({ floors: false })
-lightbulb.floors // => false
-lightbulb.isEco // => false
-lightbulb.isLED // => undefined
-lightbulb.isSmart // => false
+const building = new Building({ floors: false })
+building.floors // => false
+building.isEco // => false
+building.isLED // => undefined
+building.isSmart // => false
 
 /* floors: required and no default */
-lightbulb.floors = undefined // ActiveClassError: Building could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing
-lightbulb.floors = null // ActiveClassError: Building could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type
+building.floors = undefined // ActiveClassError: Building could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing
+building.floors = null // ActiveClassError: Building could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type
 
 /* isEco: required and has default */
-lightbulb.isEco = undefined
-lightbulb.isEco // => false (default kicks in when undefined)
-lightbulb.isEco = null // ActiveClassError: Building could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type
+building.isEco = undefined
+building.isEco // => false (default kicks in when undefined)
+building.isEco = null // ActiveClassError: Building could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type
 
 /* isLED: optional and has no default */
-lightbulb.isLED = undefined
-lightbulb.isLED // => undefined (optional, so doesn't throw, and has no default to kick in)
-lightbulb.isLED = null
-lightbulb.isLED // => null (optional, so doesn't throw and can be null)
+building.isLED = undefined
+building.isLED // => undefined (optional, so doesn't throw, and has no default to kick in)
+building.isLED = null
+building.isLED // => null (optional, so doesn't throw and can be null)
 
 /* isSmart: optional and has default */
-lightbulb.isSmart = undefined
-lightbulb.isSmart // => false (default kicks in when undefined)
-lightbulb.isSmart = null
-lightbulb.isSmart // => null (optional, so doesn't throw and can be null)
+building.isSmart = undefined
+building.isSmart // => false (default kicks in when undefined)
+building.isSmart = null
+building.isSmart // => null (optional, so doesn't throw and can be null)
 ```
 
 </TabItem>
@@ -205,27 +205,27 @@ const buildingSchema = {
 
 class Building extends ActiveClass(buildingSchema) {}
 
-const lightbulb = new Building({ floors: false })
-lightbulb.floors // => false
-lightbulb.isEco // => false
-lightbulb.isLED // => undefined
-lightbulb.isSmart // => false
+const building = new Building({ floors: false })
+building.floors // => false
+building.isEco // => false
+building.isLED // => undefined
+building.isSmart // => false
 
 /* floors: required and no default */
-lightbulb.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number'
-lightbulb.floors = null // (ts 2322) Type 'null' is not assignable to type 'number'
+building.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number'
+building.floors = null // (ts 2322) Type 'null' is not assignable to type 'number'
 
 /* isEco: required and has default */
-lightbulb.isEco = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number'
-lightbulb.isEco = null // (ts 2322) Type 'null' is not assignable to type 'number'
+building.isEco = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number'
+building.isEco = null // (ts 2322) Type 'null' is not assignable to type 'number'
 
 /* isLED: optional and has no default */
-lightbulb.isLED = undefined // compiles
-lightbulb.isLED = null // compiles
+building.isLED = undefined // compiles
+building.isLED = null // compiles
 
 /* isSmart: optional and has default */
-lightbulb.isSmart = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number | null'
-lightbulb.isSmart = null // compiles
+building.isSmart = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number | null'
+building.isSmart = null // compiles
 ```
 
 </TabItem>

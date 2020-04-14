@@ -7,60 +7,60 @@ describe('Basic example', () => {
     floors: Schema.number
   }
 
-  class Lightbulb extends ActiveClass(buildingSchema) { }
+  class Building extends ActiveClass(buildingSchema) { }
 
   describe('Creation', () => {
     describe('Runtime errors', () => {
       testExpectError(
         'Requires an argument',
         // @ts-ignore
-        () => new Lightbulb(),
-        { message: `Could not construct Lightbulb. The required property 'floors' is missing`, constructor: ActiveClassError }
+        () => new Building(),
+        { message: `Could not construct Building. The required property 'floors' is missing`, constructor: ActiveClassError }
       )
 
       testExpectError(
         'Requires the property',
         // @ts-ignore
-        () => new Lightbulb({}),
-        { message: `Could not construct Lightbulb. The required property 'floors' is missing`, constructor: ActiveClassError }
+        () => new Building({}),
+        { message: `Could not construct Building. The required property 'floors' is missing`, constructor: ActiveClassError }
       )
 
       testExpectError(
         'Requires the property to be the right type',
         // @ts-ignore
-        () => new Lightbulb({ floors: '4' }),
-        { message: `Could not construct Lightbulb. The property 'floors' is of the wrong type`, constructor: ActiveClassError }
+        () => new Building({ floors: '4' }),
+        { message: `Could not construct Building. The property 'floors' is of the wrong type`, constructor: ActiveClassError }
       )
 
       testExpectError(
         'Requires the property not to be null (strictNullChecks)',
         // @ts-ignore
-        () => new Lightbulb({ floors: null }),
-        { message: `Could not construct Lightbulb. The property 'floors' is of the wrong type`, constructor: ActiveClassError }
+        () => new Building({ floors: null }),
+        { message: `Could not construct Building. The property 'floors' is of the wrong type`, constructor: ActiveClassError }
       )
     })
 
     test('Runtime passes', () => {
       // @ts-ignore
-      expect(() => new Lightbulb({ floors: 4, randomProp: 9 })).not.toThrow()
-      expect(() => new Lightbulb({ floors: 4 })).not.toThrow()
-      expect(() => new Lightbulb({ floors: 9})).not.toThrow()
+      expect(() => new Building({ floors: 4, randomProp: 9 })).not.toThrow()
+      expect(() => new Building({ floors: 4 })).not.toThrow()
+      expect(() => new Building({ floors: 9})).not.toThrow()
     })
   })
 
-  // describe('Updates', () => {
-  //   const building = new Lightbulb({ floors: true })
+  describe('Updates', () => {
+    const building = new Building({ floors: 4 })
 
-  //   test("Can assign boolean values", () => {
-  //     building.floors = false
-  //     expect(building.floors).toBe(false)
-  //   })
+    test("Can assign boolean values", () => {
+      building.floors = 5
+      expect(building.floors).toBe(5)
+    })
 
-  //   testExpectError("Can't assign non-boolean values", () => {
-  //     // @ts-ignore
-  //     building.floors = 'true'
-  //   }, { message: `Lightbulb could not accept the value "true" (string) at path 'floors'. The property 'floors' is of the wrong type`, constructor: ActiveClassError })
-  // })
+    testExpectError("Can't assign non-boolean values", () => {
+      // @ts-ignore
+      building.floors = '5'
+    }, { message: `Building could not accept the value "5" (string) at path 'floors'. The property 'floors' is of the wrong type`, constructor: ActiveClassError })
+  })
 })
 
 // describe('Configuration', () => {
@@ -71,9 +71,9 @@ describe('Basic example', () => {
 //     isSmart: Schema.number({ optional: true, default: false })
 //   }
 
-//   class Lightbulb extends ActiveClass(buildingSchema) {}
+//   class Building extends ActiveClass(buildingSchema) {}
 
-//   const building = new Lightbulb({ floors: false })
+//   const building = new Building({ floors: false })
   
 //   test('Initial values', () => {
 //     expect(building.floors).toBe(false)
@@ -86,12 +86,12 @@ describe('Basic example', () => {
 //     testExpectError('throws error when assigned undefined', () => {
 //       // @ts-ignore
 //       building.floors = undefined
-//     }, { message: `Lightbulb could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing`, constructor: ActiveClassError })
+//     }, { message: `Building could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing`, constructor: ActiveClassError })
 
 //     testExpectError('throws error when assigned null', () => {
 //       // @ts-ignore
 //       building.floors = null
-//     }, { message: `Lightbulb could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type`, constructor: ActiveClassError })
+//     }, { message: `Building could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type`, constructor: ActiveClassError })
 //   })
 
 //   describe('Required with default', () => {    
@@ -104,7 +104,7 @@ describe('Basic example', () => {
 //     testExpectError('throws error when assigned null', () => {
 //       // @ts-ignore
 //       building.isEco = null
-//     }, { message: `Lightbulb could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type`, constructor: ActiveClassError })
+//     }, { message: `Building could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type`, constructor: ActiveClassError })
 //   })
 
 //   describe('Optional with no default', () => {
