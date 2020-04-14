@@ -63,32 +63,46 @@ describe('Basic example', () => {
 
 describe('Configuration', () => {
   const lightbulbSchema = {
-    isOn: Schema.boolean({ default: false }),
+    isOn: Schema.boolean,
+    isEco: Schema.boolean({ default: false }),
     isLED: Schema.boolean({ optional: true }), // or required: false,
     isSmart: Schema.boolean({ optional: true, default: false })
   }
 
   class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
-  const bulbOne = new Lightbulb({})
+  const bulbOne = new Lightbulb({ isOn: false })
   
   test('Initial values', () => {
     expect(bulbOne.isOn).toBe(false)
+    expect(bulbOne.isEco).toBe(false)
     expect(bulbOne.isLED).toBeUndefined()
     expect(bulbOne.isSmart).toBe(false)
   })
 
-  describe('Required with default', () => {    
-    it('defaults when assigned undefined', () => {
+  describe('Required with no default', () => {
+    testExpectError('throws error when assigned undefined', () => {
       // @ts-ignore
       bulbOne.isOn = undefined
-      expect(bulbOne.isOn).toBe(false)
-    })
+    }, { message: `Lightbulb could not accept the value undefined (undefined) at path 'isOn'. The required property 'isOn' is missing`, constructor: ActiveClassError })
 
     testExpectError('throws error when assigned null', () => {
       // @ts-ignore
       bulbOne.isOn = null
     }, { message: `Lightbulb could not accept the value null (object) at path 'isOn'. The property 'isOn' is of the wrong type`, constructor: ActiveClassError })
+  })
+
+  describe('Required with default', () => {    
+    it('defaults when assigned undefined', () => {
+      // @ts-ignore
+      bulbOne.isEco = undefined
+      expect(bulbOne.isEco).toBe(false)
+    })
+
+    testExpectError('throws error when assigned null', () => {
+      // @ts-ignore
+      bulbOne.isEco = null
+    }, { message: `Lightbulb could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type`, constructor: ActiveClassError })
   })
 
   describe('Optional with no default', () => {
