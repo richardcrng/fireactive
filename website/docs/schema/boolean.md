@@ -153,32 +153,32 @@ const lightbulbSchema = {
 
 class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
-const bulbOne = new Lightbulb({ isOn: false })
-bulbOne.isOn // => false
-bulbOne.isEco // => false
-bulbOne.isLED // => undefined
-bulbOne.isSmart // => false
+const lightbulb = new Lightbulb({ isOn: false })
+lightbulb.isOn // => false
+lightbulb.isEco // => false
+lightbulb.isLED // => undefined
+lightbulb.isSmart // => false
 
 /* isOn: required and no default */
-bulbOne.isOn = undefined // ActiveClassError: Lightbulb could not accept the value undefined (undefined) at path 'isOn'. The required property 'isOn' is missing
-bulbOne.isOn = null // ActiveClassError: Lightbulb could not accept the value null (object) at path 'isOn'. The property 'isOn' is of the wrong type
+lightbulb.isOn = undefined // ActiveClassError: Lightbulb could not accept the value undefined (undefined) at path 'isOn'. The required property 'isOn' is missing
+lightbulb.isOn = null // ActiveClassError: Lightbulb could not accept the value null (object) at path 'isOn'. The property 'isOn' is of the wrong type
 
 /* isEco: required and has default */
-bulbOne.isEco = undefined
-bulbOne.isEco // => false (default kicks in when undefined)
-bulbOne.isEco = null // ActiveClassError: Lightbulb could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type
+lightbulb.isEco = undefined
+lightbulb.isEco // => false (default kicks in when undefined)
+lightbulb.isEco = null // ActiveClassError: Lightbulb could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type
 
 /* isLED: optional and has no default */
-bulbOne.isLED = undefined
-bulbOne.isLED // => undefined (optional, so doesn't throw, and has no default to kick in)
-bulbOne.isLED = null
-bulbOne.isLED // => null (optional, so doesn't throw and can be null)
+lightbulb.isLED = undefined
+lightbulb.isLED // => undefined (optional, so doesn't throw, and has no default to kick in)
+lightbulb.isLED = null
+lightbulb.isLED // => null (optional, so doesn't throw and can be null)
 
 /* isSmart: optional and has default */
-bulbOne.isSmart = undefined
-bulbOne.isSmart // => false (default kicks in when undefined)
-bulbOne.isSmart = null
-bulbOne.isSmart // => null (optional, so doesn't throw and can be null)
+lightbulb.isSmart = undefined
+lightbulb.isSmart // => false (default kicks in when undefined)
+lightbulb.isSmart = null
+lightbulb.isSmart // => null (optional, so doesn't throw and can be null)
 ```
 
 </TabItem>
@@ -188,19 +188,40 @@ bulbOne.isSmart // => null (optional, so doesn't throw and can be null)
 import { ActiveClass, Schema } from 'fireactive'
 
 const lightbulbSchema = {
-  isOn: Schema.boolean
+  isOn: Schema.boolean,
+  isEco: Schema.boolean({ default: false }),
+  isLED: Schema.boolean({ optional: true }), // or required: false,
+  isSmart: Schema.boolean({ optional: true, default: false })
 }
 
 class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
-// Key: * assumes strict null checks
-new Lightbulb() // (ts 2554) Expected 1 arguments, but got 0
-new Lightbulb({}) // (ts 2354)* Property 'isOn' is missing in type '{}' but required in...
-new Lightbulb({ isOn: 'yes' }) // (ts 2322) Type 'string' is not assignable to type 'boolean'
-new Lightbulb({ isOn: null }) // (ts 2322)* Type 'null' is not assignable to type 'boolean'
+const lightbulb = new Lightbulb({ isOn: false })
+lightbulb.isOn // => false
+lightbulb.isEco // => false
+lightbulb.isLED // => undefined
+lightbulb.isSmart // => false
 
-new Lightbulb({ isOn: true }) // works
-new Lightbulb({ isOn: false }) // works
+/* isOn: required and no default */
+lightbulb.isOn = undefined // ActiveClassError: Lightbulb could not accept the value undefined (undefined) at path 'isOn'. The required property 'isOn' is missing
+lightbulb.isOn = null // ActiveClassError: Lightbulb could not accept the value null (object) at path 'isOn'. The property 'isOn' is of the wrong type
+
+/* isEco: required and has default */
+lightbulb.isEco = undefined
+lightbulb.isEco // => false (default kicks in when undefined)
+lightbulb.isEco = null // ActiveClassError: Lightbulb could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type
+
+/* isLED: optional and has no default */
+lightbulb.isLED = undefined
+lightbulb.isLED // => undefined (optional, so doesn't throw, and has no default to kick in)
+lightbulb.isLED = null
+lightbulb.isLED // => null (optional, so doesn't throw and can be null)
+
+/* isSmart: optional and has default */
+lightbulb.isSmart = undefined
+lightbulb.isSmart // => false (default kicks in when undefined)
+lightbulb.isSmart = null
+lightbulb.isSmart // => null (optional, so doesn't throw and can be null)
 ```
 
 </TabItem>

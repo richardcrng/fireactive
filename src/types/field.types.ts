@@ -34,7 +34,7 @@ export type FieldDefinition<T = any, R extends boolean = boolean, D extends bool
     } & {
       required: R,
       default?: T extends Array<infer E> ? E : T
-    } & (D extends true ? { _hasDefault: true } : { _hasDefault: false })
+    } & (D extends true ? { _hasDefault: true } : { _hasDefault: D })
       & (T extends Array<infer E> ? { vals: E[] } : {})
 
 export type FieldType<FI, T = unknown> =
@@ -86,12 +86,15 @@ export type RecordField<FD> =
         : unknown
     : FD extends IndexedFieldDefinition<infer T>
       ? TypeFromIdentifier<FieldIdentifier.indexed, T>
+
+    // non-indexed cases
+    
     // handle enum cases: is it optional?
-    : FD extends { _fieldIdentifier: infer C, vals: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined | null
+    : FD extends { _fieldIdentifier: infer C, vals: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined
     // required enum
     : FD extends { _fieldIdentifier: infer C, vals: Array<infer E> } ? TypeFromIdentifier<C, E>
     // if FD.required === false, then the record might not have the property
-    : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined | null
+    : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
     // else if it has `_fieldIdentifier`, then it is a necessary primitive field
     : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
     // else it is an object of RecordFields, some of which might be optional

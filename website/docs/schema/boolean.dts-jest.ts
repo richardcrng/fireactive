@@ -1,42 +1,83 @@
 import { ActiveClass, Schema } from '../../../src'
+import { ActiveClass as AC } from '../../../src/types/class.types'
 
-const lightbulbSchema = {
+const simpleSchema = {
   isOn: Schema.boolean
 }
 
-class Lightbulb extends ActiveClass(lightbulbSchema) {}
+class LightbulbSimple extends ActiveClass(simpleSchema) {}
 
 // @dts-jest:group Basic creation
 {
   // @dts-jest:fail
-  new Lightbulb()
+  new LightbulbSimple()
 
   // @dts-jest:fail
-  new Lightbulb({})
+  new LightbulbSimple({})
 
   // @dts-jest:fail
-  new Lightbulb({ isOn: 'yes' })
+  new LightbulbSimple({ isOn: 'yes' })
 
   // @dts-jest:fail
-  new Lightbulb({ isOn: null })
+  new LightbulbSimple({ isOn: null })
 
   // @dts-jest:fail
-  new Lightbulb({ isOn: true, randomProp: true })
+  new LightbulbSimple({ isOn: true, randomProp: true })
 
   // @dts-jest:pass
-  new Lightbulb({ isOn: true })
+  new LightbulbSimple({ isOn: true })
 
   // @dts-jest:pass
-  new Lightbulb({ isOn: false })
+  new LightbulbSimple({ isOn: false })
 }
 
 // @dts-jest:group Basic assignment
 {
-  const lightbulb = new Lightbulb({ isOn: true })
+  const lightbulb = new LightbulbSimple({ isOn: true })
 
   // @dts-jest:pass
   lightbulb.isOn = false
 
   // @dts-jest:fail
   lightbulb.isOn = 'true'
+}
+
+const configuredSchema = {
+  isOn: Schema.boolean,
+  isEco: Schema.boolean({ default: false }),
+  isLED: Schema.boolean({ optional: true }), // or required: false,
+  isSmart: Schema.boolean({ optional: true, default: false })
+}
+
+console.log(configuredSchema.isSmart)
+
+class LightbulbConfigured extends ActiveClass(configuredSchema) {}
+
+// @dts-jest:group Configuration
+{
+  const lightbulb = new LightbulbConfigured({ isOn: true })
+
+  // @dts-jest:fail
+  lightbulb.isOn = undefined
+
+  // @dts-jest:fail
+  lightbulb.isOn = null
+
+  // @dts-jest:fail
+  lightbulb.isEco = undefined
+
+  // @dts-jest:fail
+  lightbulb.isEco = null
+
+  // @dts-jest:pass
+  lightbulb.isLED = undefined
+
+  // @dts-jest:fail
+  lightbulb.isLED = null
+
+  // @dts-jest:pass
+  lightbulb.isSmart = undefined
+
+  // @dts-jest:fail
+  lightbulb.isSmart = null
 }

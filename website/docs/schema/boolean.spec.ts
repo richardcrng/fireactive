@@ -71,65 +71,65 @@ describe('Configuration', () => {
 
   class Lightbulb extends ActiveClass(lightbulbSchema) {}
 
-  const bulbOne = new Lightbulb({ isOn: false })
+  const lightbulb = new Lightbulb({ isOn: false })
   
   test('Initial values', () => {
-    expect(bulbOne.isOn).toBe(false)
-    expect(bulbOne.isEco).toBe(false)
-    expect(bulbOne.isLED).toBeUndefined()
-    expect(bulbOne.isSmart).toBe(false)
+    expect(lightbulb.isOn).toBe(false)
+    expect(lightbulb.isEco).toBe(false)
+    expect(lightbulb.isLED).toBeUndefined()
+    expect(lightbulb.isSmart).toBe(false)
   })
 
   describe('Required with no default', () => {
     testExpectError('throws error when assigned undefined', () => {
       // @ts-ignore
-      bulbOne.isOn = undefined
+      lightbulb.isOn = undefined
     }, { message: `Lightbulb could not accept the value undefined (undefined) at path 'isOn'. The required property 'isOn' is missing`, constructor: ActiveClassError })
 
     testExpectError('throws error when assigned null', () => {
       // @ts-ignore
-      bulbOne.isOn = null
+      lightbulb.isOn = null
     }, { message: `Lightbulb could not accept the value null (object) at path 'isOn'. The property 'isOn' is of the wrong type`, constructor: ActiveClassError })
   })
 
   describe('Required with default', () => {    
     it('defaults when assigned undefined', () => {
       // @ts-ignore
-      bulbOne.isEco = undefined
-      expect(bulbOne.isEco).toBe(false)
+      lightbulb.isEco = undefined
+      expect(lightbulb.isEco).toBe(false)
     })
 
     testExpectError('throws error when assigned null', () => {
       // @ts-ignore
-      bulbOne.isEco = null
+      lightbulb.isEco = null
     }, { message: `Lightbulb could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type`, constructor: ActiveClassError })
   })
 
   describe('Optional with no default', () => {
     it('does not default or throw error when assigned undefined', () => {
       // @ts-ignore
-      bulbOne.isLED = undefined
-      expect(bulbOne.isLED).toBeUndefined()
+      lightbulb.isLED = undefined
+      expect(lightbulb.isLED).toBeUndefined()
     })
 
     it('does not default or throw error when assigned null', () => {
       // @ts-ignore
-      bulbOne.isLED = null
-      expect(bulbOne.isLED).toBeNull()
+      lightbulb.isLED = null
+      expect(lightbulb.isLED).toBeNull()
     })
   })
 
   describe('Optional with default', () => {
     it('defaults when assigned undefined', () => {
       // @ts-ignore
-      bulbOne.isSmart = undefined
-      expect(bulbOne.isSmart).toBe(false)
+      lightbulb.isSmart = undefined
+      expect(lightbulb.isSmart).toBe(false)
     })
 
     it('does not default or throw error when assigned null', () => {
       // @ts-ignore
-      bulbOne.isSmart = null
-      expect(bulbOne.isSmart).toBeNull()
+      lightbulb.isSmart = null
+      expect(lightbulb.isSmart).toBeNull()
     })
   })
 })
