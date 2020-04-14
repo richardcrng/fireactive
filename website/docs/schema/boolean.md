@@ -91,6 +91,8 @@ class Lightbulb extends ActiveClass(lightbulbSchema) {}
 const lightbulb = new Lightbulb({ isOn: true })
 lightbulb.isOn = false // works
 lightbulb.isOn = 'true' // ActiveClassError: Lightbulb could not accept the value "true" (string) at path 'isOn'. The property 'isOn' is of the wrong type
+lightbulb.isOn = undefined // ActiveClassError: Lightbulb could not accept the value undefined (undefined) at path 'isOn'. The required property 'isOn' is missing
+lightbulb.isOn = null // ActiveClassError: Lightbulb could not accept the value null (object) at path 'isOn'. The property 'isOn' is of the wrong type
 ```
 
 </TabItem>
@@ -108,6 +110,8 @@ class Lightbulb extends ActiveClass(lightbulbSchema) {}
 const lightbulb = new Lightbulb({ isOn: true })
 lightbulb.isOn = false // compiles
 lightbulb.isOn = 'true' // (ts 2322) Type '"true"' is not assignable to type 'boolean'
+lightbulb.isOn = undefined // (ts 2322) Type 'undefined' is not assignable to type 'boolean'
+lightbulb.isOn = null // (ts 2322) Type 'null' is not assignable to type 'boolean'
 ```
 
 </TabItem>

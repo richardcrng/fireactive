@@ -41,6 +41,8 @@ describe('Basic example', () => {
     })
 
     test('Runtime passes', () => {
+      // @ts-ignore
+      expect(() => new Lightbulb({ isOn: true, randomProp: true })).not.toThrow()
       expect(() => new Lightbulb({ isOn: true })).not.toThrow()
       expect(() => new Lightbulb({ isOn: false })).not.toThrow()
     })
