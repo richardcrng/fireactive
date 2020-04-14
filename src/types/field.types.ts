@@ -1,3 +1,4 @@
+import { NonUndefined } from 'utility-types'
 import { UndefinedToOptional } from "./util.types"
 
 export interface FieldOptions<T> {
@@ -93,8 +94,14 @@ export type RecordField<FD> =
     : FD extends { _fieldIdentifier: infer C, vals: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined
     // required enum
     : FD extends { _fieldIdentifier: infer C, vals: Array<infer E> } ? TypeFromIdentifier<C, E>
-    // if FD.required === false, then the record might not have the property
-    : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
+    // if it is not required but has a default, can be the type, default or null (but undefined takes default)
+    : FD extends { _fieldIdentifier: infer C, required: false, default: infer D } ? TypeFromIdentifier<C> | D | null
+    // if it has a default and is optional, can be the type or null (undefined takes the default)
+    : FD extends { _fieldIdentifier: infer C, required: false, _hasDefault: true } ? TypeFromIdentifier<C> | null
+    // if it has a default, can only be the type
+    : FD extends { _fieldIdentifier: infer C, required: false, _hasDefault: true } ? TypeFromIdentifier<C>
+    // if it is not required but does not have a default, can be the type, undefined or null
+    : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined | null
     // else if it has `_fieldIdentifier`, then it is a necessary primitive field
     : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
     // else it is an object of RecordFields, some of which might be optional

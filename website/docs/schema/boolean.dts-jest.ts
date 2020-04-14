@@ -72,12 +72,12 @@ class LightbulbConfigured extends ActiveClass(configuredSchema) {}
   // @dts-jest:pass
   lightbulb.isLED = undefined
 
-  // @dts-jest:fail
+  // @dts-jest:pass
   lightbulb.isLED = null
 
-  // @dts-jest:pass
+  // @dts-jest:fail
   lightbulb.isSmart = undefined
 
-  // @dts-jest:fail
+  // @dts-jest:pass
   lightbulb.isSmart = null
 }
