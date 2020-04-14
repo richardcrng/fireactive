@@ -198,18 +198,18 @@ import { ActiveClass, Schema } from 'fireactive'
 
 const buildingSchema = {
   floors: Schema.number,
-  doors: Schema.number({ default: false }),
+  doors: Schema.number({ default: 1 }),
   rooms: Schema.number({ optional: true }), // or required: false,
-  chimneys: Schema.number({ optional: true, default: false })
+  chimneys: Schema.number({ optional: true, default: 2 })
 }
 
 class Building extends ActiveClass(buildingSchema) {}
 
-const building = new Building({ floors: false })
-building.floors // => false
-building.doors // => false
+const building = new Building({ floors: 4 })
+building.floors // => 4
+building.doors // => 1
 building.rooms // => undefined
-building.chimneys // => false
+building.chimneys // => 2
 
 /* floors: required and no default */
 building.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'number'

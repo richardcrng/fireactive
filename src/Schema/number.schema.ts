@@ -11,6 +11,10 @@ function numberFn(opts: FieldOptions<number>): FieldDefinition<number, true, fal
 function numberFn(opts: FieldOptions<number> & { required: true }): FieldDefinition<number, true, false>
 function numberFn(opts: FieldOptions<number> & { optional: false }): FieldDefinition<number, true, false>
 
+// Overloads for optional wiwth default
+function numberFn(opts: FieldOptions<number> & { optional: true, default: number }): FieldDefinition<number, false, true>;
+function numberFn(opts: FieldOptions<number> & { required: false, default: number }): FieldDefinition<number, false, true>;
+
 // Overloads for optional
 function numberFn(opts: FieldOptions<number> & { required: false }): FieldDefinition<number, false>;
 function numberFn(opts: FieldOptions<number> & { optional: true }): FieldDefinition<number, false>;

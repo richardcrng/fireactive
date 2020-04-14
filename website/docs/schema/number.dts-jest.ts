@@ -41,42 +41,40 @@ class BuildingSimple extends ActiveClass(simpleSchema) {}
   building.floors = '5'
 }
 
-// const configuredSchema = {
-//   floors: Schema.number,
-//   isEco: Schema.number({ default: false }),
-//   isLED: Schema.number({ optional: true }), // or required: false,
-//   isSmart: Schema.number({ optional: true, default: false })
-// }
+const configuredSchema = {
+  floors: Schema.number,
+  doors: Schema.number({ default: 1 }),
+  rooms: Schema.number({ optional: true }), // or required: false,
+  chimneys: Schema.number({ optional: true, default: 2 })
+}
 
-// console.log(configuredSchema.isSmart)
+class LightbulbConfigured extends ActiveClass(configuredSchema) {}
 
-// class LightbulbConfigured extends ActiveClass(configuredSchema) {}
+// @dts-jest:group Configuration
+{
+  const building = new LightbulbConfigured({ floors: 4 })
 
-// // @dts-jest:group Configuration
-// {
-//   const building = new LightbulbConfigured({ floors: true })
+  // @dts-jest:fail
+  building.floors = undefined
 
-//   // @dts-jest:fail
-//   building.floors = undefined
+  // @dts-jest:fail
+  building.floors = null
 
-//   // @dts-jest:fail
-//   building.floors = null
+  // @dts-jest:fail
+  building.doors = undefined
 
-//   // @dts-jest:fail
-//   building.isEco = undefined
+  // @dts-jest:fail
+  building.doors = null
 
-//   // @dts-jest:fail
-//   building.isEco = null
+  // @dts-jest:pass
+  building.rooms = undefined
 
-//   // @dts-jest:pass
-//   building.isLED = undefined
+  // @dts-jest:pass
+  building.rooms = null
 
-//   // @dts-jest:pass
-//   building.isLED = null
+  // @dts-jest:fail
+  building.chimneys = undefined
 
-//   // @dts-jest:fail
-//   building.isSmart = undefined
-
-//   // @dts-jest:pass
-//   building.isSmart = null
-// }
+  // @dts-jest:pass
+  building.chimneys = null
+}
