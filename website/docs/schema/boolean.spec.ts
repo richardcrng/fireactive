@@ -78,10 +78,17 @@ describe('Configuration', () => {
     expect(bulbOne.isSmart).toBe(false)
   })
 
-  test('Required property defaults when undefined', () => {
-    // @ts-ignore
-    bulbOne.isOn = undefined
-    expect(bulbOne.isOn).toBe(false)
+  describe('Required with default', () => {    
+    test('Required property defaults when assigned undefined', () => {
+      // @ts-ignore
+      bulbOne.isOn = undefined
+      expect(bulbOne.isOn).toBe(false)
+    })
+
+    testExpectError('Required property throws error when assigned null', () => {
+      // @ts-ignore
+      bulbOne.isOn = null
+    }, { message: `Lightbulb could not accept the value null (object) at path 'isOn'. The property 'isOn' is of the wrong type`, constructor: ActiveClassError })
   })
 
   test('Optional property does not default when undefined', () => {
@@ -92,11 +99,4 @@ describe('Configuration', () => {
     bulbOne.isSmart = null
     expect(bulbOne.isSmart).toBeNull()
   })
-
-  // describe.only('errors', () => {
-  //   testExpectError("Can't assign undefined to required property", () => {
-  //     // @ts-ignore
-  //     bulbOne.isOn = undefined
-  //   }, { message: `Lightbulb could not accept the value null (object) at path 'isOn'. The property 'isOn' is of the wrong type`, constructor: ActiveClassError })
-  // })
 })
