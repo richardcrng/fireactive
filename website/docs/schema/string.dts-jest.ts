@@ -30,16 +30,16 @@ class DinosaurSimple extends ActiveClass(simpleSchema) {}
   new DinosaurSimple({ species: 'Triceratops' })
 }
 
-// // @dts-jest:group Basic assignment
-// {
-//   const building = new DinosaurSimple({ species: 4 })
+// @dts-jest:group Basic assignment
+{
+  const dinosaur = new DinosaurSimple({ species: 'Diplodocus' })
 
-//   // @dts-jest:pass
-//   building.species = 5
+  // @dts-jest:pass
+  dinosaur.species = 'T-Rex'
 
-//   // @dts-jest:fail
-//   building.species = '5'
-// }
+  // @dts-jest:fail
+  dinosaur.species = 7
+}
 
 // const configuredSchema = {
 //   species: Schema.number,
@@ -52,29 +52,29 @@ class DinosaurSimple extends ActiveClass(simpleSchema) {}
 
 // // @dts-jest:group Configuration
 // {
-//   const building = new LightbulbConfigured({ species: 4 })
+//   const dinosaur = new LightbulbConfigured({ species: 4 })
 
 //   // @dts-jest:fail
-//   building.species = undefined
+//   dinosaur.species = undefined
 
 //   // @dts-jest:fail
-//   building.species = null
+//   dinosaur.species = null
 
 //   // @dts-jest:fail
-//   building.doors = undefined
+//   dinosaur.doors = undefined
 
 //   // @dts-jest:fail
-//   building.doors = null
+//   dinosaur.doors = null
 
 //   // @dts-jest:pass
-//   building.rooms = undefined
+//   dinosaur.rooms = undefined
 
 //   // @dts-jest:pass
-//   building.rooms = null
+//   dinosaur.rooms = null
 
 //   // @dts-jest:fail
-//   building.chimneys = undefined
+//   dinosaur.chimneys = undefined
 
 //   // @dts-jest:pass
-//   building.chimneys = null
+//   dinosaur.chimneys = null
 // }

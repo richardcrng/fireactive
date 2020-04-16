@@ -109,9 +109,9 @@ const dinosaurSchema = {
 
 class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const dinosaur = new Dinosaur({ species: 4 })
-dinosaur.species = 5 // compiles
-dinosaur.species = '5' // (ts 2322) Type '"5"' is not assignable to type 'string'
+const dinosaur = new Dinosaur({ species: 'Diplodocus' })
+dinosaur.species = 'T-Rex' // compiles
+dinosaur.species = 7 // (ts 2322) Type '7' is not assignable to type 'string'
 dinosaur.species = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
 dinosaur.species = null // (ts 2322) Type 'null' is not assignable to type 'string'
 ```
