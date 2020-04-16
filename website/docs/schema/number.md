@@ -10,7 +10,7 @@ import TabItem from '@theme/TabItem';
 # `Schema.number`
 
 ## Basic example
-Let's suppose we're modelling building, which has a number of floors.
+Let's suppose we're modelling a building, which has a number of floors.
 
 ### Creation
 <Tabs
