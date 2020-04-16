@@ -48,19 +48,19 @@ describe('Basic example', () => {
     })
   })
 
-  // describe('Updates', () => {
-  //   const dinosaur = new Dinosaur({ species: 4 })
+  describe('Updates', () => {
+    const dinosaur = new Dinosaur({ species: 'Diplodocus' })
 
-  //   test("Can assign boolean values", () => {
-  //     dinosaur.species = 5
-  //     expect(dinosaur.species).toBe(5)
-  //   })
+    test("Can assign string values", () => {
+      dinosaur.species = 'T-Rex'
+      expect(dinosaur.species).toBe('T-Rex')
+    })
 
-  //   testExpectError("Can't assign non-boolean values", () => {
-  //     // @ts-ignore
-  //     dinosaur.species = '5'
-  //   }, { message: `Dinosaur could not accept the value "5" (string) at path 'species'. The property 'species' is of the wrong type`, constructor: ActiveClassError })
-  // })
+    testExpectError("Can't assign non-string values", () => {
+      // @ts-ignore
+      dinosaur.species = 7
+    }, { message: `Dinosaur could not accept the value 7 (number) at path 'species'. The property 'species' is of the wrong type`, constructor: ActiveClassError })
+  })
 })
 
 // describe('Configuration', () => {

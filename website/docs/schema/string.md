@@ -90,11 +90,11 @@ const dinosaurSchema = {
 
 class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const building = new Dinosaur({ species: 4 })
-building.species = 5 // works
-building.species = '5' // ActiveClassError: Dinosaur could not accept the value "true" (string) at path 'species'. The property 'species' is of the wrong type
-building.species = undefined // ActiveClassError: Dinosaur could not accept the value undefined (undefined) at path 'species'. The required property 'species' is missing
-building.species = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'species'. The property 'species' is of the wrong type
+const dinosaur = new Dinosaur({ species: 4 })
+dinosaur.species = 'T-Rex' // works
+dinosaur.species = 7 // ActiveClassError: Dinosaur could not accept the value 7 (number) at path 'species'. The property 'species' is of the wrong type
+dinosaur.species = undefined // ActiveClassError: Dinosaur could not accept the value undefined (undefined) at path 'species'. The required property 'species' is missing
+dinosaur.species = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'species'. The property 'species' is of the wrong type
 ```
 
 </TabItem>
@@ -109,11 +109,11 @@ const dinosaurSchema = {
 
 class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const building = new Dinosaur({ species: 4 })
-building.species = 5 // compiles
-building.species = '5' // (ts 2322) Type '"5"' is not assignable to type 'string'
-building.species = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
-building.species = null // (ts 2322) Type 'null' is not assignable to type 'string'
+const dinosaur = new Dinosaur({ species: 4 })
+dinosaur.species = 5 // compiles
+dinosaur.species = '5' // (ts 2322) Type '"5"' is not assignable to type 'string'
+dinosaur.species = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
+dinosaur.species = null // (ts 2322) Type 'null' is not assignable to type 'string'
 ```
 
 </TabItem>
@@ -128,7 +128,7 @@ Default values are used when a field's value would otherwise be `undefined`.
 
 Only optional properties can be assigned `null` (i.e. the deliberate ommission of a value).
 
-Let's add some additionl properties to our building schema to demonstrate:
+Let's add some additionl properties to our dinosaur schema to demonstrate:
 * `doors` should default to `1`;
 * `rooms`, should be an optional property;
 * `chimneys`, should default to `2` *and* be an optional property.
@@ -159,32 +159,32 @@ const dinosaurSchema = {
 
 class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const building = new Dinosaur({ species: 4 })
-building.species // => 4
-building.doors // => 1
-building.rooms // => undefined
-building.chimneys // => 2
+const dinosaur = new Dinosaur({ species: 4 })
+dinosaur.species // => 4
+dinosaur.doors // => 1
+dinosaur.rooms // => undefined
+dinosaur.chimneys // => 2
 
 /* species: required and no default */
-building.species = undefined // ActiveClassError: Dinosaur could not accept the value undefined (undefined) at path 'species'. The required property 'species' is missing
-building.species = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'species'. The property 'species' is of the wrong type
+dinosaur.species = undefined // ActiveClassError: Dinosaur could not accept the value undefined (undefined) at path 'species'. The required property 'species' is missing
+dinosaur.species = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'species'. The property 'species' is of the wrong type
 
 /* doors: required and has default */
-building.doors = undefined
-building.doors // => false (default kicks in when undefined)
-building.doors = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'doors'. The property 'doors' is of the wrong type
+dinosaur.doors = undefined
+dinosaur.doors // => false (default kicks in when undefined)
+dinosaur.doors = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'doors'. The property 'doors' is of the wrong type
 
 /* rooms: optional and has no default */
-building.rooms = undefined
-building.rooms // => undefined (optional, so doesn't throw, and has no default to kick in)
-building.rooms = null
-building.rooms // => null (optional, so doesn't throw and can be null)
+dinosaur.rooms = undefined
+dinosaur.rooms // => undefined (optional, so doesn't throw, and has no default to kick in)
+dinosaur.rooms = null
+dinosaur.rooms // => null (optional, so doesn't throw and can be null)
 
 /* chimneys: optional and has default */
-building.chimneys = undefined
-building.chimneys // => false (default kicks in when undefined)
-building.chimneys = null
-building.chimneys // => null (optional, so doesn't throw and can be null)
+dinosaur.chimneys = undefined
+dinosaur.chimneys // => false (default kicks in when undefined)
+dinosaur.chimneys = null
+dinosaur.chimneys // => null (optional, so doesn't throw and can be null)
 ```
 
 </TabItem>
@@ -207,27 +207,27 @@ const dinosaurSchema = {
 
 class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const building = new Dinosaur({ species: 4 })
-building.species // => 4
-building.doors // => 1
-building.rooms // => undefined
-building.chimneys // => 2
+const dinosaur = new Dinosaur({ species: 4 })
+dinosaur.species // => 4
+dinosaur.doors // => 1
+dinosaur.rooms // => undefined
+dinosaur.chimneys // => 2
 
 /* species: required and no default */
-building.species = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
-building.species = null // (ts 2322) Type 'null' is not assignable to type 'string'
+dinosaur.species = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
+dinosaur.species = null // (ts 2322) Type 'null' is not assignable to type 'string'
 
 /* doors: required and has default */
-building.doors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
-building.doors = null // (ts 2322) Type 'null' is not assignable to type 'string'
+dinosaur.doors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
+dinosaur.doors = null // (ts 2322) Type 'null' is not assignable to type 'string'
 
 /* rooms: optional and has no default */
-building.rooms = undefined // compiles
-building.rooms = null // compiles
+dinosaur.rooms = undefined // compiles
+dinosaur.rooms = null // compiles
 
 /* chimneys: optional and has default */
-building.chimneys = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string | null'
-building.chimneys = null // compiles
+dinosaur.chimneys = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string | null'
+dinosaur.chimneys = null // compiles
 ```
 
 </TabItem>
