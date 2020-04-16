@@ -90,7 +90,7 @@ class Building extends ActiveClass(buildingSchema) {}
 
 const building = new Building({ floors: 4 })
 building.floors = 5 // works
-building.floors = '5' // ActiveClassError: Building could not accept the value "true" (string) at path 'floors'. The property 'floors' is of the wrong type
+building.floors = '5' // ActiveClassError: Building could not accept the value "5" (string) at path 'floors'. The property 'floors' is of the wrong type
 building.floors = undefined // ActiveClassError: Building could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing
 building.floors = null // ActiveClassError: Building could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type
 ```

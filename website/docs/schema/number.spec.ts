@@ -51,12 +51,12 @@ describe('Basic example', () => {
   describe('Updates', () => {
     const building = new Building({ floors: 4 })
 
-    test("Can assign boolean values", () => {
+    test("Can assign number values", () => {
       building.floors = 5
       expect(building.floors).toBe(5)
     })
 
-    testExpectError("Can't assign non-boolean values", () => {
+    testExpectError("Can't assign non-number values", () => {
       // @ts-ignore
       building.floors = '5'
     }, { message: `Building could not accept the value "5" (string) at path 'floors'. The property 'floors' is of the wrong type`, constructor: ActiveClassError })
