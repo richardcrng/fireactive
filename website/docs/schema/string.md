@@ -10,7 +10,9 @@ import TabItem from '@theme/TabItem';
 # `Schema.string`
 
 ## Basic example
-Let's suppose we're modelling building, which has a string of floors.
+Let's suppose we're modelling information about a dinosaur.
+
+(For now, we'll just store its species as a string, e.g. `'Diplodocus'`.)
 
 ### Creation
 <Tabs
@@ -25,21 +27,21 @@ Let's suppose we're modelling building, which has a string of floors.
 ```js
 import { ActiveClass, Schema } from 'fireactive'
 
-const buildingSchema = {
-  floors: Schema.string
+const dinosaurSchema = {
+  species: Schema.string
 }
 
-class Building extends ActiveClass(buildingSchema) {}
+class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-new Building() // ActiveClassError: Could not construct Building. The required property 'floors' is missing
-new Building({}) // ActiveClassError: Could not construct Building. The required property 'floors' is missing
-new Building({ floors: '4' }) // ActiveClassError: Could not construct Building. The property 'floors' is of the wrong type
-new Building({ floors: null }) // ActiveClassError: Could not construct Building. The property 'floors' is of the wrong type
+new Dinosaur() // ActiveClassError: Could not construct Dinosaur. The required property 'species' is missing
+new Dinosaur({}) // ActiveClassError: Could not construct Dinosaur. The required property 'species' is missing
+new Dinosaur({ species: true }) // ActiveClassError: Could not construct Dinosaur. The property 'species' is of the wrong type
+new Dinosaur({ species: null }) // ActiveClassError: Could not construct Dinosaur. The property 'species' is of the wrong type
 
-new Building({ floors: 4, randomProp: 9 }) // works (but randomProp gets ignored as it is not on the schema)
+new Dinosaur({ species: 'Diplodocus', randomProp: 'Triceratops' }) // works (but randomProp gets ignored as it is not on the schema)
 
-new Building({ floors: 4 }) // works
-new Building({ floors: 9 }) // works
+new Dinosaur({ species: 'Diplodocus' }) // works
+new Dinosaur({ species: 'Triceratops' }) // works
 ```
 
 </TabItem>
@@ -48,22 +50,22 @@ new Building({ floors: 9 }) // works
 ```ts
 import { ActiveClass, Schema } from 'fireactive'
 
-const buildingSchema = {
-  floors: Schema.string
+const dinosaurSchema = {
+  species: Schema.string
 }
 
-class Building extends ActiveClass(buildingSchema) {}
+class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
 // Key: * assumes strict null checks
 
-new Building() // (ts 2554) Expected 1 arguments, but got 0
-new Building({}) // (ts 2354)* Property 'floors' is missing in type '{}' but required in...
-new Building({ floors: '4' }) // (ts 2322) Type 'string' is not assignable to type 'string'
-new Building({ floors: null }) // (ts 2322)* Type 'null' is not assignable to type 'string'
-new Building({ floors: 4, randomProp: 9 }) // (ts 2345) Object literal may only specify known properties, and 'randomProp' does not exist in type...
+new Dinosaur() // (ts 2554) Expected 1 arguments, but got 0
+new Dinosaur({}) // (ts 2354)* Property 'species' is missing in type '{}' but required in...
+new Dinosaur({ species: true }) // (ts 2322) Type 'boolean' is not assignable to type 'string'
+new Dinosaur({ species: null }) // (ts 2322)* Type 'null' is not assignable to type 'string'
+new Dinosaur({ species: 'Diplodocus', randomProp: 'Triceratops' }) // (ts 2345) Object literal may only specify known properties, and 'randomProp' does not exist in type...
 
-new Building({ floors: 4 }) // compiles
-new Building({ floors: 9 }) // compiles
+new Dinosaur({ species: 'Diplodocus' }) // compiles
+new Dinosaur({ species: 'Triceratops' }) // compiles
 ```
 
 </TabItem>
@@ -82,17 +84,17 @@ new Building({ floors: 9 }) // compiles
 ```js
 import { ActiveClass, Schema } from 'fireactive'
 
-const buildingSchema = {
-  floors: Schema.string
+const dinosaurSchema = {
+  species: Schema.string
 }
 
-class Building extends ActiveClass(buildingSchema) {}
+class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const building = new Building({ floors: 4 })
-building.floors = 5 // works
-building.floors = '5' // ActiveClassError: Building could not accept the value "true" (string) at path 'floors'. The property 'floors' is of the wrong type
-building.floors = undefined // ActiveClassError: Building could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing
-building.floors = null // ActiveClassError: Building could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type
+const building = new Dinosaur({ species: 4 })
+building.species = 5 // works
+building.species = '5' // ActiveClassError: Dinosaur could not accept the value "true" (string) at path 'species'. The property 'species' is of the wrong type
+building.species = undefined // ActiveClassError: Dinosaur could not accept the value undefined (undefined) at path 'species'. The required property 'species' is missing
+building.species = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'species'. The property 'species' is of the wrong type
 ```
 
 </TabItem>
@@ -101,17 +103,17 @@ building.floors = null // ActiveClassError: Building could not accept the value 
 ```ts
 import { ActiveClass, Schema } from 'fireactive'
 
-const buildingSchema = {
-  floors: Schema.string
+const dinosaurSchema = {
+  species: Schema.string
 }
 
-class Building extends ActiveClass(buildingSchema) {}
+class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const building = new Building({ floors: 4 })
-building.floors = 5 // compiles
-building.floors = '5' // (ts 2322) Type '"5"' is not assignable to type 'string'
-building.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
-building.floors = null // (ts 2322) Type 'null' is not assignable to type 'string'
+const building = new Dinosaur({ species: 4 })
+building.species = 5 // compiles
+building.species = '5' // (ts 2322) Type '"5"' is not assignable to type 'string'
+building.species = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
+building.species = null // (ts 2322) Type 'null' is not assignable to type 'string'
 ```
 
 </TabItem>
@@ -148,29 +150,29 @@ Let's add some additionl properties to our building schema to demonstrate:
 ```js
 import { ActiveClass, Schema } from 'fireactive'
 
-const buildingSchema = {
-  floors: Schema.string,
+const dinosaurSchema = {
+  species: Schema.string,
   doors: Schema.string({ default: 1 }),
   rooms: Schema.string({ optional: true }), // or required: false,
   chimneys: Schema.string({ optional: true, default: 2 })
 }
 
-class Building extends ActiveClass(buildingSchema) {}
+class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const building = new Building({ floors: 4 })
-building.floors // => 4
+const building = new Dinosaur({ species: 4 })
+building.species // => 4
 building.doors // => 1
 building.rooms // => undefined
 building.chimneys // => 2
 
-/* floors: required and no default */
-building.floors = undefined // ActiveClassError: Building could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing
-building.floors = null // ActiveClassError: Building could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type
+/* species: required and no default */
+building.species = undefined // ActiveClassError: Dinosaur could not accept the value undefined (undefined) at path 'species'. The required property 'species' is missing
+building.species = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'species'. The property 'species' is of the wrong type
 
 /* doors: required and has default */
 building.doors = undefined
 building.doors // => false (default kicks in when undefined)
-building.doors = null // ActiveClassError: Building could not accept the value null (object) at path 'doors'. The property 'doors' is of the wrong type
+building.doors = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'doors'. The property 'doors' is of the wrong type
 
 /* rooms: optional and has no default */
 building.rooms = undefined
@@ -196,24 +198,24 @@ building.chimneys // => null (optional, so doesn't throw and can be null)
 ```ts
 import { ActiveClass, Schema } from 'fireactive'
 
-const buildingSchema = {
-  floors: Schema.string,
+const dinosaurSchema = {
+  species: Schema.string,
   doors: Schema.string({ default: 1 }),
   rooms: Schema.string({ optional: true }), // or required: false,
   chimneys: Schema.string({ optional: true, default: 2 })
 }
 
-class Building extends ActiveClass(buildingSchema) {}
+class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const building = new Building({ floors: 4 })
-building.floors // => 4
+const building = new Dinosaur({ species: 4 })
+building.species // => 4
 building.doors // => 1
 building.rooms // => undefined
 building.chimneys // => 2
 
-/* floors: required and no default */
-building.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
-building.floors = null // (ts 2322) Type 'null' is not assignable to type 'string'
+/* species: required and no default */
+building.species = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
+building.species = null // (ts 2322) Type 'null' is not assignable to type 'string'
 
 /* doors: required and has default */
 building.doors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
