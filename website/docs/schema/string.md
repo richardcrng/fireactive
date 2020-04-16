@@ -60,7 +60,7 @@ class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
 new Dinosaur() // (ts 2554) Expected 1 arguments, but got 0
 new Dinosaur({}) // (ts 2354)* Property 'species' is missing in type '{}' but required in...
-new Dinosaur({ species: true }) // (ts 2322) Type 'boolean' is not assignable to type 'string'
+new Dinosaur({ species: true }) // (ts 2322) Type 'true' is not assignable to type 'string'
 new Dinosaur({ species: null }) // (ts 2322)* Type 'null' is not assignable to type 'string'
 new Dinosaur({ species: 'Diplodocus', randomProp: 'Triceratops' }) // (ts 2345) Object literal may only specify known properties, and 'randomProp' does not exist in type...
 
