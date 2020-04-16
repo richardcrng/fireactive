@@ -48,11 +48,11 @@ const configuredSchema = {
   chimneys: Schema.number({ optional: true, default: 2 })
 }
 
-class LightbulbConfigured extends ActiveClass(configuredSchema) {}
+class BuildingConfigured extends ActiveClass(configuredSchema) {}
 
 // @dts-jest:group Configuration
 {
-  const building = new LightbulbConfigured({ floors: 4 })
+  const building = new BuildingConfigured({ floors: 4 })
 
   // @dts-jest:fail
   building.floors = undefined

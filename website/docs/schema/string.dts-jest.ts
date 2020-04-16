@@ -41,40 +41,40 @@ class DinosaurSimple extends ActiveClass(simpleSchema) {}
   dinosaur.species = 7
 }
 
-// const configuredSchema = {
-//   species: Schema.number,
-//   doors: Schema.number({ default: 1 }),
-//   rooms: Schema.number({ optional: true }), // or required: false,
-//   chimneys: Schema.number({ optional: true, default: 2 })
-// }
+const configuredSchema = {
+  species: Schema.string,
+  roar: Schema.string({ default: 'RAWR' }),
+  name: Schema.string({ optional: true }), // or required: false,
+  home: Schema.string({ optional: true, default: 'Earth' })
+}
 
-// class LightbulbConfigured extends ActiveClass(configuredSchema) {}
+class DinosaurConfigured extends ActiveClass(configuredSchema) {}
 
-// // @dts-jest:group Configuration
-// {
-//   const dinosaur = new LightbulbConfigured({ species: 4 })
+// @dts-jest:group Configuration
+{
+  const dinosaur = new DinosaurConfigured({ species: 'Diplodocus' })
 
-//   // @dts-jest:fail
-//   dinosaur.species = undefined
+  // @dts-jest:fail
+  dinosaur.species = undefined
 
-//   // @dts-jest:fail
-//   dinosaur.species = null
+  // @dts-jest:fail
+  dinosaur.species = null
 
-//   // @dts-jest:fail
-//   dinosaur.doors = undefined
+  // @dts-jest:fail
+  dinosaur.roar = undefined
 
-//   // @dts-jest:fail
-//   dinosaur.doors = null
+  // @dts-jest:fail
+  dinosaur.roar = null
 
-//   // @dts-jest:pass
-//   dinosaur.rooms = undefined
+  // @dts-jest:pass
+  dinosaur.name = undefined
 
-//   // @dts-jest:pass
-//   dinosaur.rooms = null
+  // @dts-jest:pass
+  dinosaur.name = null
 
-//   // @dts-jest:fail
-//   dinosaur.chimneys = undefined
+  // @dts-jest:fail
+  dinosaur.home = undefined
 
-//   // @dts-jest:pass
-//   dinosaur.chimneys = null
-// }
+  // @dts-jest:pass
+  dinosaur.home = null
+}
