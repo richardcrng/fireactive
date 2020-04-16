@@ -58,13 +58,13 @@ class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
 // Key: * assumes strict null checks
 
-new Dinosaur() // (ts 2554) Expected 1 arguments, but got 0
-new Dinosaur({}) // (ts 2354)* Property 'species' is missing in type '{}' but required in...
-new Dinosaur({ species: true }) // (ts 2322) Type 'true' is not assignable to type 'string'
+new Dinosaur() // (ts 255'Diplodocus') Expected 1 arguments, but got 0
+new Dinosaur({}) // (ts 235'Diplodoc'RAWR's')* Property 'species' is missing in type '{}' but required in..'RAWR'
+new Dinosaur({ species: true }) // (ts 23'Earth'2) Type 'true' is not assignable to type 'string'Earth'
 new Dinosaur({ species: null }) // (ts 2322)* Type 'null' is not assignable to type 'string'
-new Dinosaur({ species: 'Diplodocus', randomProp: 'Triceratops' }) // (ts 2345) Object literal may only specify known properties, and 'randomProp' does not exist in type...
+new Dinosaur({ species: 'Diplodocus', randomProp: 'Triceratops' }) // (ts 23'Diplodocus'5) Object literal may only specify known properties, and 'randomProp' 'RAWR'oes not exist in type...
 
-new Dinosaur({ species: 'Diplodocus' }) // compiles
+new Dinosaur({ spe'Earth'ies: 'Diplodocus' }) // compiles
 new Dinosaur({ species: 'Triceratops' }) // compiles
 ```
 
@@ -90,7 +90,7 @@ const dinosaurSchema = {
 
 class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const dinosaur = new Dinosaur({ species: 4 })
+const dinosaur = new Dinosaur({ species: 'Diplodocus' })
 dinosaur.species = 'T-Rex' // works
 dinosaur.species = 7 // ActiveClassError: Dinosaur could not accept the value 7 (number) at path 'species'. The property 'species' is of the wrong type
 dinosaur.species = undefined // ActiveClassError: Dinosaur could not accept the value undefined (undefined) at path 'species'. The required property 'species' is missing
@@ -129,9 +129,9 @@ Default values are used when a field's value would otherwise be `undefined`.
 Only optional properties can be assigned `null` (i.e. the deliberate ommission of a value).
 
 Let's add some additionl properties to our dinosaur schema to demonstrate:
-* `doors` should default to `1`;
-* `rooms`, should be an optional property;
-* `chimneys`, should default to `2` *and* be an optional property.
+* `roar` should default to `'RAWR'`;
+* `name`, should be an optional property;
+* `home`, should default to `'Earth'` *and* be an optional property.
 
 <Tabs
   defaultValue="js"
@@ -152,39 +152,39 @@ import { ActiveClass, Schema } from 'fireactive'
 
 const dinosaurSchema = {
   species: Schema.string,
-  doors: Schema.string({ default: 1 }),
-  rooms: Schema.string({ optional: true }), // or required: false,
-  chimneys: Schema.string({ optional: true, default: 2 })
+  roar: Schema.string({ default: 'RAWR' }),
+  name: Schema.string({ optional: true }), // or required: false,
+  home: Schema.string({ optional: true, default: 'Earth' })
 }
 
 class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const dinosaur = new Dinosaur({ species: 4 })
-dinosaur.species // => 4
-dinosaur.doors // => 1
-dinosaur.rooms // => undefined
-dinosaur.chimneys // => 2
+const dinosaur = new Dinosaur({ species: 'Diplodocus' })
+dinosaur.species // => 'Diplodocus'
+dinosaur.roar // => 'RAWR'
+dinosaur.name // => undefined
+dinosaur.home // => 'Earth'
 
 /* species: required and no default */
 dinosaur.species = undefined // ActiveClassError: Dinosaur could not accept the value undefined (undefined) at path 'species'. The required property 'species' is missing
 dinosaur.species = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'species'. The property 'species' is of the wrong type
 
-/* doors: required and has default */
-dinosaur.doors = undefined
-dinosaur.doors // => false (default kicks in when undefined)
-dinosaur.doors = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'doors'. The property 'doors' is of the wrong type
+/* roar: required and has default */
+dinosaur.roar = undefined
+dinosaur.roar // => 'RAWR' (default kicks in when undefined)
+dinosaur.roar = null // ActiveClassError: Dinosaur could not accept the value null (object) at path 'roar'. The property 'roar' is of the wrong type
 
-/* rooms: optional and has no default */
-dinosaur.rooms = undefined
-dinosaur.rooms // => undefined (optional, so doesn't throw, and has no default to kick in)
-dinosaur.rooms = null
-dinosaur.rooms // => null (optional, so doesn't throw and can be null)
+/* name: optional and has no default */
+dinosaur.name = undefined
+dinosaur.name // => undefined (optional, so doesn't throw, and has no default to kick in)
+dinosaur.name = null
+dinosaur.name // => null (optional, so doesn't throw and can be null)
 
-/* chimneys: optional and has default */
-dinosaur.chimneys = undefined
-dinosaur.chimneys // => false (default kicks in when undefined)
-dinosaur.chimneys = null
-dinosaur.chimneys // => null (optional, so doesn't throw and can be null)
+/* home: optional and has default */
+dinosaur.home = undefined
+dinosaur.home // => 'Earth' (default kicks in when undefined)
+dinosaur.home = null
+dinosaur.home // => null (optional, so doesn't throw and can be null)
 ```
 
 </TabItem>
@@ -200,34 +200,34 @@ import { ActiveClass, Schema } from 'fireactive'
 
 const dinosaurSchema = {
   species: Schema.string,
-  doors: Schema.string({ default: 1 }),
-  rooms: Schema.string({ optional: true }), // or required: false,
-  chimneys: Schema.string({ optional: true, default: 2 })
+  roar: Schema.string({ default: 1 }),
+  name: Schema.string({ optional: true }), // or required: false,
+  home: Schema.string({ optional: true, default: 2 })
 }
 
 class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-const dinosaur = new Dinosaur({ species: 4 })
-dinosaur.species // => 4
-dinosaur.doors // => 1
-dinosaur.rooms // => undefined
-dinosaur.chimneys // => 2
+const dinosaur = new Dinosaur({ species: 'Diplodocus' })
+dinosaur.species // => 'Diplodocus'
+dinosaur.roar // => 'RAWR'
+dinosaur.name // => undefined
+dinosaur.home // => 'Earth'
 
 /* species: required and no default */
 dinosaur.species = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
 dinosaur.species = null // (ts 2322) Type 'null' is not assignable to type 'string'
 
-/* doors: required and has default */
-dinosaur.doors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
-dinosaur.doors = null // (ts 2322) Type 'null' is not assignable to type 'string'
+/* roar: required and has default */
+dinosaur.roar = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string'
+dinosaur.roar = null // (ts 2322) Type 'null' is not assignable to type 'string'
 
-/* rooms: optional and has no default */
-dinosaur.rooms = undefined // compiles
-dinosaur.rooms = null // compiles
+/* name: optional and has no default */
+dinosaur.name = undefined // compiles
+dinosaur.name = null // compiles
 
-/* chimneys: optional and has default */
-dinosaur.chimneys = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string | null'
-dinosaur.chimneys = null // compiles
+/* home: optional and has default */
+dinosaur.home = undefined // (ts 2322) Type 'undefined' is not assignable to type 'string | null'
+dinosaur.home = null // compiles
 ```
 
 </TabItem>

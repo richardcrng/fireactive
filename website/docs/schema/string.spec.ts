@@ -63,75 +63,75 @@ describe('Basic example', () => {
   })
 })
 
-// describe('Configuration', () => {
-//   const dinosaurSchema = {
-//     species: Schema.string,
-//     doors: Schema.string({ default: 1 }),
-//     rooms: Schema.string({ optional: true }), // or required: false,
-//     chimneys: Schema.string({ optional: true, default: 2 })
-//   }
+describe('Configuration', () => {
+  const dinosaurSchema = {
+    species: Schema.string,
+    roar: Schema.string({ default: 'RAWR' }),
+    name: Schema.string({ optional: true }), // or required: false,
+    home: Schema.string({ optional: true, default: 'Earth' })
+  }
 
-//   class Dinosaur extends ActiveClass(dinosaurSchema) {}
+  class Dinosaur extends ActiveClass(dinosaurSchema) {}
 
-//   const dinosaur = new Dinosaur({ species: 4 })
+  const dinosaur = new Dinosaur({ species: 'Diplodocus' })
   
-//   test('Initial values', () => {
-//     expect(dinosaur.species).toBe(4)
-//     expect(dinosaur.doors).toBe(1)
-//     expect(dinosaur.rooms).toBeUndefined()
-//     expect(dinosaur.chimneys).toBe(2)
-//   })
+  test('Initial values', () => {
+    expect(dinosaur.species).toBe('Diplodocus')
+    expect(dinosaur.roar).toBe('RAWR')
+    expect(dinosaur.name).toBeUndefined()
+    expect(dinosaur.home).toBe('Earth')
+  })
 
-//   describe('Required with no default', () => {
-//     testExpectError('throws error when assigned undefined', () => {
-//       // @ts-ignore
-//       dinosaur.species = undefined
-//     }, { message: `Dinosaur could not accept the value undefined (undefined) at path 'species'. The required property 'species' is missing`, constructor: ActiveClassError })
+  describe('Required with no default', () => {
+    testExpectError('throws error when assigned undefined', () => {
+      // @ts-ignore
+      dinosaur.species = undefined
+    }, { message: `Dinosaur could not accept the value undefined (undefined) at path 'species'. The required property 'species' is missing`, constructor: ActiveClassError })
 
-//     testExpectError('throws error when assigned null', () => {
-//       // @ts-ignore
-//       dinosaur.species = null
-//     }, { message: `Dinosaur could not accept the value null (object) at path 'species'. The property 'species' is of the wrong type`, constructor: ActiveClassError })
-//   })
+    testExpectError('throws error when assigned null', () => {
+      // @ts-ignore
+      dinosaur.species = null
+    }, { message: `Dinosaur could not accept the value null (object) at path 'species'. The property 'species' is of the wrong type`, constructor: ActiveClassError })
+  })
 
-//   describe('Required with default', () => {    
-//     it('defaults when assigned undefined', () => {
-//       // @ts-ignore
-//       dinosaur.doors = undefined
-//       expect(dinosaur.doors).toBe(1)
-//     })
+  describe('Required with default', () => {    
+    it('defaults when assigned undefined', () => {
+      // @ts-ignore
+      dinosaur.roar = undefined
+      expect(dinosaur.roar).toBe('RAWR')
+    })
 
-//     testExpectError('throws error when assigned null', () => {
-//       // @ts-ignore
-//       dinosaur.doors = null
-//     }, { message: `Dinosaur could not accept the value null (object) at path 'doors'. The property 'doors' is of the wrong type`, constructor: ActiveClassError })
-//   })
+    testExpectError('throws error when assigned null', () => {
+      // @ts-ignore
+      dinosaur.roar = null
+    }, { message: `Dinosaur could not accept the value null (object) at path 'roar'. The property 'roar' is of the wrong type`, constructor: ActiveClassError })
+  })
 
-//   describe('Optional with no default', () => {
-//     it('does not default or throw error when assigned undefined', () => {
-//       // @ts-ignore
-//       dinosaur.rooms = undefined
-//       expect(dinosaur.rooms).toBeUndefined()
-//     })
+  describe('Optional with no default', () => {
+    it('does not default or throw error when assigned undefined', () => {
+      // @ts-ignore
+      dinosaur.name = undefined
+      expect(dinosaur.name).toBeUndefined()
+    })
 
-//     it('does not default or throw error when assigned null', () => {
-//       // @ts-ignore
-//       dinosaur.rooms = null
-//       expect(dinosaur.rooms).toBeNull()
-//     })
-//   })
+    it('does not default or throw error when assigned null', () => {
+      // @ts-ignore
+      dinosaur.name = null
+      expect(dinosaur.name).toBeNull()
+    })
+  })
 
-//   describe('Optional with default', () => {
-//     it('defaults when assigned undefined', () => {
-//       // @ts-ignore
-//       dinosaur.chimneys = undefined
-//       expect(dinosaur.chimneys).toBe(2)
-//     })
+  describe('Optional with default', () => {
+    it('defaults when assigned undefined', () => {
+      // @ts-ignore
+      dinosaur.home = undefined
+      expect(dinosaur.home).toBe('Earth')
+    })
 
-//     it('does not default or throw error when assigned null', () => {
-//       // @ts-ignore
-//       dinosaur.chimneys = null
-//       expect(dinosaur.chimneys).toBeNull()
-//     })
-//   })
-// })
+    it('does not default or throw error when assigned null', () => {
+      // @ts-ignore
+      dinosaur.home = null
+      expect(dinosaur.home).toBeNull()
+    })
+  })
+})
