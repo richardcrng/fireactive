@@ -60,4 +60,56 @@ describe('Basic example', () => {
       expect(() => new Dictionary({ trueVals: { test: true } })).not.toThrow()
     })
   })
+
+  describe('Assignment / updates', () => {
+    const dictionary = new Dictionary({})
+    
+    test('Defaulting to empty objects', () => {
+      expect(dictionary.booleanVals).toEqual({})
+      expect(dictionary.fooOrBarVals).toEqual({})
+      expect(dictionary.numberVals).toEqual({})
+      expect(dictionary.stringVals).toEqual({})
+      expect(dictionary.trueVals).toEqual({})
+    })
+    
+    describe('Runtime errors', () => {
+      const cases: [keyof Dictionary, any][] = [
+        ['booleanVals', 'false'],
+        ['fooOrBarVals', 'BAR'],
+        ['numberVals', '5'],
+        ['stringVals', 5],
+        ['trueVals', false]
+      ]
+
+      cases.forEach(([key, disallowedVal]) => {
+        testExpectError(
+          `Cannot index incorrectly in ${key}`,
+          () => {
+            // @ts-ignore
+            dictionary[key].someProp = disallowedVal
+          },
+          { message: `Dictionary could not accept the value ${typeof disallowedVal === 'string' ? `"${disallowedVal}"` : disallowedVal } (${typeof disallowedVal}) at path '${key}.someProp'. The property '${key}' is of the wrong type`, constructor: ActiveClassError }
+        )
+      })
+    })
+
+    describe('Runtime passes', () => {
+      it('allows assignment of matching properties', () => {
+        const cases: [keyof Dictionary, any][] = [
+          ['booleanVals', true],
+          ['fooOrBarVals', 'bar'],
+          ['numberVals', 5],
+          ['stringVals', '5'],
+          ['trueVals', true]
+        ]
+
+        cases.forEach(([key, allowedVal]) => {
+          // @ts-ignore
+          dictionary[key].someProp = allowedVal
+          // @ts-ignore
+          expect(dictionary[key].someProp).toBe(allowedVal)
+        })
+      })
+    })
+  })
 })

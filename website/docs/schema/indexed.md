@@ -77,19 +77,19 @@ const schema = {
 class Dictionary extends ActiveClass(schema) {}
 
 new Dictionary({ booleanVals: { test: 'false' } }) // (ts 2332) Type 'string' is not assignable to type 'true'
-new Dictionary({ booleanVals: { test: false } }) // works
+new Dictionary({ booleanVals: { test: false } }) // compiles
 
 new Dictionary({ fooOrBarVals: { test: 'foobar' } }) // (ts 2332) Type '"foobar"' is not assignable to type '"bar"'
-new Dictionary({ fooOrBarVals: { test: 'foo' } }) // works
+new Dictionary({ fooOrBarVals: { test: 'foo' } }) // compiles
 
 new Dictionary({ numberVals: { test: '5' } }) // (ts 2332) Type 'string' is not assignable to type 'number'
-new Dictionary({ numberVals: { test: 5 } }) // works
+new Dictionary({ numberVals: { test: 5 } }) // compiles
 
 new Dictionary({ stringVals: { test: 5 } }) // (ts 2332) Type 'number' is not assignable to type 'string'
-new Dictionary({ stringVals: { test: '5' } }) // works
+new Dictionary({ stringVals: { test: '5' } }) // compiles
 
 new Dictionary({ trueVals: { test: false } }) // (ts 2332) Type 'false' is not assignable to type 'true'
-new Dictionary({ trueVals: { test: true } }) // works
+new Dictionary({ trueVals: { test: true } }) // compiles
 ```
 
 </TabItem>
@@ -108,17 +108,37 @@ new Dictionary({ trueVals: { test: true } }) // works
 ```js
 import { ActiveClass, Schema } from 'fireactive'
 
-const buildingSchema = {
-  floors: Schema.indexed
+const schema = {
+  booleanVals: Schema.indexed.boolean,
+  fooOrBarVals: Schema.indexed.enum(['foo', 'bar']),
+  numberVals: Schema.indexed.number,
+  stringVals: Schema.indexed.string,
+  trueVals: Schema.indexed.true
 }
 
-class Dictionary extends ActiveClass(buildingSchema) {}
+class Dictionary extends ActiveClass(schema) {}
 
-const building = new Dictionary({ floors: 4 })
-building.floors = 5 // works
-building.floors = '5' // ActiveClassError: Dictionary could not accept the value "5" (string) at path 'floors'. The property 'floors' is of the wrong type
-building.floors = undefined // ActiveClassError: Dictionary could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing
-building.floors = null // ActiveClassError: Dictionary could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type
+const dictionary = new Dictionary({})
+dictionary.booleanVals // => {}
+dictionary.fooOrBarVals // => {}
+dictionary.numberVals // => {}
+dictionary.stringVals // => {}
+dictionary.trueVals // => {}
+
+dictionary.booleanVals.someProp = 'false' // ActiveClassError: Dictionary could not accept the value "false" (string) at path 'booleanVals.someProp'. The property 'booleanVals' is of the wrong type
+dictionary.booleanVals.someProp = false // works
+
+dictionary.fooOrBarVals.someProp = 'BAR' // ActiveClassError: Dictionary could not accept the value "BAR" (string) at path 'fooOrBarVals.someProp'. The property 'fooOrBarVals' is of the wrong type
+dictionary.fooOrBarVals.someProp = 'bar' // works
+
+dictionary.numberVals.someProp = '5' // ActiveClassError: Dictionary could not accept the value "5" (string) at path 'numberVals.someProp'. The property 'numberVals' is of the wrong type
+dictionary.numberVals.someProp = 5 // works
+
+dictionary.stringVals.someProp = 5 // ActiveClassError: Dictionary could not accept the value 5 (number) at path 'stringVals.someProp'. The property 'stringVals' is of the wrong type
+dictionary.stringVals.someProp = '5' // works
+
+dictionary.trueVals.someProp = false // ActiveClassError: Dictionary could not accept the value false (boolean) at path 'trueVals.someProp'. The property 'trueVals' is of the wrong type
+dictionary.trueVals.someProp = true // works
 ```
 
 </TabItem>
@@ -127,17 +147,17 @@ building.floors = null // ActiveClassError: Dictionary could not accept the valu
 ```ts
 import { ActiveClass, Schema } from 'fireactive'
 
-const buildingSchema = {
+const dictionarySchema = {
   floors: Schema.indexed
 }
 
-class Dictionary extends ActiveClass(buildingSchema) {}
+class Dictionary extends ActiveClass(dictionarySchema) {}
 
-const building = new Dictionary({ floors: 4 })
-building.floors = 5 // compiles
-building.floors = '5' // (ts 2322) Type '"5"' is not assignable to type 'indexed'
-building.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'indexed'
-building.floors = null // (ts 2322) Type 'null' is not assignable to type 'indexed'
+const dictionary = new Dictionary({ floors: 4 })
+dictionary.floors = 5 // compiles
+dictionary.floors = '5' // (ts 2322) Type '"5"' is not assignable to type 'indexed'
+dictionary.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'indexed'
+dictionary.floors = null // (ts 2322) Type 'null' is not assignable to type 'indexed'
 ```
 
 </TabItem>
@@ -152,7 +172,7 @@ Default values are used when a field's value would otherwise be `undefined`.
 
 Only optional properties can be assigned `null` (i.e. the deliberate ommission of a value).
 
-Let's add some additionl properties to our building schema to demonstrate:
+Let's add some additionl properties to our dictionary schema to demonstrate:
 * `doors` should default to `1`;
 * `rooms`, should be an optional property;
 * `chimneys`, should default to `2` *and* be an optional property.
@@ -174,41 +194,41 @@ Let's add some additionl properties to our building schema to demonstrate:
 ```js
 import { ActiveClass, Schema } from 'fireactive'
 
-const buildingSchema = {
+const dictionarySchema = {
   floors: Schema.indexed,
   doors: Schema.indexed({ default: 1 }),
   rooms: Schema.indexed({ optional: true }), // or required: false,
   chimneys: Schema.indexed({ optional: true, default: 2 })
 }
 
-class Dictionary extends ActiveClass(buildingSchema) {}
+class Dictionary extends ActiveClass(dictionarySchema) {}
 
-const building = new Dictionary({ floors: 4 })
-building.floors // => 4
-building.doors // => 1
-building.rooms // => undefined
-building.chimneys // => 2
+const dictionary = new Dictionary({ floors: 4 })
+dictionary.floors // => 4
+dictionary.doors // => 1
+dictionary.rooms // => undefined
+dictionary.chimneys // => 2
 
 /* floors: required and no default */
-building.floors = undefined // ActiveClassError: Dictionary could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing
-building.floors = null // ActiveClassError: Dictionary could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type
+dictionary.floors = undefined // ActiveClassError: Dictionary could not accept the value undefined (undefined) at path 'floors'. The required property 'floors' is missing
+dictionary.floors = null // ActiveClassError: Dictionary could not accept the value null (object) at path 'floors'. The property 'floors' is of the wrong type
 
 /* doors: required and has default */
-building.doors = undefined
-building.doors // => false (default kicks in when undefined)
-building.doors = null // ActiveClassError: Dictionary could not accept the value null (object) at path 'doors'. The property 'doors' is of the wrong type
+dictionary.doors = undefined
+dictionary.doors // => false (default kicks in when undefined)
+dictionary.doors = null // ActiveClassError: Dictionary could not accept the value null (object) at path 'doors'. The property 'doors' is of the wrong type
 
 /* rooms: optional and has no default */
-building.rooms = undefined
-building.rooms // => undefined (optional, so doesn't throw, and has no default to kick in)
-building.rooms = null
-building.rooms // => null (optional, so doesn't throw and can be null)
+dictionary.rooms = undefined
+dictionary.rooms // => undefined (optional, so doesn't throw, and has no default to kick in)
+dictionary.rooms = null
+dictionary.rooms // => null (optional, so doesn't throw and can be null)
 
 /* chimneys: optional and has default */
-building.chimneys = undefined
-building.chimneys // => false (default kicks in when undefined)
-building.chimneys = null
-building.chimneys // => null (optional, so doesn't throw and can be null)
+dictionary.chimneys = undefined
+dictionary.chimneys // => false (default kicks in when undefined)
+dictionary.chimneys = null
+dictionary.chimneys // => null (optional, so doesn't throw and can be null)
 ```
 
 </TabItem>
@@ -222,36 +242,36 @@ building.chimneys // => null (optional, so doesn't throw and can be null)
 ```ts
 import { ActiveClass, Schema } from 'fireactive'
 
-const buildingSchema = {
+const dictionarySchema = {
   floors: Schema.indexed,
   doors: Schema.indexed({ default: 1 }),
   rooms: Schema.indexed({ optional: true }), // or required: false,
   chimneys: Schema.indexed({ optional: true, default: 2 })
 }
 
-class Dictionary extends ActiveClass(buildingSchema) {}
+class Dictionary extends ActiveClass(dictionarySchema) {}
 
-const building = new Dictionary({ floors: 4 })
-building.floors // => 4
-building.doors // => 1
-building.rooms // => undefined
-building.chimneys // => 2
+const dictionary = new Dictionary({ floors: 4 })
+dictionary.floors // => 4
+dictionary.doors // => 1
+dictionary.rooms // => undefined
+dictionary.chimneys // => 2
 
 /* floors: required and no default */
-building.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'indexed'
-building.floors = null // (ts 2322) Type 'null' is not assignable to type 'indexed'
+dictionary.floors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'indexed'
+dictionary.floors = null // (ts 2322) Type 'null' is not assignable to type 'indexed'
 
 /* doors: required and has default */
-building.doors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'indexed'
-building.doors = null // (ts 2322) Type 'null' is not assignable to type 'indexed'
+dictionary.doors = undefined // (ts 2322) Type 'undefined' is not assignable to type 'indexed'
+dictionary.doors = null // (ts 2322) Type 'null' is not assignable to type 'indexed'
 
 /* rooms: optional and has no default */
-building.rooms = undefined // compiles
-building.rooms = null // compiles
+dictionary.rooms = undefined // compiles
+dictionary.rooms = null // compiles
 
 /* chimneys: optional and has default */
-building.chimneys = undefined // (ts 2322) Type 'undefined' is not assignable to type 'indexed | null'
-building.chimneys = null // compiles
+dictionary.chimneys = undefined // (ts 2322) Type 'undefined' is not assignable to type 'indexed | null'
+dictionary.chimneys = null // compiles
 ```
 
 </TabItem>
