@@ -46,13 +46,37 @@ class Dictionary extends ActiveClass(schema) {}
   new Dictionary({ trueVals: { test: true } })
 }
 
-// // @dts-jest:group Basic assignment
-// {
-//   const coffeeOrder = new Dictionary({ type: 'Americano' })
+// @dts-jest:group Basic assignment
+{
+  const dictionary = new Dictionary({})
 
-//   // @dts-jest:pass
-//   coffeeOrder.type = 'Latte'
+  // @dts-jest:fail
+  dictionary.booleanVals.someProp = 'false'
 
-//   // @dts-jest:fail
-//   coffeeOrder.type = 'Orange juice'
-// }
+  // @dts-jest:pass
+  dictionary.booleanVals.someProp = false
+
+  // @dts-jest:fail
+  dictionary.fooOrBarVals.someProp = 'BAR'
+
+  // @dts-jest:pass
+  dictionary.fooOrBarVals.someProp = 'bar'
+
+  // @dts-jest:fail
+  dictionary.numberVals.someProp = '5'
+
+  // @dts-jest:pass
+  dictionary.numberVals.someProp = 5
+
+  // @dts-jest:fail
+  dictionary.stringVals.someProp = 5
+
+  // @dts-jest:pass
+  dictionary.stringVals.someProp = '5'
+
+  // @dts-jest:fail
+  dictionary.trueVals.someProp = false
+
+  // @dts-jest:pass
+  dictionary.trueVals.someProp = true
+}
