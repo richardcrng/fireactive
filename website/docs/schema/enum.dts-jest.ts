@@ -30,16 +30,16 @@ class CoffeeOrderSimple extends ActiveClass(simpleSchema) {}
   new CoffeeOrderSimple({ type: 'Latte' })
 }
 
-// // @dts-jest:group Basic assignment
-// {
-//   const lightbulb = new CoffeeOrderSimple({ type: true })
+// @dts-jest:group Basic assignment
+{
+  const coffeeOrder = new CoffeeOrderSimple({ type: 'Americano' })
 
-//   // @dts-jest:pass
-//   lightbulb.type = false
+  // @dts-jest:pass
+  coffeeOrder.type = 'Latte'
 
-//   // @dts-jest:fail
-//   lightbulb.type = 'true'
-// }
+  // @dts-jest:fail
+  coffeeOrder.type = 'Orange juice'
+}
 
 // const configuredSchema = {
 //   type: Schema.enum,
@@ -52,29 +52,29 @@ class CoffeeOrderSimple extends ActiveClass(simpleSchema) {}
 
 // // @dts-jest:group Configuration
 // {
-//   const lightbulb = new CoffeeOrderConfigured({ type: true })
+//   const coffeeOrder = new CoffeeOrderConfigured({ type: true })
 
 //   // @dts-jest:fail
-//   lightbulb.type = undefined
+//   coffeeOrder.type = undefined
 
 //   // @dts-jest:fail
-//   lightbulb.type = null
+//   coffeeOrder.type = null
 
 //   // @dts-jest:fail
-//   lightbulb.isEco = undefined
+//   coffeeOrder.isEco = undefined
 
 //   // @dts-jest:fail
-//   lightbulb.isEco = null
+//   coffeeOrder.isEco = null
 
 //   // @dts-jest:pass
-//   lightbulb.isLED = undefined
+//   coffeeOrder.isLED = undefined
 
 //   // @dts-jest:pass
-//   lightbulb.isLED = null
+//   coffeeOrder.isLED = null
 
 //   // @dts-jest:fail
-//   lightbulb.isSmart = undefined
+//   coffeeOrder.isSmart = undefined
 
 //   // @dts-jest:pass
-//   lightbulb.isSmart = null
+//   coffeeOrder.isSmart = null
 // }

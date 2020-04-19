@@ -83,7 +83,7 @@ new CoffeeOrder({ type: 'Latte' }) // compiles
 import { ActiveClass, Schema } from 'fireactive'
 
 const coffeeOrderSchema = {
-  type: Schema.enum
+  type: Schema.enum(['Americano', 'Latte', 'Cappucino'])
 }
 
 class CoffeeOrder extends ActiveClass(coffeeOrderSchema) {}
@@ -102,16 +102,16 @@ coffeeOrder.type = null // ActiveClassError: CoffeeOrder could not accept the va
 import { ActiveClass, Schema } from 'fireactive'
 
 const coffeeOrderSchema = {
-  type: Schema.enum
+  type: Schema.enum(['Americano', 'Latte', 'Cappucino'])
 }
 
 class CoffeeOrder extends ActiveClass(coffeeOrderSchema) {}
 
 const coffeeOrder = new CoffeeOrder({ type: 'Americano' })
-coffeeOrder.type = false // compiles
-coffeeOrder.type = 'true' // (ts 2322) Type '"true"' is not assignable to type 'enum'
-coffeeOrder.type = undefined // (ts 2322) Type 'undefined' is not assignable to type 'enum'
-coffeeOrder.type = null // (ts 2322) Type 'null' is not assignable to type 'enum'
+coffeeOrder.type = 'Latte' // compiles
+coffeeOrder.type = 'Orange juice' // (ts 2322) Type '"Orange juice"' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
+coffeeOrder.type = undefined // (ts 2322) Type 'undefined' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
+coffeeOrder.type = null // (ts 2322) Type 'null' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
 ```
 
 </TabItem>
@@ -212,12 +212,12 @@ coffeeOrder.isLED // => undefined
 coffeeOrder.isSmart // => false
 
 /* type: required and no default */
-coffeeOrder.type = undefined // (ts 2322) Type 'undefined' is not assignable to type 'enum'
-coffeeOrder.type = null // (ts 2322) Type 'null' is not assignable to type 'enum'
+coffeeOrder.type = undefined // (ts 2322) Type 'undefined' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
+coffeeOrder.type = null // (ts 2322) Type 'null' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
 
 /* isEco: required and has default */
-coffeeOrder.isEco = undefined // (ts 2322) Type 'undefined' is not assignable to type 'enum'
-coffeeOrder.isEco = null // (ts 2322) Type 'null' is not assignable to type 'enum'
+coffeeOrder.isEco = undefined // (ts 2322) Type 'undefined' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
+coffeeOrder.isEco = null // (ts 2322) Type 'null' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
 
 /* isLED: optional and has no default */
 coffeeOrder.isLED = undefined // compiles
