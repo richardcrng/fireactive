@@ -11,7 +11,9 @@ export interface FieldOptions<T> {
  */
 export interface IndexedFieldDefinition<T = any> {
   _fieldIdentifier: FieldIdentifier.indexed,
-  indexed: FieldDefinition<T>
+  indexed: FieldDefinition<T>,
+  _hasDefault: true,
+  default: {}
 }
 
 /**
@@ -126,8 +128,8 @@ export type CreateField<FD> =
     // handle indexed cases
     : FD extends { _fieldIdentifier: FieldIdentifier.indexed, indexed: infer T }
       ? T extends { _fieldIdentifier: FieldIdentifier.enum, vals: Array<infer E> }
-        ? TypeFromIdentifier<FieldIdentifier.indexed, E>
-        : T extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<FieldIdentifier.indexed, TypeFromIdentifier<C>>
+        ? TypeFromIdentifier<FieldIdentifier.indexed, E> | undefined
+        : T extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<FieldIdentifier.indexed, TypeFromIdentifier<C>> | undefined
       // 🤷
       : unknown
 
