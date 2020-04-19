@@ -127,9 +127,9 @@ Default values are used when a field's value would otherwise be `undefined`.
 Only optional properties can be assigned `null` (i.e. the deliberate ommission of a value).
 
 Let's add some additionl properties to our coffeeOrder schema to demonstrate:
-* `isEco` should default to `false`;
-* `isLED`, should be an optional property;
-* `isSmart`, should default to `false` *and* be an optional property.
+* `size` should default to `'regular'` but also accept `'small'` and `'large'`;
+* `chain`, should be an optional property, but, if given, must be `'Starbucks'`, `'Costa'` or `'Pret'`;
+* `milk`, should default to `'dairy'` *and* be an optional property which, if given, must be `'dairy'`, `'oat'` or `'soya'`.
 
 <Tabs
   defaultValue="js"
@@ -149,40 +149,40 @@ Let's add some additionl properties to our coffeeOrder schema to demonstrate:
 import { ActiveClass, Schema } from 'fireactive'
 
 const coffeeOrderSchema = {
-  type: Schema.enum,
-  isEco: Schema.enum({ default: false }),
-  isLED: Schema.enum({ optional: true }), // or required: false,
-  isSmart: Schema.enum({ optional: true, default: false })
+  type: Schema.enum(['Americano', 'Latte', 'Cappucino']),
+  size: Schema.enum(['small', 'regular', 'large'], { default: 'regular' }),
+  chain: Schema.enum(['Starbucks', 'Costa', 'Pret'], { optional: true }), // or required: false,
+  milk: Schema.enum(['dairy', 'oat', 'soya'], { optional: true, default: 'dairy' })
 }
 
 class CoffeeOrder extends ActiveClass(coffeeOrderSchema) {}
 
 const coffeeOrder = new CoffeeOrder({ type: false })
-coffeeOrder.type // => false
-coffeeOrder.isEco // => false
-coffeeOrder.isLED // => undefined
-coffeeOrder.isSmart // => false
+coffeeOrder.type // => 'Americano'
+coffeeOrder.size // => 'regular'
+coffeeOrder.chain // => undefined
+coffeeOrder.milk // => 'dairy'
 
 /* type: required and no default */
 coffeeOrder.type = undefined // ActiveClassError: CoffeeOrder could not accept the value undefined (undefined) at path 'type'. The required property 'type' is missing
 coffeeOrder.type = null // ActiveClassError: CoffeeOrder could not accept the value null (object) at path 'type'. The property 'type' is of the wrong type
 
-/* isEco: required and has default */
-coffeeOrder.isEco = undefined
-coffeeOrder.isEco // => false (default kicks in when undefined)
-coffeeOrder.isEco = null // ActiveClassError: CoffeeOrder could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type
+/* size: required and has default */
+coffeeOrder.size = undefined
+coffeeOrder.size // => 'regular' (default kicks in when undefined)
+coffeeOrder.size = null // ActiveClassError: CoffeeOrder could not accept the value null (object) at path 'size'. The property 'size' is of the wrong type
 
-/* isLED: optional and has no default */
-coffeeOrder.isLED = undefined
-coffeeOrder.isLED // => undefined (optional, so doesn't throw, and has no default to kick in)
-coffeeOrder.isLED = null
-coffeeOrder.isLED // => null (optional, so doesn't throw and can be null)
+/* chain: optional and has no default */
+coffeeOrder.chain = undefined
+coffeeOrder.chain // => undefined (optional, so doesn't throw, and has no default to kick in)
+coffeeOrder.chain = null
+coffeeOrder.chain // => null (optional, so doesn't throw and can be null)
 
-/* isSmart: optional and has default */
-coffeeOrder.isSmart = undefined
-coffeeOrder.isSmart // => false (default kicks in when undefined)
-coffeeOrder.isSmart = null
-coffeeOrder.isSmart // => null (optional, so doesn't throw and can be null)
+/* milk: optional and has default */
+coffeeOrder.milk = undefined
+coffeeOrder.milk // => 'dairy' (default kicks in when undefined)
+coffeeOrder.milk = null
+coffeeOrder.milk // => null (optional, so doesn't throw and can be null)
 ```
 
 </TabItem>
@@ -197,35 +197,35 @@ coffeeOrder.isSmart // => null (optional, so doesn't throw and can be null)
 import { ActiveClass, Schema } from 'fireactive'
 
 const coffeeOrderSchema = {
-  type: Schema.enum,
-  isEco: Schema.enum({ default: false }),
-  isLED: Schema.enum({ optional: true }), // or required: false,
-  isSmart: Schema.enum({ optional: true, default: false })
+  type: Schema.enum(['Americano', 'Latte', 'Cappucino']),
+  size: Schema.enum(['small', 'regular', 'large'], { default: 'regular' }),
+  chain: Schema.enum(['Starbucks', 'Costa', 'Pret'], { optional: true }), // or required: false,
+  milk: Schema.enum(['dairy', 'oat', 'soya'], { optional: true, default: 'dairy' })
 }
 
 class CoffeeOrder extends ActiveClass(coffeeOrderSchema) {}
 
 const coffeeOrder = new CoffeeOrder({ type: false })
 coffeeOrder.type // => false
-coffeeOrder.isEco // => false
-coffeeOrder.isLED // => undefined
-coffeeOrder.isSmart // => false
+coffeeOrder.size // => false
+coffeeOrder.chain // => undefined
+coffeeOrder.milk // => false
 
 /* type: required and no default */
 coffeeOrder.type = undefined // (ts 2322) Type 'undefined' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
 coffeeOrder.type = null // (ts 2322) Type 'null' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
 
-/* isEco: required and has default */
-coffeeOrder.isEco = undefined // (ts 2322) Type 'undefined' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
-coffeeOrder.isEco = null // (ts 2322) Type 'null' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
+/* size: required and has default */
+coffeeOrder.size = undefined // (ts 2322) Type 'undefined' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
+coffeeOrder.size = null // (ts 2322) Type 'null' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
 
-/* isLED: optional and has no default */
-coffeeOrder.isLED = undefined // compiles
-coffeeOrder.isLED = null // compiles
+/* chain: optional and has no default */
+coffeeOrder.chain = undefined // compiles
+coffeeOrder.chain = null // compiles
 
-/* isSmart: optional and has default */
-coffeeOrder.isSmart = undefined // (ts 2322) Type 'undefined' is not assignable to type 'enum | null'
-coffeeOrder.isSmart = null // compiles
+/* milk: optional and has default */
+coffeeOrder.milk = undefined // (ts 2322) Type 'undefined' is not assignable to type 'enum | null'
+coffeeOrder.milk = null // compiles
 ```
 
 </TabItem>

@@ -63,75 +63,75 @@ describe('Basic example', () => {
   })
 })
 
-// describe('Configuration', () => {
-//   const coffeeOrderSchema = {
-//     type: Schema.enum,
-//     isEco: Schema.enum({ default: false }),
-//     isLED: Schema.enum({ optional: true }), // or required: false,
-//     isSmart: Schema.enum({ optional: true, default: false })
-//   }
+describe('Configuration', () => {
+  const coffeeOrderSchema = {
+    type: Schema.enum(['Americano', 'Latte', 'Cappucino']),
+    size: Schema.enum(['small', 'regular', 'large'], { default: 'regular' }),
+    chain: Schema.enum(['Starbucks', 'Costa', 'Pret'], { optional: true }), // or required: false,
+    milk: Schema.enum(['dairy', 'oat', 'soya'], { optional: true, default: 'dairy' })
+  }
 
-//   class CoffeeOrder extends ActiveClass(coffeeOrderSchema) {}
+  class CoffeeOrder extends ActiveClass(coffeeOrderSchema) {}
 
-//   const coffeeOrder = new CoffeeOrder({ type: false })
+  const coffeeOrder = new CoffeeOrder({ type: 'Americano' })
   
-//   test('Initial values', () => {
-//     expect(coffeeOrder.type).toBe(false)
-//     expect(coffeeOrder.isEco).toBe(false)
-//     expect(coffeeOrder.isLED).toBeUndefined()
-//     expect(coffeeOrder.isSmart).toBe(false)
-//   })
+  test('Initial values', () => {
+    expect(coffeeOrder.type).toBe('Americano')
+    expect(coffeeOrder.size).toBe('regular')
+    expect(coffeeOrder.chain).toBeUndefined()
+    expect(coffeeOrder.milk).toBe('dairy')
+  })
 
-//   describe('Required with no default', () => {
-//     testExpectError('throws error when assigned undefined', () => {
-//       // @ts-ignore
-//       coffeeOrder.type = undefined
-//     }, { message: `CoffeeOrder could not accept the value undefined (undefined) at path 'type'. The required property 'type' is missing`, constructor: ActiveClassError })
+  describe('Required with no default', () => {
+    testExpectError('throws error when assigned undefined', () => {
+      // @ts-ignore
+      coffeeOrder.type = undefined
+    }, { message: `CoffeeOrder could not accept the value undefined (undefined) at path 'type'. The required property 'type' is missing`, constructor: ActiveClassError })
 
-//     testExpectError('throws error when assigned null', () => {
-//       // @ts-ignore
-//       coffeeOrder.type = null
-//     }, { message: `CoffeeOrder could not accept the value null (object) at path 'type'. The property 'type' is of the wrong type`, constructor: ActiveClassError })
-//   })
+    testExpectError('throws error when assigned null', () => {
+      // @ts-ignore
+      coffeeOrder.type = null
+    }, { message: `CoffeeOrder could not accept the value null (object) at path 'type'. The property 'type' is of the wrong type`, constructor: ActiveClassError })
+  })
 
-//   describe('Required with default', () => {    
-//     it('defaults when assigned undefined', () => {
-//       // @ts-ignore
-//       coffeeOrder.isEco = undefined
-//       expect(coffeeOrder.isEco).toBe(false)
-//     })
+  describe('Required with default', () => {    
+    it('defaults when assigned undefined', () => {
+      // @ts-ignore
+      coffeeOrder.size = undefined
+      expect(coffeeOrder.size).toBe('regular')
+    })
 
-//     testExpectError('throws error when assigned null', () => {
-//       // @ts-ignore
-//       coffeeOrder.isEco = null
-//     }, { message: `CoffeeOrder could not accept the value null (object) at path 'isEco'. The property 'isEco' is of the wrong type`, constructor: ActiveClassError })
-//   })
+    testExpectError('throws error when assigned null', () => {
+      // @ts-ignore
+      coffeeOrder.size = null
+    }, { message: `CoffeeOrder could not accept the value null (object) at path 'size'. The property 'size' is of the wrong type`, constructor: ActiveClassError })
+  })
 
-//   describe('Optional with no default', () => {
-//     it('does not default or throw error when assigned undefined', () => {
-//       // @ts-ignore
-//       coffeeOrder.isLED = undefined
-//       expect(coffeeOrder.isLED).toBeUndefined()
-//     })
+  describe('Optional with no default', () => {
+    it('does not default or throw error when assigned undefined', () => {
+      // @ts-ignore
+      coffeeOrder.chain = undefined
+      expect(coffeeOrder.chain).toBeUndefined()
+    })
 
-//     it('does not default or throw error when assigned null', () => {
-//       // @ts-ignore
-//       coffeeOrder.isLED = null
-//       expect(coffeeOrder.isLED).toBeNull()
-//     })
-//   })
+    it('does not default or throw error when assigned null', () => {
+      // @ts-ignore
+      coffeeOrder.chain = null
+      expect(coffeeOrder.chain).toBeNull()
+    })
+  })
 
-//   describe('Optional with default', () => {
-//     it('defaults when assigned undefined', () => {
-//       // @ts-ignore
-//       coffeeOrder.isSmart = undefined
-//       expect(coffeeOrder.isSmart).toBe(false)
-//     })
+  describe('Optional with default', () => {
+    it('defaults when assigned undefined', () => {
+      // @ts-ignore
+      coffeeOrder.milk = undefined
+      expect(coffeeOrder.milk).toBe('dairy')
+    })
 
-//     it('does not default or throw error when assigned null', () => {
-//       // @ts-ignore
-//       coffeeOrder.isSmart = null
-//       expect(coffeeOrder.isSmart).toBeNull()
-//     })
-//   })
-// })
+    it('does not default or throw error when assigned null', () => {
+      // @ts-ignore
+      coffeeOrder.milk = null
+      expect(coffeeOrder.milk).toBeNull()
+    })
+  })
+})
