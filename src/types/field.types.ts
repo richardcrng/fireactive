@@ -34,7 +34,7 @@ export type FieldDefinition<T = any, R extends boolean = boolean, D extends bool
       : unknown
     } & {
       required: R
-  } & (D extends true ? { _hasDefault: true, default: T extends Array<infer E> ? E : T } : { _hasDefault: D })
+  } & (D extends true ? { _hasDefault: true, default: T extends Array<infer E> ? E : T } : { _hasDefault: D, default?: T extends Array<infer E> ? E : T })
       & (T extends Array<infer E> ? { vals: E[] } : {})
 
 export type FieldType<FI, T = unknown> =
