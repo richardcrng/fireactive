@@ -1,4 +1,3 @@
-import { NonUndefined } from 'utility-types'
 import { UndefinedToOptional } from "./util.types"
 
 export interface FieldOptions<T> {
