@@ -41,40 +41,40 @@ class CoffeeOrderSimple extends ActiveClass(simpleSchema) {}
   coffeeOrder.type = 'Orange juice'
 }
 
-// const configuredSchema = {
-//   type: Schema.enum,
-//   isEco: Schema.enum({ default: false }),
-//   isLED: Schema.enum({ optional: true }), // or required: false,
-//   isSmart: Schema.enum({ optional: true, default: false })
-// }
+const configuredSchema = {
+  type: Schema.enum(['Americano', 'Latte', 'Cappucino']),
+  size: Schema.enum(['small', 'regular', 'large'], { default: 'small' }),
+  chain: Schema.enum(['Starbucks', 'Costa', 'Pret'], { optional: true }), // or required: false,
+  milk: Schema.enum(['dairy', 'oat', 'soya'], { optional: true, default: 'dairy' })
+}
 
-// class CoffeeOrderConfigured extends ActiveClass(configuredSchema) {}
+class CoffeeOrderConfigured extends ActiveClass(configuredSchema) {}
 
-// // @dts-jest:group Configuration
-// {
-//   const coffeeOrder = new CoffeeOrderConfigured({ type: true })
+// @dts-jest:group Configuration
+{
+  const coffeeOrder = new CoffeeOrderConfigured({ type: 'Americano' })
 
-//   // @dts-jest:fail
-//   coffeeOrder.type = undefined
+  // @dts-jest:fail
+  coffeeOrder.type = undefined
 
-//   // @dts-jest:fail
-//   coffeeOrder.type = null
+  // @dts-jest:fail
+  coffeeOrder.type = null
 
-//   // @dts-jest:fail
-//   coffeeOrder.isEco = undefined
+  // @dts-jest:fail
+  coffeeOrder.size = undefined
 
-//   // @dts-jest:fail
-//   coffeeOrder.isEco = null
+  // @dts-jest:fail
+  coffeeOrder.size = null
 
-//   // @dts-jest:pass
-//   coffeeOrder.isLED = undefined
+  // @dts-jest:pass
+  coffeeOrder.chain = undefined
 
-//   // @dts-jest:pass
-//   coffeeOrder.isLED = null
+  // @dts-jest:pass
+  coffeeOrder.chain = null
 
-//   // @dts-jest:fail
-//   coffeeOrder.isSmart = undefined
+  // @dts-jest:fail
+  coffeeOrder.milk = undefined
 
-//   // @dts-jest:pass
-//   coffeeOrder.isSmart = null
-// }
+  // @dts-jest:pass
+  coffeeOrder.milk = null
+}

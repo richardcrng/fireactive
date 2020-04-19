@@ -20,7 +20,7 @@ const gameSchema = {
 class Player extends ActiveClass(playerSchema) {
   votingFor = relations.findById<Player, Player>(
     'Player',
-    () => this.votingForId
+    () => this.votingForId as string
   )
 
   game = relations.findById<Player, Game>('Game', 'gameId')

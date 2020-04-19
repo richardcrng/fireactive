@@ -205,11 +205,11 @@ const coffeeOrderSchema = {
 
 class CoffeeOrder extends ActiveClass(coffeeOrderSchema) {}
 
-const coffeeOrder = new CoffeeOrder({ type: false })
-coffeeOrder.type // => false
-coffeeOrder.size // => false
+const coffeeOrder = new CoffeeOrder({ type: 'Americano' })
+coffeeOrder.type // => 'Americano'
+coffeeOrder.size // => 'regular'
 coffeeOrder.chain // => undefined
-coffeeOrder.milk // => false
+coffeeOrder.milk // => 'dairy'
 
 /* type: required and no default */
 coffeeOrder.type = undefined // (ts 2322) Type 'undefined' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
