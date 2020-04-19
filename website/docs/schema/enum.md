@@ -88,9 +88,9 @@ const coffeeOrderSchema = {
 
 class CoffeeOrder extends ActiveClass(coffeeOrderSchema) {}
 
-const coffeeOrder = new CoffeeOrder({ type: true })
-coffeeOrder.type = false // works
-coffeeOrder.type = 'true' // ActiveClassError: CoffeeOrder could not accept the value "true" (string) at path 'type'. The property 'type' is of the wrong type
+const coffeeOrder = new CoffeeOrder({ type: 'Americano' })
+coffeeOrder.type = 'Latte' // works
+coffeeOrder.type = 'Orange juice' // ActiveClassError: CoffeeOrder could not accept the value "Orange juice" (string) at path 'type'. The property 'type' is of the wrong type
 coffeeOrder.type = undefined // ActiveClassError: CoffeeOrder could not accept the value undefined (undefined) at path 'type'. The required property 'type' is missing
 coffeeOrder.type = null // ActiveClassError: CoffeeOrder could not accept the value null (object) at path 'type'. The property 'type' is of the wrong type
 ```
@@ -107,7 +107,7 @@ const coffeeOrderSchema = {
 
 class CoffeeOrder extends ActiveClass(coffeeOrderSchema) {}
 
-const coffeeOrder = new CoffeeOrder({ type: true })
+const coffeeOrder = new CoffeeOrder({ type: 'Americano' })
 coffeeOrder.type = false // compiles
 coffeeOrder.type = 'true' // (ts 2322) Type '"true"' is not assignable to type 'enum'
 coffeeOrder.type = undefined // (ts 2322) Type 'undefined' is not assignable to type 'enum'

@@ -48,19 +48,19 @@ describe('Basic example', () => {
     })
   })
 
-  // describe('Updates', () => {
-  //   const coffeeOrder = new CoffeeOrder({ type: true })
+  describe('Updates', () => {
+    const coffeeOrder = new CoffeeOrder({ type: 'Americano' })
 
-  //   test("Can assign enum values", () => {
-  //     coffeeOrder.type = false
-  //     expect(coffeeOrder.type).toBe(false)
-  //   })
+    test("Can assign enum values", () => {
+      coffeeOrder.type = 'Latte'
+      expect(coffeeOrder.type).toBe('Latte')
+    })
 
-  //   testExpectError("Can't assign non-enum values", () => {
-  //     // @ts-ignore
-  //     coffeeOrder.type = 'true'
-  //   }, { message: `CoffeeOrder could not accept the value "true" (string) at path 'type'. The property 'type' is of the wrong type`, constructor: ActiveClassError })
-  // })
+    testExpectError("Can't assign non-enum values", () => {
+      // @ts-ignore
+      coffeeOrder.type = 'Orange juice'
+    }, { message: `CoffeeOrder could not accept the value "Orange juice" (string) at path 'type'. The property 'type' is of the wrong type`, constructor: ActiveClassError })
+  })
 })
 
 // describe('Configuration', () => {
