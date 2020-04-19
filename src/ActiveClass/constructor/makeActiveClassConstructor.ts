@@ -16,7 +16,7 @@ import ActiveClassError from '../Error/ActiveClassError';
 const makeActiveClassConstructor = <Schema extends RecordSchema>(
   schema: Schema,
   className?: string
-) => {
+) => { 
   /**
    * A constructor function for a Fireactive `ActiveRecord`.
    */

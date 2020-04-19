@@ -6,7 +6,9 @@ import number from './number.schema';
 
 const indexString = (): IndexedFieldDefinition<string> => ({
   _fieldIdentifier: FieldIdentifier.indexed,
-  indexed: string()
+  indexed: string(),
+  _hasDefault: true,
+  default: {}
 })
 const indexedString = Object.assign(indexString, indexString())
 
@@ -14,18 +16,24 @@ const indexedEnum = <T extends string | number = string>(
   enumVals: readonly T[]
 ): IndexedFieldDefinition<T[]> => ({
   _fieldIdentifier: FieldIdentifier.indexed,
-  indexed: enumr(enumVals)
+  indexed: enumr(enumVals),
+  _hasDefault: true,
+  default: {}
 })
 
 const indexBoolean = (): IndexedFieldDefinition<boolean> => ({
   _fieldIdentifier: FieldIdentifier.indexed,
-  indexed: boolean()
+  indexed: boolean,
+  _hasDefault: true,
+  default: {}
 })
 const indexedBoolean = Object.assign(indexBoolean, indexBoolean())
 
 const indexNumber = (): IndexedFieldDefinition<number> => ({
   _fieldIdentifier: FieldIdentifier.indexed,
-  indexed: number()
+  indexed: number(),
+  _hasDefault: true,
+  default: {}
 })
 const indexedNumber = Object.assign(indexNumber, indexNumber())
 
@@ -34,8 +42,11 @@ const indexTrue = (): IndexedFieldDefinition<true> => ({
   indexed: {
     _fieldIdentifier: FieldIdentifier.true,
     _hasDefault: true,
-    required: true
-  }
+    required: true,
+    default: true
+  },
+  _hasDefault: true,
+  default: {}
 })
 const indexedTrue = Object.assign(indexTrue, indexTrue())
 

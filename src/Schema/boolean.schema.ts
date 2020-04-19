@@ -11,6 +11,10 @@ function booleanFn(opts: FieldOptions<boolean>): FieldDefinition<boolean, true, 
 function booleanFn(opts: FieldOptions<boolean> & { required: true }): FieldDefinition<boolean, true, false>
 function booleanFn(opts: FieldOptions<boolean> & { optional: false }): FieldDefinition<boolean, true, false>
 
+// Overloads for optional wiwth default
+function booleanFn(opts: FieldOptions<boolean> & { optional: true, default: boolean }): FieldDefinition<boolean, false, true>;
+function booleanFn(opts: FieldOptions<boolean> & { required: false, default: boolean }): FieldDefinition<boolean, false, true>;
+
 // Overloads for optional
 function booleanFn(opts: FieldOptions<boolean> & { required: false }): FieldDefinition<boolean, false>;
 function booleanFn(opts: FieldOptions<boolean> & { optional: true }): FieldDefinition<boolean, false>;

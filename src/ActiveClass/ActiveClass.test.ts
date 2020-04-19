@@ -288,6 +288,12 @@ describe('ActiveClass: integration test', () => {
           expect(user.friends.alfred).toBe('Alfie')
           expect(user.friends.bob).toBe('bobo')
         })
+
+        it('allows creation without providing the empty dictionary which it defaults to', () => {
+          const user = new User({ username: 'Test' })
+          expect(user.friends).toEqual({})
+          expect(user.numbers).toEqual({})
+        })
       })
 
       describe('sad path', () => {

@@ -1,85 +1,66 @@
 ---
-id: basic-types
-title: Basic Schema Types
-sidebar_label: Basic Schema Types
+id: overview
+title: Schema
+sidebar_label: Overview
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-## Why?
+`Schema` is one of the main exports from Fireactive.
 
-The [Firebase Realtime Database](https://firebase.google.com/docs/database) is great because it:
+You should use `Schema` to provide a predictable structure to your ActiveClasses.
 
-- **syncs realtime data** between devices, no HTTP requests needed;
-- can be **used directly in client-side code**, no backend server needed; and
-- **enables offline persistence** in the absence of a connection.
+Schemas are used by ActiveClasses to:
+- provide runtime type-checking on instances; and
+- provide static type-checking in TypeScript (without additional type declarations).
 
-But there are some pain points when using it with the [JavaScript SDK](https://firebase.google.com/docs/reference/js):
+## Examples
 
-1. It can be **cumbersome and repetitive** to read data and set up listeners to sync data;
-2. It is **easy to forget the precise structure** of [your NoSQL database](https://firebase.google.com/docs/database/web/structure-data) when writing your code; and
-3. There is **no autocomplete or type-checking** on data read from the database.
+### Basic usage
+Let's suppose we're storing user data.
 
-## How?
-
-Fireactive was built with three goals in mind:
-
-1. **Easy APIs for data syncing (active by default)** to and from your Realtime Database;
-2. **Predictable data with an explicit model-based structure** for objects and your database; and
-3. **Code autocomplete and type-checking** with VS Code and/or TypeScript.
-
-## What?
-
-Fireactive is a strongly-typed Object Document Mapper with realtime syncing enabled by default for all data that is created, read or updated in your Firebase Realtime Database.
-
-This is achieved through *Schema*-based *ActiveClass*es.
-
-<Tabs
-  defaultValue="js"
-  values={[
-    { label: 'JavaScript', value: 'js', },
-    { label: 'TypeScript', value: 'ts', }
-  ]}
->
-<TabItem value="js">
+For the sake of argument, let's suppose that users all:
+- have a name, which should be a `string`;
+- have an age, which should be a `number`;
+- have a role, which must be either the string `'admin'` or `'basic'`
+  - (i.e. as a type it should satisfy an `enum` of the two);
+- have a verified status, which should be a `boolean`.
 
 ```js
-import { ActiveClass, Schema } from 'fireactive'
+import { Schema } from 'fireactive'
 
-// A schema for user data
-const userSchema = {
-  name: Schema.string,  // users must have a name
-  age: Schema.number({ optional: true }), // age is optional
-  role: Schema.enum(['admin', 'basic']), // role must be 'admin' or 'basic'
-  isVerified: Schema.boolean({ default: false }) // defaults to false
+let userSchema = {
+  name: Schema.string,
+  age: Schema.number,
+  role: Schema.enum(['admin', 'basic']),
+  isVerified: Schema.boolean
 }
-
-// Create an `ActiveClass` based on this schema
-class User extends ActiveClass(userSchema) {}
 ```
 
-</TabItem>
-<TabItem value="ts">
+### Simple configuration
+Schema fields are required (and therefore must always exist on a record) unless configured otherwise.
 
-```ts
-import { ActiveClass, Schema } from 'fireactive'
+Suppose we want to tweak our schema in the following way therefore:
 
-// A schema for user data
-const userSchema = {
-  name: Schema.string,  // users must have a name
-  age: Schema.number({ optional: true }), // age is optional
-  role: Schema.enum(['admin', 'basic']), // role must be 'admin' or 'basic'
-  isVerified: Schema.boolean({ default: false }) // defaults to false
+- `age` should be optional;
+- `role` should default to `'basic'` on initialization; and
+- `isVerified` should be optional but also default to `false` on initialization.
+
+```js
+let userSchema = {
+  name: Schema.string,
+  age: Schema.number({ optional: true }),
+  role: Schema.enum(['admin', 'basic'], { default: 'basic' }),
+  isVerified: Schema.boolean({ required: false, default: false })
 }
-
-// Create an `ActiveClass` based on this schema
-class User extends ActiveClass(userSchema) {}
 ```
 
-</TabItem>
-</Tabs>
+Note that `optional: true` and `required: false` achieve the same thing, so you can use whichever you prefer the semantics of.
 
-A Fireactive `ActiveClass` provides some helpful static and prototype methods by default, although you are free to add your own in when extending.
-
-
+## Available types
+- [`Schema.boolean`](boolean.md)
+- [`Schema.enum`](enum.md)
+- [`Schema.indexed`](indexed.md)
+- [`Schema.number`](number.md)
+- [`Schema.string`](string.md)

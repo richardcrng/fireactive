@@ -1,7 +1,7 @@
 import { get, set } from 'lodash'
 import { ActiveRecord } from '../../types/class.types'
 import { RecordSchema } from '../../types/schema.types';
-import { FieldIdentifier } from '../../types/field.types';
+import { FieldIdentifier, FieldDefinition } from '../../types/field.types';
 import ActiveClassError from '../Error/ActiveClassError';
 
 interface A<Schema extends RecordSchema> {
@@ -22,7 +22,7 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
    *  the value right now - we want to 
    */
   const currentValAtPath = () => get(this, [...schemaKeyPath])
-  const schemaFieldDef = get(schema, schemaKeyPath)
+  const schemaFieldDef: FieldDefinition = get(schema, schemaKeyPath)
 
   // check if the path has the `_hasDefault` property and is undefined
   if (get(schemaFieldDef, '_hasDefault') && typeof currentValAtPath() === 'undefined') {
@@ -37,7 +37,7 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
     })
   }
 
-  if (currentValAtPath() == null) {
+  if (currentValAtPath() === undefined) {
     if (schemaFieldDef && schemaFieldDef._fieldIdentifier === FieldIdentifier.indexed) {
       set(this, schemaKeyPath, {})
     }
@@ -53,8 +53,9 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
       case FieldIdentifier.boolean:
         doesMatch = typeof currentValAtPath() === 'boolean'; break
       case FieldIdentifier.enum:
+        const enumFieldDef = schemaFieldDef as FieldDefinition<Array<string>>
         // the enum values are on the field definition's vals property
-        doesMatch = schemaFieldDef.vals.includes(currentValAtPath()); break
+        doesMatch = enumFieldDef.vals.includes(currentValAtPath()); break
       case FieldIdentifier.indexed:
         doesMatch = Object.values(currentValAtPath()).every(val => {
           if (typeof val === 'undefined') return true
@@ -68,17 +69,22 @@ function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>,
             case FieldIdentifier.boolean:
               return typeof val === 'boolean'
             case FieldIdentifier.enum:
-              return schemaFieldDef.indexed.vals.includes(val)
+              const indexedFieldDef = schemaFieldDef as FieldDefinition<{ [key: string]: any }>
+              return indexedFieldDef.indexed.vals.includes(val)
           }
         })
         break
     }
 
     if (!doesMatch) {
-      throw new ActiveClassError({
-        what: defaultErrorWhat,
-        why: `The property '${schemaKeyPath.join('.')}' is of the wrong type`
-      })
+      if (currentValAtPath() === null && !schemaFieldDef.required) {
+        // all okay
+      } else {
+        throw new ActiveClassError({
+          what: defaultErrorWhat,
+          why: `The property '${schemaKeyPath.join('.')}' is of the wrong type`
+        })
+      }
     }
   }
 }
