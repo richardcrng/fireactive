@@ -11,6 +11,8 @@ interface WhyWhatError {
 }
 
 class ActiveClassError extends Error {
+  message: string
+
   /**
    * **What** operation/update failed
    */
@@ -29,6 +31,7 @@ class ActiveClassError extends Error {
   constructor({ what = 'Operation failed', why } : Partial<WhyWhatError>) {
     const message = why ? [what, why].join('. ') : what
     super(message)
+    this.message = message
     this.name = 'ActiveClassError'
     this.what = what
     this.why = why

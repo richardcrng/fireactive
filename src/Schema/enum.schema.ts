@@ -2,35 +2,78 @@ import { FieldOptions, FieldDefinition, FieldIdentifier } from "../types/field.t
 
 
 // Overloads for required with default: i.e. it exists on document but need not be passed in
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T> & { required: true, default: T }): FieldDefinition<T[], true, true>
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { optional: false, default: TextDecoder }): FieldDefinition<T[], true, true>;
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { default: TextDecoder }): FieldDefinition<T[], true, true>;
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType> & { required: true, default: UnionType }
+): FieldDefinition<UnionType[], true, true>
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType[]> & { optional: false, default: UnionType }
+): FieldDefinition<UnionType[], true, true>;
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType[]> & { default: UnionType }
+): FieldDefinition<UnionType[], true, true>;
 
 // Overloads for required with no default: i.e. it exists on document and must be passed in
-function enumr<T extends string | number = string>(enumVals: readonly T[],): FieldDefinition<T[], true, false>
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]>): FieldDefinition<T[], true, false>
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { required: true }): FieldDefinition<T[], true, false>
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { optional: false }): FieldDefinition<T[], true, false>
+function enumr<UnionType extends string | number = string>(enumVals: readonly UnionType[],): FieldDefinition<UnionType[], true, false>
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType[]>
+): FieldDefinition<UnionType[], true, false>
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType[]> & { required: true }
+): FieldDefinition<UnionType[], true, false>
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType[]> & { optional: false }
+): FieldDefinition<UnionType[], true, false>
+
+// Overloads for optional wiwth default
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType[]> & { optional: true, default: UnionType }
+): FieldDefinition<UnionType[], false, true>;
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType[]> & { required: false, default: UnionType }
+): FieldDefinition<UnionType[], false, true>;
 
 // Overloads for optional
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { required: false }): FieldDefinition<T[], false>;
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { optional: true }): FieldDefinition<T[], false>;
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType[]> & { required: false }
+): FieldDefinition<UnionType[], false>;
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType[]> & { optional: true }
+): FieldDefinition<UnionType[], false>;
 
 // General definition
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { optional?: boolean, default?: T }): FieldDefinition<T[]>
-function enumr<T extends string | number = string>(enumVals: readonly T[], opts: FieldOptions<T[]> & { required?: boolean, default?: T }): FieldDefinition<T[]>
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType[]> & { optional?: boolean, default?: UnionType }
+): FieldDefinition<UnionType[]>
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts: FieldOptions<UnionType[]> & { required?: boolean, default?: UnionType }
+): FieldDefinition<UnionType[]>
 
-function enumr<T extends string | number = string>(enumVals: readonly T[],opts?: FieldOptions<T[]> & { required?: boolean, optional?: boolean, default?: T }): any {
+function enumr<UnionType extends string | number = string>(
+  enumVals: readonly UnionType[],
+  opts?: FieldOptions<UnionType[]> & { required?: boolean, optional?: boolean, default?: UnionType }
+): any {
   if (!opts) return { _fieldIdentifier: FieldIdentifier.enum, vals: enumVals, required: true }
 
   const { default: defaultVal, required, optional, ...rest } = opts
 
   // @ts-ignore
-  let fieldConfig: FieldDefinition<T[]> = { ...rest, _fieldIdentifier: FieldIdentifier.enum, vals: enumVals }
+  let fieldConfig: FieldDefinition<UnionType[]> = { ...rest, _fieldIdentifier: FieldIdentifier.enum, vals: enumVals }
 
   if (typeof defaultVal !== 'undefined') {
     if (!enumVals.includes(defaultVal)) {
-      throw new Error(`The supplied default value ${defaultVal} does not exist in the specifed enum, ${enumVals.join(' | ')}`)
+      throw new Error(`UnionTypehe supplied default value ${defaultVal} does not exist in the specifed enum, ${enumVals.join(' | ')}`)
     }
     fieldConfig._hasDefault = true
     fieldConfig.default = defaultVal

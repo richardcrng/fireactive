@@ -8,11 +8,24 @@ module.exports = {
       'quick-start/connecting-101',
       {
         "Simple Relations": [
-          'quick-start/simple-relations/structuring-relations',
-          'quick-start/simple-relations/one-to-one',
-          'quick-start/simple-relations/one-to-many'
+          'relations/simple/structuring-relations',
+          'relations/simple/one-to-one',
+          'relations/simple/one-to-many',
+          'relations/simple/circular-relations'
         ]
       }
-    ]
+    ],
+    "API": [
+      {
+        "Schema": [
+          'schema/overview',
+          'schema/boolean',
+          'schema/enum',
+          'schema/indexed',
+          'schema/number',
+          'schema/string'
+        ]
+      }
+    ] 
   },
 };

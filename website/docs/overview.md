@@ -6,6 +6,7 @@ sidebar_label: Overview
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import JsTsTabs from '../src/lib/atoms/JsTsTabs'
 
 ## Why?
 
@@ -35,13 +36,7 @@ Fireactive is a strongly-typed Object Document Mapper with realtime syncing enab
 
 This is achieved through *Schema*-based *ActiveClass*es.
 
-<Tabs
-  defaultValue="js"
-  values={[
-    { label: 'JavaScript', value: 'js', },
-    { label: 'TypeScript', value: 'ts', }
-  ]}
->
+<JsTsTabs>
 <TabItem value="js">
 
 ```js
@@ -78,7 +73,7 @@ class User extends ActiveClass(userSchema) {}
 ```
 
 </TabItem>
-</Tabs>
+</JsTsTabs>
 
 A Fireactive `ActiveClass` provides some helpful static and prototype methods by default, although you are free to add your own in when extending.
 

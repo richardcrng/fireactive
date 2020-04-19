@@ -5,21 +5,8 @@ sidebar_label: One-to-One (storing an id)
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-
-export const JsTsTabs = ({ children }) => (
-  <Tabs
-    defaultValue="js"
-    values={[
-      { label: 'JavaScript', value: 'js', },
-      { label: 'TypeScript', value: 'ts', }
-    ]}
-  >
-    {children}
-  </Tabs>
-)
-
+import JsTsTabs from '../../../src/lib/atoms/JsTsTabs';
 
 Let's suppose we want to model a relationship between Authors and Books. For simplicity's sake, we'll assume a book only has a single Author.
 
@@ -117,6 +104,16 @@ class Book extends ActiveClass(bookSchema) {
 
 </TabItem>
 </JsTsTabs>
+
+:::caution Beware circular imports
+The above example uses relations defined between two classes in the same file.
+
+It is important to be careful when defining relations between classes in multiple files, as you may inadvertently end up with some [circular imports](https://stackoverflow.com/questions/38841469/how-to-fix-this-es6-module-circular-dependency).
+
+Fireactive provides a way to escape this through an alternative `relations` API, where you pass in a string as the first argument rather than a class (removing the need to import a class from one file into another).
+
+This is documented in ['Circular Relations'](circular-relations.md).
+:::
 
 ## Execution: awaiting a promise
 

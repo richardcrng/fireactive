@@ -11,6 +11,10 @@ function stringFn(opts: FieldOptions<string>): FieldDefinition<string, true, fal
 function stringFn(opts: FieldOptions<string> & { required: true }): FieldDefinition<string, true, false>
 function stringFn(opts: FieldOptions<string> & { optional: false }): FieldDefinition<string, true, false>
 
+// Overloads for optional wiwth default
+function stringFn(opts: FieldOptions<string> & { optional: true, default: string }): FieldDefinition<string, false, true>;
+function stringFn(opts: FieldOptions<string> & { required: false, default: string }): FieldDefinition<string, false, true>;
+
 // Overloads for optional
 function stringFn(opts: FieldOptions<string> & { required: false }): FieldDefinition<string, false>;
 function stringFn(opts: FieldOptions<string> & { optional: true }): FieldDefinition<string, false>;

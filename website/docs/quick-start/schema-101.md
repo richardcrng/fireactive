@@ -5,8 +5,9 @@ sidebar_label: Creating a Schema
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import JsTsTabs from '../../src/lib/atoms/JsTsTabs';
+
 
 ## Why use a `Schema`?
 
@@ -18,13 +19,7 @@ Schemas are the key to providing predictable data, autocomplete and type-checkin
 
 Let's say that we want to model a user. Here's how we might do it.
 
-<Tabs
-  defaultValue="js"
-  values={[
-    { label: 'JavaScript', value: 'js', },
-    { label: 'TypeScript', value: 'ts', }
-  ]}
->
+<JsTsTabs>
 <TabItem value="js">
 
 ```js
@@ -53,7 +48,7 @@ const userSchema = {
 ```
 
 </TabItem>
-</Tabs>
+</JsTsTabs>
 
 `Schema` fields are all required, unless explicitly passed either `{ optional: true }` or `{ required: false }` as options.
 

@@ -18,9 +18,14 @@ function ActiveClass<Schema extends RecordSchema>(schema: Schema, className?: st
   // our JavaScript `Record` variable, with a constructor type
   let ActiveClass: ActiveClass<Schema>;
 
+  const readonlySchema = Object.freeze(schema)
+
   // Constructor function does not satisfy the whole `ActiveClass` type
   //  so it needs to be case to any
   ActiveClass = <any>makeActiveClassConstructor(schema, className);
+
+  // @ts-ignore: initial assignment for later readonly
+  ActiveClass.schema = readonlySchema
 
   // adding static properties/methods onto `ActiveClass`
   // @ts-ignore : infinitely deep :(

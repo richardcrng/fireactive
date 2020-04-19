@@ -5,20 +5,8 @@ sidebar_label: One-to-Many (indexing keys)
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-
-export const JsTsTabs = ({ children }) => (
-  <Tabs
-    defaultValue="js"
-    values={[
-      { label: 'JavaScript', value: 'js', },
-      { label: 'TypeScript', value: 'ts', }
-    ]}
-  >
-    {children}
-  </Tabs>
-)
+import JsTsTabs from '../../../src/lib/atoms/JsTsTabs';
 
 Let's build on [our previous one-to-one example](one-to-one-101.md) by introducing Series (representing a book series). A single Series can have many books, and might have multiple authors (e.g. the 'For Dummies' series has multiple different authors depending on the topic).
 
@@ -28,7 +16,7 @@ We'll add one schema for a Series.
 
 A series should have a series name, as well as information about the books that it contains.
 
-Following the Firebase recommendations, we'll be storing data (in a flattened form using indexes)[#flatten-data-in-your-database].
+Following the Firebase recommendations, we'll be storing data [in a flattened form using indexes](structuring-relations.md#flatten-data-in-your-database).
 
 For example, rather than storing book ids as an array of strings (such as `['book01', 'book32', 'book77']`), we'll store the same information in an object where the values don't matter (so we'll just use `true` for simplicity): what matters is the presence of the keys, i.e. `{ book01: true, book32: true, book77: true }`.
 

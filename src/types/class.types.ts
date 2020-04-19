@@ -105,6 +105,12 @@ export type ActiveClass<S extends RecordSchema = RecordSchema> = {
 
   prototype: ActiveRecord<S>,
 
+
+  /**
+   * The schema forming the basis of the `ActiveClass`
+   */
+  readonly schema: Readonly<S>,
+
   /**
    * The 'table' key which this model uses in the Firebase RTD.
    */

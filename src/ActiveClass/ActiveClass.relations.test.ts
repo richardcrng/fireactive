@@ -1,12 +1,10 @@
 import ActiveClass from '.';
 import Schema from '../Schema';
-import pushWithId from '../utils/pushWithId';
 import setupTestServer from '../utils/setupTestServer';
 import '../utils/toEqSerialize'
-import ActiveClassError from './Error';
 import relations from './relations';
 
-const { server, db } = setupTestServer()
+setupTestServer()
 
 const playerSchema = {
   name: Schema.string,
@@ -22,7 +20,7 @@ const gameSchema = {
 class Player extends ActiveClass(playerSchema) {
   votingFor = relations.findById<Player, Player>(
     'Player',
-    () => this.votingForId
+    () => this.votingForId as string
   )
 
   game = relations.findById<Player, Game>('Game', 'gameId')

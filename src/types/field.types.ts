@@ -11,7 +11,9 @@ export interface FieldOptions<T> {
  */
 export interface IndexedFieldDefinition<T = any> {
   _fieldIdentifier: FieldIdentifier.indexed,
-  indexed: FieldDefinition<T>
+  indexed: FieldDefinition<T>,
+  _hasDefault: true,
+  default: {}
 }
 
 /**
@@ -32,9 +34,8 @@ export type FieldDefinition<T = any, R extends boolean = boolean, D extends bool
       : T extends string ? FieldIdentifier.string
       : unknown
     } & {
-      required: R,
-      default?: T extends Array<infer E> ? E : T
-    } & (D extends true ? { _hasDefault: true } : { _hasDefault: false })
+      required: R
+  } & (D extends true ? { _hasDefault: true, default: T extends Array<infer E> ? E : T } : { _hasDefault: D, default?: T extends Array<infer E> ? E : T })
       & (T extends Array<infer E> ? { vals: E[] } : {})
 
 export type FieldType<FI, T = unknown> =
@@ -86,12 +87,26 @@ export type RecordField<FD> =
         : unknown
     : FD extends IndexedFieldDefinition<infer T>
       ? TypeFromIdentifier<FieldIdentifier.indexed, T>
-    // handle enum cases: is it optional?
-    : FD extends { _fieldIdentifier: infer C, vals: Array<infer E>, required: false } ? TypeFromIdentifier<C, E> | undefined
+
+    // non-indexed cases
+    
+    // handle enum cases
+    // optional and default provided
+    : FD extends { _fieldIdentifier: FieldIdentifier.enum, vals: Array<infer E>, required: false, default: infer D } ? TypeFromIdentifier<FieldIdentifier.enum, E> | null
+    // optional no default provided
+    : FD extends { _fieldIdentifier: FieldIdentifier.enum, vals: Array<infer E>, required: false } ? TypeFromIdentifier<FieldIdentifier.enum, E> | null | undefined
     // required enum
-    : FD extends { _fieldIdentifier: infer C, vals: Array<infer E> } ? TypeFromIdentifier<C, E>
-    // if FD.required === false, then the record might not have the property
-    : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined
+    : FD extends { _fieldIdentifier: FieldIdentifier.enum, vals: Array<infer E> } ? TypeFromIdentifier<FieldIdentifier.enum, E>
+
+    // non-enum cases
+    // if it is not required but has a default, can be the type, default or null (but undefined takes default)
+    : FD extends { _fieldIdentifier: infer C, required: false, default: infer D } ? TypeFromIdentifier<C> | D | null
+    // if it has a default and is optional, can be the type or null (undefined takes the default)
+    : FD extends { _fieldIdentifier: infer C, required: false, _hasDefault: true } ? TypeFromIdentifier<C> | null
+    // if it has a default, can only be the type
+    : FD extends { _fieldIdentifier: infer C, required: false, _hasDefault: true } ? TypeFromIdentifier<C>
+    // if it is not required but does not have a default, can be the type, undefined or null
+    : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined | null
     // else if it has `_fieldIdentifier`, then it is a necessary primitive field
     : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
     // else it is an object of RecordFields, some of which might be optional
@@ -113,8 +128,8 @@ export type CreateField<FD> =
     // handle indexed cases
     : FD extends { _fieldIdentifier: FieldIdentifier.indexed, indexed: infer T }
       ? T extends { _fieldIdentifier: FieldIdentifier.enum, vals: Array<infer E> }
-        ? TypeFromIdentifier<FieldIdentifier.indexed, E>
-        : T extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<FieldIdentifier.indexed, TypeFromIdentifier<C>>
+        ? TypeFromIdentifier<FieldIdentifier.indexed, E> | undefined
+        : T extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<FieldIdentifier.indexed, TypeFromIdentifier<C>> | undefined
       // 🤷
       : unknown
 

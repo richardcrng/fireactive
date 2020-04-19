@@ -176,7 +176,6 @@ describe('ActiveClass: integration test', () => {
     })
 
     describe('enum', () => {
-      const className = 'User'
       const schema = {
         username: Schema.string,
         role: Schema.enum(['admin', 'regular']),
@@ -289,6 +288,12 @@ describe('ActiveClass: integration test', () => {
           expect(user.friends.alfred).toBe('Alfie')
           expect(user.friends.bob).toBe('bobo')
         })
+
+        it('allows creation without providing the empty dictionary which it defaults to', () => {
+          const user = new User({ username: 'Test' })
+          expect(user.friends).toEqual({})
+          expect(user.numbers).toEqual({})
+        })
       })
 
       describe('sad path', () => {
@@ -314,7 +319,6 @@ describe('ActiveClass: integration test', () => {
     })
 
     describe('nested schema', () => {
-      const className = 'Venue'
       const schema = {
         name: Schema.string,
         hours: {

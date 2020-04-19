@@ -1,11 +1,10 @@
-// @ts-nocheck
-
 import { identical, equals } from 'ramda'
-import { remove, set, unset } from 'lodash'
+import { get, remove, set, unset } from 'lodash'
 import onChange from 'on-change'
 import { ActiveRecord } from '../../types/class.types'
 import { RecordSchema } from '../../types/schema.types'
 import ActiveClassError from '../Error/ActiveClassError'
+import { FieldIdentifier } from '../../types/field.types'
 
 interface KWArgs<Schema extends RecordSchema> {
   record: ActiveRecord<Schema>,
@@ -36,8 +35,20 @@ function withOnChangeListener<Schema extends RecordSchema>({
   return onChange(record, function (path, val, prevVal) {
     // check against schema
     // this will throw an error for incompatible values
+
+    const pathArr = path.split('.')
+
+    // @ts-ignore
+    const existsOnSchemaDirectly: boolean = !!get(record.constructor.schema, pathArr)
+    // @ts-ignore
+    const ancestorIsAnIndex: boolean = get(record.constructor.schema, [...pathArr.slice(0, -1), '_fieldIdentifier']) === FieldIdentifier.indexed
+
+    const shouldCheck = existsOnSchemaDirectly || ancestorIsAnIndex
+
     try {
-      checkAgainstSchema()
+      if (shouldCheck) {
+        checkAgainstSchema()
+      }
     } catch (err) {
       // revert to previous value
       if (prevVal === 'undefined') {
@@ -51,7 +62,7 @@ function withOnChangeListener<Schema extends RecordSchema>({
       })
     }
 
-    if (record.syncOpts().toDb) {
+    if (shouldCheck && record.syncOpts().toDb) {
       let ref: firebase.database.Reference = record.ref()
       const propPath = path.replace(/\./g, '/')
       // to remove undefined properties: https://stackoverflow.com/questions/34708566/firebase-update-failed-first-argument-contains-undefined-in-property

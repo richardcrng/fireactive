@@ -5,20 +5,8 @@ sidebar_label: Connecting to Firebase
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
-import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-
-export const JsTsTabs = ({ children }) => (
-  <Tabs
-    defaultValue="js"
-    values={[
-      { label: 'JavaScript', value: 'js', },
-      { label: 'TypeScript', value: 'ts', }
-    ]}
-  >
-    {children}
-  </Tabs>
-)
+import JsTsTabs from '../../src/lib/atoms/JsTsTabs';
 
 ## Why connect to Firebase?
 
@@ -50,7 +38,7 @@ import { initialize } from 'fireactive'
 initialize({
   // put your database url below
   databaseURL: 'https://some-database-url.firebaseio.com'
-})
+}) // => returns Firebase app instance
 ```
 
 </TabItem>
