@@ -23,7 +23,7 @@ const indexedEnum = <T extends string | number = string>(
 
 const indexBoolean = (): IndexedFieldDefinition<boolean> => ({
   _fieldIdentifier: FieldIdentifier.indexed,
-  indexed: boolean(),
+  indexed: boolean,
   _hasDefault: true,
   default: {}
 })

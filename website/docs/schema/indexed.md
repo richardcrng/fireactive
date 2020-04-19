@@ -66,22 +66,30 @@ new Dictionary({ trueVals: { test: true } }) // works
 ```ts
 import { ActiveClass, Schema } from 'fireactive'
 
-const buildingSchema = {
-  floors: Schema.indexed
+const schema = {
+  booleanVals: Schema.indexed.boolean,
+  fooOrBarVals: Schema.indexed.enum(['foo', 'bar']),
+  numberVals: Schema.indexed.number,
+  stringVals: Schema.indexed.string,
+  trueVals: Schema.indexed.true
 }
 
-class Dictionary extends ActiveClass(buildingSchema) {}
+class Dictionary extends ActiveClass(schema) {}
 
-// Key: * assumes strict null checks
+new Dictionary({ booleanVals: { test: 'false' } }) // (ts 2332) Type 'string' is not assignable to type 'true'
+new Dictionary({ booleanVals: { test: false } }) // works
 
-new Dictionary() // (ts 2554) Expected 1 arguments, but got 0
-new Dictionary({}) // (ts 2354)* Property 'floors' is missing in type '{}' but required in...
-new Dictionary({ floors: '4' }) // (ts 2322) Type 'string' is not assignable to type 'indexed'
-new Dictionary({ floors: null }) // (ts 2322)* Type 'null' is not assignable to type 'indexed'
-new Dictionary({ floors: 4, randomProp: 9 }) // (ts 2345) Object literal may only specify known properties, and 'randomProp' does not exist in type...
+new Dictionary({ fooOrBarVals: { test: 'foobar' } }) // (ts 2332) Type '"foobar"' is not assignable to type '"bar"'
+new Dictionary({ fooOrBarVals: { test: 'foo' } }) // works
 
-new Dictionary({ floors: 4 }) // compiles
-new Dictionary({ floors: 9 }) // compiles
+new Dictionary({ numberVals: { test: '5' } }) // (ts 2332) Type 'string' is not assignable to type 'number'
+new Dictionary({ numberVals: { test: 5 } }) // works
+
+new Dictionary({ stringVals: { test: 5 } }) // (ts 2332) Type 'number' is not assignable to type 'string'
+new Dictionary({ stringVals: { test: '5' } }) // works
+
+new Dictionary({ trueVals: { test: false } }) // (ts 2332) Type 'false' is not assignable to type 'true'
+new Dictionary({ trueVals: { test: true } }) // works
 ```
 
 </TabItem>
