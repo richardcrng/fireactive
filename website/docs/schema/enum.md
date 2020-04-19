@@ -58,12 +58,12 @@ class CoffeeOrder extends ActiveClass(coffeeOrderSchema) {}
 
 new CoffeeOrder() // (ts 2554) Expected 1 arguments, but got 0
 new CoffeeOrder({}) // (ts 2354)* Property 'type' is missing in type '{}' but required in...
-new CoffeeOrder({ type: 'yes' }) // (ts 2322) Type 'string' is not assignable to type 'enum'
-new CoffeeOrder({ type: null }) // (ts 2322)* Type 'null' is not assignable to type 'enum'
-new CoffeeOrder({ type: true, randomProp: true }) // (ts 2345) Object literal may only specify known properties, and 'randomProp' does not exist in type...
+new CoffeeOrder({ type: 'Herbal' }) // (ts 2322) Type '"Herbal"' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
+new CoffeeOrder({ type: null }) // (ts 2322)* Type 'null' is not assignable to type '"Americano" | "Latte" | "Capuccino"'
+new CoffeeOrder({ type: 'Americano', randomProp: 'Latte' }) // (ts 2345) Object literal may only specify known properties, and 'randomProp' does not exist in type...
 
-new CoffeeOrder({ type: true }) // compiles
-new CoffeeOrder({ type: false }) // compiles
+new CoffeeOrder({ type: 'Americano' }) // compiles
+new CoffeeOrder({ type: 'Latte' }) // compiles
 ```
 
 </TabItem>
