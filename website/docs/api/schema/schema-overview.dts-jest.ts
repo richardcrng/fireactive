@@ -1,4 +1,4 @@
-import { Schema, ActiveClass } from "../../../src"
+import { Schema, ActiveClass } from "../../../../src"
 
 // @dts-jest:group Basic example
 {

@@ -25,15 +25,15 @@ module.exports = {
       },
       {
         "Schema": [
-          'schema/overview',
-          'schema/nested',
+          'api/schema/overview',
+          'api/schema/nested',
           {
             "Types": [
-              'schema/types/boolean',
-              'schema/types/enum',
-              'schema/types/indexed',
-              'schema/types/number',
-              'schema/types/string'
+              'api/schema/types/boolean',
+              'api/schema/types/enum',
+              'api/schema/types/indexed',
+              'api/schema/types/number',
+              'api/schema/types/string'
             ]
           }
         ]

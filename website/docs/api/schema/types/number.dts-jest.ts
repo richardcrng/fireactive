@@ -1,4 +1,4 @@
-import { ActiveClass, Schema } from '../../../../src'
+import { ActiveClass, Schema } from '../../../../../src'
 
 const simpleSchema = {
   floors: Schema.number

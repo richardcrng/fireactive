@@ -1,4 +1,4 @@
-import { ActiveClass, Schema } from '../../../../src'
+import { ActiveClass, Schema } from '../../../../../src'
 
 const schema = {
   booleanVals: Schema.indexed.boolean,

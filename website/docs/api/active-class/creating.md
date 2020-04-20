@@ -7,5 +7,5 @@ sidebar_label: Creating
 ## `ActiveClass(schema)`
 
 ### Parameters
-- `schema` *(object):* a Schema
+- `schema` *(object):* a [Fireactive Schema](../../)
 
