@@ -34,3 +34,21 @@ import { Schema, ActiveClass } from "../../../src"
     isVerified: true
   })
 }
+
+// @dts-jest:group Simple configuration
+{
+  const userSchema = {
+    name: Schema.string,
+    age: Schema.number({ optional: true }),
+    role: Schema.enum(['admin', 'basic'], { default: 'basic' }),
+    isVerified: Schema.boolean({ required: false, default: false })
+  }
+
+  class User extends ActiveClass(userSchema) { }
+
+  // @dts-jest:fail
+  new User({})
+
+  // @dts-jest:pass
+  new User({ name: 'Richard' })
+}

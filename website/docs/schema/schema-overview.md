@@ -28,7 +28,7 @@ For the sake of argument, let's suppose that users all:
 - have a verified status, which should be a `boolean`.
 
 <Tabs
-  defaultValue="schema"
+  defaultValue="js"
   values={[
     { label: 'Run-time type checks (JS)', value: 'js', },
     { label: 'Static / compilation type checks (TS)', value: 'ts', }
@@ -121,7 +121,7 @@ Suppose we want to tweak our schema in the following way therefore:
 - `isVerified` should be optional but also default to `false` on initialization.
 
 <Tabs
-  defaultValue="schema"
+  defaultValue="js"
   values={[
     { label: 'Run-time type checks (JS)', value: 'js', },
     { label: 'Static / compilation type checks (TS)', value: 'ts', }
@@ -166,26 +166,14 @@ const userSchema = {
 
 class User extends ActiveClass(userSchema) {}
 
-new User({
-  name: 'Joe Bloggs',
-  age: 42
-})
-// (ts 2345) Type '{ name: string; age: number; }' is missing the following properties from type ...: role, isVerified
+new User({}) // ActiveClassError: Could not construct User. The required property 'name' is missing
 
-new User({
-  name: 'Joe Blogs',
-  age: 42,
-  role: 'elite hacker', // (ts 2322) Type '"elite hacker"' is not assignable to type '"admin" | "basic"'
-  isVerified: 'true' // (ts 2322) Type 'string' is not assignable to type 'boolean'
-})
+const user = new User({ name: 'Richard' }) // compile
 
-new User({
-  name: 'Joe Bloggs',
-  age: 42,
-  role: 'admin',
-  isVerified: true
-})
-// compiles
+user.name // => 'Richard'
+user.age // => undefined
+user.role // => 'basic'
+user.isVerified // => false
 ```
 
 </TabItem>
