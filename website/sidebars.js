@@ -17,13 +17,25 @@ module.exports = {
     ],
     "API": [
       {
+        "ActiveClass": [
+          'api/active-class/overview',
+          'api/active-class/creating',
+          'api/active-class/methods'
+        ]
+      },
+      {
         "Schema": [
           'schema/overview',
-          'schema/boolean',
-          'schema/enum',
-          'schema/indexed',
-          'schema/number',
-          'schema/string'
+          'schema/nested',
+          {
+            "Types": [
+              'schema/types/boolean',
+              'schema/types/enum',
+              'schema/types/indexed',
+              'schema/types/number',
+              'schema/types/string'
+            ]
+          }
         ]
       }
     ] 

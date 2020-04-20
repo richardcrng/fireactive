@@ -1,4 +1,4 @@
-import { ActiveClass, Schema } from '../../../src'
+import { ActiveClass, Schema } from '../../../../src'
 
 const simpleSchema = {
   type: Schema.enum(['Americano', 'Latte', 'Capuccino'])

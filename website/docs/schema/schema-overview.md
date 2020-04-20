@@ -27,6 +27,16 @@ For the sake of argument, let's suppose that users all:
   - (i.e. as a type it should satisfy an `enum` of the two);
 - have a verified status, which should be a `boolean`.
 
+<Tabs
+  defaultValue="schema"
+  values={[
+    { label: 'Schema definition', value: 'schema' },
+    { label: 'Run-time type checks (JS)', value: 'js', },
+    { label: 'Static / compilation type checks (TS)', value: 'ts', }
+  ]}
+>
+<TabItem value='schema'>
+
 ```js
 import { Schema } from 'fireactive'
 
@@ -37,6 +47,65 @@ let userSchema = {
   isVerified: Schema.boolean
 }
 ```
+
+</TabItem>
+<TabItem value='js'>
+
+```js
+import { ActiveClass } from 'fireactive'
+
+class User extends ActiveClass(userSchema) {}
+
+new User({
+  name: 'Joe Bloggs',
+  age: 42
+})
+
+new User({
+  name: 'Joe Bloggs',
+  age: 42,
+  role: 'elite hacker',
+  isVerified: 'true'
+})
+
+new User({
+  name: 'Joe Bloggs',
+  age: 42,
+  role: 'admin',
+  isVerified: true
+})
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```js
+import { ActiveClass } from 'fireactive'
+
+class User extends ActiveClass(userSchema) {}
+
+new User({
+  name: 'Joe Bloggs',
+  age: 42
+})
+
+new User({
+  name: 'Joe Blogs',
+  age: 42,
+  role: 'elite hacker',
+  isVerified: 'true'
+})
+
+new User({
+  name: 'Joe Bloggs',
+  age: 42,
+  role: 'admin',
+  isVerified: true
+})
+```
+
+</TabItem>
+</Tabs>
 
 ### Simple configuration
 Schema fields are required (and therefore must always exist on a record) unless configured otherwise.
@@ -57,6 +126,7 @@ let userSchema = {
 ```
 
 Note that `optional: true` and `required: false` achieve the same thing, so you can use whichever you prefer the semantics of.
+
 
 ## Available types
 - [`Schema.boolean`](boolean.md)

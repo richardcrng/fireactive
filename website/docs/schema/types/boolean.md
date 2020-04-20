@@ -134,7 +134,7 @@ Let's add some additionl properties to our lightbulb schema to demonstrate:
 <Tabs
   defaultValue="js"
   values={[
-    { label: 'Runtime type checks (JS)', value: 'js', },
+    { label: 'Run-time type checks (JS)', value: 'js', },
     { label: 'Static / compile-time type checks (TS)', value: 'ts', }
   ]}
 >
