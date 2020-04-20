@@ -30,29 +30,21 @@ For the sake of argument, let's suppose that users all:
 <Tabs
   defaultValue="schema"
   values={[
-    { label: 'Schema definition', value: 'schema' },
     { label: 'Run-time type checks (JS)', value: 'js', },
     { label: 'Static / compilation type checks (TS)', value: 'ts', }
   ]}
 >
-<TabItem value='schema'>
+<TabItem value='js'>
 
 ```js
-import { Schema } from 'fireactive'
+import { Schema, ActiveClass } from 'fireactive'
 
-let userSchema = {
+const userSchema = {
   name: Schema.string,
   age: Schema.number,
   role: Schema.enum(['admin', 'basic']),
   isVerified: Schema.boolean
 }
-```
-
-</TabItem>
-<TabItem value='js'>
-
-```js
-import { ActiveClass } from 'fireactive'
 
 class User extends ActiveClass(userSchema) {}
 
@@ -60,6 +52,7 @@ new User({
   name: 'Joe Bloggs',
   age: 42
 })
+// ActiveClassError: Could not construct User. The required property 'role' is missing
 
 new User({
   name: 'Joe Bloggs',
@@ -67,6 +60,7 @@ new User({
   role: 'elite hacker',
   isVerified: 'true'
 })
+// ActiveClassError: Could not construct User. The property 'role' is of the wrong type
 
 new User({
   name: 'Joe Bloggs',
@@ -74,13 +68,21 @@ new User({
   role: 'admin',
   isVerified: true
 })
+// works
 ```
 
 </TabItem>
 <TabItem value='ts'>
 
 ```js
-import { ActiveClass } from 'fireactive'
+import { Schema, ActiveClass } from 'fireactive'
+
+const userSchema = {
+  name: Schema.string,
+  age: Schema.number,
+  role: Schema.enum(['admin', 'basic']),
+  isVerified: Schema.boolean
+}
 
 class User extends ActiveClass(userSchema) {}
 
@@ -88,12 +90,13 @@ new User({
   name: 'Joe Bloggs',
   age: 42
 })
+// (ts 2345) Type '{ name: string; age: number; }' is missing the following properties from type ...: role, isVerified
 
 new User({
   name: 'Joe Blogs',
   age: 42,
-  role: 'elite hacker',
-  isVerified: 'true'
+  role: 'elite hacker', // (ts 2322) Type '"elite hacker"' is not assignable to type '"admin" | "basic"'
+  isVerified: 'true' // (ts 2322) Type 'string' is not assignable to type 'boolean'
 })
 
 new User({
@@ -102,6 +105,7 @@ new User({
   role: 'admin',
   isVerified: true
 })
+// compiles
 ```
 
 </TabItem>
