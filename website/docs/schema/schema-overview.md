@@ -120,14 +120,76 @@ Suppose we want to tweak our schema in the following way therefore:
 - `role` should default to `'basic'` on initialization; and
 - `isVerified` should be optional but also default to `false` on initialization.
 
+<Tabs
+  defaultValue="schema"
+  values={[
+    { label: 'Run-time type checks (JS)', value: 'js', },
+    { label: 'Static / compilation type checks (TS)', value: 'ts', }
+  ]}
+>
+<TabItem value='js'>
+
 ```js
-let userSchema = {
+import { Schema, ActiveClass } from 'fireactive'
+
+const userSchema = {
   name: Schema.string,
   age: Schema.number({ optional: true }),
   role: Schema.enum(['admin', 'basic'], { default: 'basic' }),
   isVerified: Schema.boolean({ required: false, default: false })
 }
+
+class User extends ActiveClass(userSchema) {}
+
+new User({}) // ActiveClassError: Could not construct User. The required property 'name' is missing
+
+const user = new User({ name: 'Richard' }) // works
+
+user.name // => 'Richard'
+user.age // => undefined
+user.role // => 'basic'
+user.isVerified // => false
 ```
+
+</TabItem>
+<TabItem value='ts'>
+
+```js
+import { Schema, ActiveClass } from 'fireactive'
+
+const userSchema = {
+  name: Schema.string,
+  age: Schema.number({ optional: true }),
+  role: Schema.enum(['admin', 'basic'], { default: 'basic' }),
+  isVerified: Schema.boolean({ required: false, default: false })
+}
+
+class User extends ActiveClass(userSchema) {}
+
+new User({
+  name: 'Joe Bloggs',
+  age: 42
+})
+// (ts 2345) Type '{ name: string; age: number; }' is missing the following properties from type ...: role, isVerified
+
+new User({
+  name: 'Joe Blogs',
+  age: 42,
+  role: 'elite hacker', // (ts 2322) Type '"elite hacker"' is not assignable to type '"admin" | "basic"'
+  isVerified: 'true' // (ts 2322) Type 'string' is not assignable to type 'boolean'
+})
+
+new User({
+  name: 'Joe Bloggs',
+  age: 42,
+  role: 'admin',
+  isVerified: true
+})
+// compiles
+```
+
+</TabItem>
+</Tabs>
 
 Note that `optional: true` and `required: false` achieve the same thing, so you can use whichever you prefer the semantics of.
 
