@@ -10,16 +10,16 @@ import TabItem from '@theme/TabItem';
 A basic schema is an object where every value is either:
 
 - One of the primitive `Schema` types
-  - [`Schema.boolean`](types/boolean.md)
-  - [`Schema.enum`](types/enum.md)
-  - [`Schema.number`](types/number.md)
-  - [`Schema.string`](types/string.md)
+  - [`Schema.boolean`](types/boolean)
+  - [`Schema.enum`](types/enum)
+  - [`Schema.number`](types/number)
+  - [`Schema.string`](types/string)
 - One of the indexed `Schema` types
-  - [`Schema.indexed.boolean`](types/indexed.md)
-  - [`Schema.indexed.enum`](types/indexed.md)
-  - [`Schema.indexed.number`](types/indexed.md)
-  - [`Schema.indexed.string`](types/indexed.md)
-  - [`Schema.indexed.true`](types/indexed.md)
+  - [`Schema.indexed.boolean`](types/indexed)
+  - [`Schema.indexed.enum`](types/indexed)
+  - [`Schema.indexed.number`](types/indexed)
+  - [`Schema.indexed.string`](types/indexed)
+  - [`Schema.indexed.true`](types/indexed)
 
 These can be nested within objects to create nested schema.
 
