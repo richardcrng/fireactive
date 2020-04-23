@@ -1,6 +1,6 @@
-import { Schema, ActiveClass } from "../../../../src"
-import testExpectError from "../../../../src/utils/testExpectError"
-import ActiveClassError from "../../../../src/ActiveClass/Error"
+import { Schema, ActiveClass } from "../../../src"
+import testExpectError from "../../../src/utils/testExpectError"
+import ActiveClassError from "../../../src/ActiveClass/Error"
 
 
 describe('Basic usage', () => {

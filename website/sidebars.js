@@ -18,14 +18,14 @@ module.exports = {
     "API": [
       {
         "ActiveClass": [
-          'api/active-class/overview',
+          'api/active-class',
           'api/active-class/creating',
           'api/active-class/methods'
         ]
       },
       {
         "Schema": [
-          'api/schema/overview',
+          'api/schema',
           'api/schema/nested',
           {
             "Types": [

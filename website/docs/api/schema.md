@@ -1,5 +1,5 @@
 ---
-id: overview
+id: schema
 title: Schema
 sidebar_label: Overview
 ---

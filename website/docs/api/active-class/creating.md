@@ -6,8 +6,8 @@ sidebar_label: Creating
 
 import Link from '@docusaurus/Link';
 
-## `ActiveClass(schema)`
+## `class MyClass extends ActiveClass(schema) {}`
 
 ### Parameters
-- `schema` *(object):* a <Link to='/docs/api/schema/overview'>Fireactive Schema</Link>
+- `schema` *(object):* a <Link to='/docs/api/schema'>Fireactive Schema</Link>
 
