@@ -127,12 +127,16 @@ const personSchema = {
 }
 
 class Person extends ActiveClass(personSchema) {
-  introduce() {
+  get name() {
+    return `${this.firstName} ${this.lastName}`
+  }
+  
+  about() {
     return `Hello, my name is ${this.firstName}, and I'm ${this.age} years old!`
   }
 
-  get name() {
-    return `${this.firstName} ${this.lastName}`
+  celebrateBirthday() {
+    this.age += 1
   }
 }
 
@@ -141,8 +145,10 @@ initialize({ databaseURL: 'https://your-project.firebase.io' })
 
 const person = await Person.create({ firstName: 'Elizabeth', lastName: 'Windsor', age: 94 })
 
-person.introduce() // => "Hello, my name is Elizabeth, and I'm 94 years old!"
 person.name // => "Elizabeth Windsor"
+person.about() // => "Hello, my name is Elizabeth, and I'm 94 years old!"
+person.celebrateBirthday()
+person.age // => 95
 ```
 
 </TabItem>
@@ -158,12 +164,16 @@ const personSchema = {
 }
 
 class Person extends ActiveClass(personSchema) {
-  introduce(): string {
+  get name(): string {
+    return `${this.firstName} ${this.lastName}`
+  }
+
+  about(): string {
     return `Hello, my name is ${this.firstName}, and I'm ${this.age} years old!`
   }
 
-  get name(): string {
-    return `${this.firstName} ${this.lastName}`
+  celebrateBirthday(): void {
+    this.age += 1
   }
 }
 
@@ -172,9 +182,12 @@ initialize({ databaseURL: 'https://your-project.firebase.io' })
 
 const person = await Person.create({ firstName: 'Elizabeth', lastName: 'Windsor', age: 94 })
 
-person.introduce() // => "Hello, my name is Elizabeth, and I'm 94 years old!"
 person.name // => "Elizabeth Windsor"
+person.about() // => "Hello, my name is Elizabeth, and I'm 94 years old!"
+person.celebrateBirthday()
+person.age // => 95
 ```
 
 </TabItem>
 </JsTsTabs>
+

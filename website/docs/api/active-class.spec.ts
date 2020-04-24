@@ -39,19 +39,25 @@ describe('Extending: prototype / instance methods', () => {
   }
 
   class Person extends ActiveClass(personSchema) {
-    introduce(): string {
+    get name(): string {
+      return `${this.firstName} ${this.lastName}`
+    }
+
+    about(): string {
       return `Hello, my name is ${this.firstName}, and I'm ${this.age} years old!`
     }
 
-    get name(): string {
-      return `${this.firstName} ${this.lastName}`
+    celebrateBirthday(): void {
+      this.age += 1
     }
   }
 
   test('Creation', async (done) => {
     const person = await Person.create({ firstName: 'Elizabeth', lastName: 'Windsor', age: 94 })
-    expect(person.introduce()).toBe("Hello, my name is Elizabeth, and I'm 94 years old!")
     expect(person.name).toBe("Elizabeth Windsor")
+    expect(person.about()).toBe("Hello, my name is Elizabeth, and I'm 94 years old!")
+    person.celebrateBirthday()
+    expect(person.age).toBe(95)
     done()
   })
 })
