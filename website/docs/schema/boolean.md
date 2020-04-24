@@ -120,7 +120,7 @@ lightbulb.isOn = null // (ts 2322) Type 'null' is not assignable to type 'boolea
 ## Configuration
 A schema property can have a *default* value, **and/or** be *optional*.
 
-In either case, if the property has a default value and/or is optional, it does not need to be supplied when the ActiveRecord is created.
+In either case, if the property has a default value and/or is optional, it does not need to be supplied when the ActiveDocument is created.
 
 Default values are used when a field's value would otherwise be `undefined`.
 

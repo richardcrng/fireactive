@@ -39,7 +39,7 @@ let userSchema = {
 ```
 
 ### Simple configuration
-Schema fields are required (and therefore must always exist on a record) unless configured otherwise.
+Schema fields are required (and therefore must always exist on a document) unless configured otherwise.
 
 Suppose we want to tweak our schema in the following way therefore:
 

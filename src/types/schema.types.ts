@@ -1,5 +1,5 @@
 import { UndefinedToOptional } from './util.types'
-import { FieldIdentifier, FieldDefinition, CreateField, FieldType, RecordField, IndexedFieldDefinition } from './field.types'
+import { FieldIdentifier, FieldDefinition, CreateField, FieldType, DocumentField, IndexedFieldDefinition } from './field.types'
 import Schema from '../Schema'
 
 type SchemaField<FI extends FieldIdentifier = FieldIdentifier> = (IndexedFieldDefinition | FieldDefinition | typeof Schema.boolean | typeof Schema.number | typeof Schema.string) & {
@@ -12,31 +12,31 @@ export type SchemaProperty = SchemaField | {
   [key: string]: SchemaProperty
 }
 
-export interface RecordSchema {
+export interface DocumentSchema {
   [key: string]: SchemaProperty
 }
 
 /**
- * Specifies the options argument for creating a record
+ * Specifies the options argument for creating a document
  * @template S - A Schema of Fields
  */
-export type ToCreateRecord<S extends RecordSchema> = UndefinedToOptional<{
+export type ToCreateDocument<S extends DocumentSchema> = UndefinedToOptional<{
   [K in keyof S]: CreateField<S[K]>
 }>
 
 /**
- * Specifies the properties available on a record
+ * Specifies the properties available on a document
  * @template S - A Schema of Fields
  */
-export type RecordProps<S extends RecordSchema> = UndefinedToOptional<{
-  [K in keyof S]: RecordField<S[K]>
+export type DocumentProps<S extends DocumentSchema> = UndefinedToOptional<{
+  [K in keyof S]: DocumentField<S[K]>
 }>
 
 /**
  * @template S - A Schema of Fields
  */
-export type ObjectFromRecord<S extends RecordSchema> = RecordProps<S> & { _id?: string }
+export type ObjectFromDocument<S extends DocumentSchema> = DocumentProps<S> & { _id?: string }
 
-export interface FirebaseTable<S extends RecordSchema> {
-  [_id: string]: ObjectFromRecord<S> & { _id: string }
+export interface FirebaseTable<S extends DocumentSchema> {
+  [_id: string]: ObjectFromDocument<S> & { _id: string }
 }

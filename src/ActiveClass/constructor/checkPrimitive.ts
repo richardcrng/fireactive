@@ -1,15 +1,15 @@
 import { get, set } from 'lodash'
-import { ActiveRecord } from '../../types/class.types'
-import { RecordSchema } from '../../types/schema.types';
+import { ActiveDocument } from '../../types/class.types'
+import { DocumentSchema } from '../../types/schema.types';
 import { FieldIdentifier, FieldDefinition } from '../../types/field.types';
 import ActiveClassError from '../Error/ActiveClassError';
 
-interface A<Schema extends RecordSchema> {
+interface A<Schema extends DocumentSchema> {
   schema: Schema,
   schemaKeyPath: string[]
 }
 
-function checkPrimitive<Schema extends RecordSchema>(this: ActiveRecord<Schema>, {
+function checkPrimitive<Schema extends DocumentSchema>(this: ActiveDocument<Schema>, {
   schema,
   schemaKeyPath
 }: A<Schema>) {

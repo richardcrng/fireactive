@@ -1,20 +1,20 @@
-import { RecordSchema, ObjectFromRecord, ToCreateRecord, RecordProps, FirebaseTable } from "./schema.types"
+import { DocumentSchema, ObjectFromDocument, ToCreateDocument, DocumentProps, FirebaseTable } from "./schema.types"
 import { SyncOpts } from "./sync.types"
 
 export type ClassDefinition<T = unknown> = { new(...args: any[]): T; };
 
 /**
- * An `ActiveRecord<S>` _instance_ of the `ActiveClass<S>`. 
+ * An `ActiveDocument<S>` _instance_ of the `ActiveClass<S>`. 
  * This interface holds the instance methods and properties.
  */
-export type ActiveRecord<S extends RecordSchema = RecordSchema> = ObjectFromRecord<S> & {
+export type ActiveDocument<S extends DocumentSchema = DocumentSchema> = ObjectFromDocument<S> & {
   constructor: ActiveClass<S>
 
   /**
-   * Returns the `ActiveRecord`'s `_id` property if it has one, or
+   * Returns the `ActiveDocument`'s `_id` property if it has one, or
    *  generates one if one does not yet exist.
    * 
-   * @returns The `ActiveRecord`'s `_id`, whether existing or generated
+   * @returns The `ActiveDocument`'s `_id`, whether existing or generated
    */
   getId(): string,
 
@@ -23,13 +23,13 @@ export type ActiveRecord<S extends RecordSchema = RecordSchema> = ObjectFromReco
    * 
    * @returns The values reloaded from the Firebase database
    */
-  reload(): Promise<ObjectFromRecord<S>>,
+  reload(): Promise<ObjectFromDocument<S>>,
 
   /**
-   * Get a `Reference` for the record and/or a child within it
+   * Get a `Reference` for the document and/or a child within it
    * 
-   * @param path - a relative path from the record
-   * @returns a `Reference` for the record, to its relative path
+   * @param path - a relative path from the document
+   * @returns a `Reference` for the document, to its relative path
    *  if supplied
    */
   ref(path?: string): firebase.database.Reference,
@@ -39,7 +39,7 @@ export type ActiveRecord<S extends RecordSchema = RecordSchema> = ObjectFromReco
    * 
    * @returns The values saved to the Firebase database
    */
-  save(): Promise<ObjectFromRecord<S>>,
+  save(): Promise<ObjectFromDocument<S>>,
 
 
   /**
@@ -47,7 +47,7 @@ export type ActiveRecord<S extends RecordSchema = RecordSchema> = ObjectFromReco
    * 
    * @returns The values saved to the Firebase database
    */
-  saveAndSync(syncOpts?: Partial<SyncOpts>): Promise<ObjectFromRecord<S>>,
+  saveAndSync(syncOpts?: Partial<SyncOpts>): Promise<ObjectFromDocument<S>>,
 
   /**
    * A promise resolved when all pending setter promises to
@@ -67,13 +67,13 @@ export type ActiveRecord<S extends RecordSchema = RecordSchema> = ObjectFromReco
   pendingSetters({ array }: { array: true }): Promise<any>[],
 
   /**
-   * Returns the current syncing options for the `ActiveRecord`
+   * Returns the current syncing options for the `ActiveDocument`
    */
   syncOpts(): SyncOpts
 
   /**
    * Update sync options and return the overall syncing options
-   *  for the `ActiveRecord`
+   *  for the `ActiveDocument`
    * @param syncOpts - The sync options to update
    * @returns the current syncing options after the update
    */
@@ -82,28 +82,28 @@ export type ActiveRecord<S extends RecordSchema = RecordSchema> = ObjectFromReco
 
   /**
    * Return the raw object properties (as schematised)
-   * @returns an object with type properties `ObjectFromRecord<S>`
+   * @returns an object with type properties `ObjectFromDocument<S>`
    */
-  toObject(): ObjectFromRecord<S>
+  toObject(): ObjectFromDocument<S>
 }
 
 
 
 
 /**
- * A _class_ to create `ActiveRecord<S>` instances from the `RecordSchema`, `S`. 
+ * A _class_ to create `ActiveDocument<S>` instances from the `DocumentSchema`, `S`. 
  * This interface holds the static class methods and properties.
  * 
- * @template S - a RecordSchema
+ * @template S - a DocumentSchema
  */
-export type ActiveClass<S extends RecordSchema = RecordSchema> = {
+export type ActiveClass<S extends DocumentSchema = DocumentSchema> = {
   /**
-   * Create an instance of the ActiveRecord -
+   * Create an instance of the ActiveDocument -
    *  not yet saved to the database
    */
-  new(props: ToCreateRecord<S> & { _id?: string }): ActiveRecord<S>,
+  new(props: ToCreateDocument<S> & { _id?: string }): ActiveDocument<S>,
 
-  prototype: ActiveRecord<S>,
+  prototype: ActiveDocument<S>,
 
 
   /**
@@ -134,66 +134,66 @@ export type ActiveClass<S extends RecordSchema = RecordSchema> = {
   /**
    * Create a new model and save it to the database
    * 
-   * @param props Properties to create the Record with
-   * @returns a `Promise` that resolves into the created record
+   * @param props Properties to create the Document with
+   * @returns a `Promise` that resolves into the created document
    */
-  create<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: ToCreateRecord<S> & { _id?: string }): Promise<InstanceType<ThisClass>>,
+  create<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: ToCreateDocument<S> & { _id?: string }): Promise<InstanceType<ThisClass>>,
 
   /**
-   * Delete all `ActiveRecord`s from the database that
+   * Delete all `ActiveDocument`s from the database that
    *  match the passed in `props`
    * 
-   * @param props Properties to create the Record with
-   * @returns a `Promise` that resolves with the count of deleted records
+   * @param props Properties to create the Document with
+   * @returns a `Promise` that resolves with the count of deleted documents
    */
-  delete(props: Partial<ObjectFromRecord<S>>): Promise<number>,
+  delete(props: Partial<ObjectFromDocument<S>>): Promise<number>,
 
   /**
-   * Delete the first `ActiveRecord` from the database that
+   * Delete the first `ActiveDocument` from the database that
    *  matches the passed in `props`
    * 
-   * @param props Properties to create the Record with
-   * @returns a `Promise` that resolves to whether or not a record was deleted
+   * @param props Properties to create the Document with
+   * @returns a `Promise` that resolves to whether or not a document was deleted
    */
-  deleteOne(props: Partial<ObjectFromRecord<S>>): Promise<boolean>,
+  deleteOne(props: Partial<ObjectFromDocument<S>>): Promise<boolean>,
 
   /**
-   * Find all `ActiveRecord`s from the database that
+   * Find all `ActiveDocument`s from the database that
    *  match the passed in `props`
    * 
    * @param props 
-   * @returns an array of `ActiveRecord<S>`
+   * @returns an array of `ActiveDocument<S>`
    */
-  find<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>): Promise<InstanceType<ThisClass>[]>,
+  find<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromDocument<S>>): Promise<InstanceType<ThisClass>[]>,
 
   /**
-   * Find a single ActiveRecord in the database by id
+   * Find a single ActiveDocument in the database by id
    * 
-   * @param id - id of the ActiveRecord to find
-   * @returns the `ActiveRecord` found, or `null` if none
+   * @param id - id of the ActiveDocument to find
+   * @returns the `ActiveDocument` found, or `null` if none
    */
   findById<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, id: string): Promise<InstanceType<ThisClass> | null>,
 
   /**
-   * Find a single ActiveRecord in the database by id
+   * Find a single ActiveDocument in the database by id
    *  and throw an error if it does not exist
    * 
-   * @param id - id of the ActiveRecord to find
-   * @returns the `ActiveRecord` found
+   * @param id - id of the ActiveDocument to find
+   * @returns the `ActiveDocument` found
    */
   findByIdOrFail<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, id: string): Promise<InstanceType<ThisClass>>,
 
   /**
-   * Find a single ActiveRecord in the database by
+   * Find a single ActiveDocument in the database by
    *  retrieving the first that matches the passed in `props`
    * 
    * @param props 
-   * @returns the `ActiveRecord` found, or `null` if no record was found
+   * @returns the `ActiveDocument` found, or `null` if no document was found
    */
-  findOne<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>): Promise<InstanceType<ThisClass> | null>,
+  findOne<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromDocument<S>>): Promise<InstanceType<ThisClass> | null>,
 
   /**
-   * Create an `ActiveRecord` from some props, such that it
+   * Create an `ActiveDocument` from some props, such that it
    *  is syncing to and from the database.
    * 
    * This is equivalent to using the `new` constructor
@@ -202,9 +202,9 @@ export type ActiveClass<S extends RecordSchema = RecordSchema> = {
    *  why `_id` is necessary).
    * 
    * @param props 
-   * @returns the `ActiveRecord`
+   * @returns the `ActiveDocument`
    */
-  from<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: ObjectFromRecord<S> & { _id: string }): InstanceType<ThisClass>,
+  from<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: ObjectFromDocument<S> & { _id: string }): InstanceType<ThisClass>,
 
   /**
    * Return the Firebase Real-Time Database instance and interface
@@ -222,26 +222,26 @@ export type ActiveClass<S extends RecordSchema = RecordSchema> = {
   ref(path?: string): firebase.database.Reference,
 
   /**
-   * Updates all `ActiveRecord`s from the database that
+   * Updates all `ActiveDocument`s from the database that
    *  match the passed in `props` with `updateProps`
    * 
    * @param props - props to match by
    * @param updateProps - props to update
-   * @returns an array of `ActiveRecord<S>` that were updated
+   * @returns an array of `ActiveDocument<S>` that were updated
    */
-  update<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<InstanceType<ThisClass>[]>
+  update<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromDocument<S>>, updateProps: Partial<DocumentProps<S>>): Promise<InstanceType<ThisClass>[]>
 
   /**
-   * Update a single ActiveRecord in the database by
+   * Update a single ActiveDocument in the database by
    *  retrieving the first that matches the passed in `props`
    *  and updating it using `updateProps`
    * 
    * @param props 
-   * @returns the updated `ActiveRecord` if there is one, or `null` otherwise
+   * @returns the updated `ActiveDocument` if there is one, or `null` otherwise
    */
-  updateOne<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromRecord<S>>, updateProps: Partial<RecordProps<S>>): Promise<InstanceType<ThisClass> | null>,
+  updateOne<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromDocument<S>>, updateProps: Partial<DocumentProps<S>>): Promise<InstanceType<ThisClass> | null>,
 
 
-  value(props: Partial<ObjectFromRecord<S>>): Promise<ObjectFromRecord<S> | null>
-  values(props?: Partial<ObjectFromRecord<S>>): Promise<ObjectFromRecord<S>[]>,
+  value(props: Partial<ObjectFromDocument<S>>): Promise<ObjectFromDocument<S> | null>
+  values(props?: Partial<ObjectFromDocument<S>>): Promise<ObjectFromDocument<S>[]>,
 }

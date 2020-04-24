@@ -1,35 +1,35 @@
 import { get, set } from 'lodash'
 import { plural } from 'pluralize'
-import { ActiveRecord, ActiveClass } from "../../types/class.types";
-import { RecordSchema, ToCreateRecord, ObjectFromRecord } from "../../types/schema.types";
+import { ActiveDocument, ActiveClass } from "../../types/class.types";
+import { DocumentSchema, ToCreateDocument, ObjectFromDocument } from "../../types/schema.types";
 import checkPrimitive from './checkPrimitive';
 import withOnChangeListener from './withOnChangeListener';
 import setupSyncing from './setupSyncing';
 import ActiveClassError from '../Error/ActiveClassError';
 
 /**
- * Creates a constructor function for a `RecordModel<Schema>`
+ * Creates a constructor function for a `DocumentModel<Schema>`
  * 
  * @param schema - The schema that the model uses
  * @param className - The name of the model, used as a basis for the Firebase table name
  */
-const makeActiveClassConstructor = <Schema extends RecordSchema>(
+const makeActiveClassConstructor = <Schema extends DocumentSchema>(
   schema: Schema,
   className?: string
 ) => { 
   /**
-   * A constructor function for a Fireactive `ActiveRecord`.
+   * A constructor function for a Fireactive `ActiveDocument`.
    */
-  function ActiveRecord (
-    this: ActiveRecord<Schema>,
+  function ActiveDocument (
+    this: ActiveDocument<Schema>,
     // @ts-ignore : allow instantiation with no argument
-    props: ToCreateRecord<Schema> & { _id?: string } = {}
+    props: ToCreateDocument<Schema> & { _id?: string } = {}
   ) {
     
     // assign initial props
     Object.assign(this, props)
 
-    const record = this
+    const document = this
 
     const schemaFieldIdentified = (path: string[]) => get(schema, [...path, '_fieldIdentifier'])
 
@@ -60,9 +60,9 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
 
     const checkAgainstSchema = (initialiseFromProps = false) => {
       Object.keys(schema).forEach(key => {
-        const schemaKey = key as keyof ObjectFromRecord<Schema>
+        const schemaKey = key as keyof ObjectFromDocument<Schema>
         // @ts-ignore : set it from props, if it exists there
-        if (initialiseFromProps) record[schemaKey] = props[schemaKey]
+        if (initialiseFromProps) document[schemaKey] = props[schemaKey]
 
         iterativelyCheckAgainstSchema([key])
       })
@@ -77,9 +77,9 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
     }
 
     // @ts-ignore : possibly infinitely deep :(
-    const { pendingSetters } = setupSyncing({ record, checkAgainstSchema })
+    const { pendingSetters } = setupSyncing({ document, checkAgainstSchema })
 
-    return withOnChangeListener({ record, checkAgainstSchema, pendingSetters })
+    return withOnChangeListener({ document, checkAgainstSchema, pendingSetters })
   }
 
   /**
@@ -91,10 +91,10 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
    */
 
   if (className) {
-    Object.defineProperty(ActiveRecord, 'name', { value: className })
+    Object.defineProperty(ActiveDocument, 'name', { value: className })
   }
   
-  Object.defineProperty(ActiveRecord, 'key', {
+  Object.defineProperty(ActiveDocument, 'key', {
     get(this: ActiveClass<Schema>) {
       return plural(this.name)
     }
@@ -102,7 +102,7 @@ const makeActiveClassConstructor = <Schema extends RecordSchema>(
 
   
 
-  return ActiveRecord
+  return ActiveDocument
 }
 
 export default makeActiveClassConstructor

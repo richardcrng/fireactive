@@ -1,10 +1,10 @@
 import { ActiveClass } from "../../types/class.types";
-import { RecordSchema, FirebaseTable } from "../../types/schema.types";
+import { DocumentSchema, FirebaseTable } from "../../types/schema.types";
 
 /**
  * Adds default class methods and properties onto the `ActiveClass`
  */
-const addActiveClassCache = <Schema extends RecordSchema>(
+const addActiveClassCache = <Schema extends DocumentSchema>(
   ActiveClass: ActiveClass<Schema>
 ): void => {
   const updateCacheFromSnapshot = (snapshot: firebase.database.DataSnapshot) => {

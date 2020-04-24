@@ -1,5 +1,5 @@
 import { ActiveClass } from "../../types/class.types";
-import { RecordSchema, ObjectFromRecord } from "../../types/schema.types";
+import { DocumentSchema, ObjectFromDocument } from "../../types/schema.types";
 import isNull from "../../utils/isNull";
 import { SyncOpts } from "../../types/sync.types";
 import ActiveClassError from "../Error";
@@ -7,7 +7,7 @@ import ActiveClassError from "../Error";
 /**
  * Adds default instance methods and properties onto the `ActiveClass`'s prototype
  */
-const addActiveClassInstances = <Schema extends RecordSchema>(
+const addActiveClassInstances = <Schema extends DocumentSchema>(
   ActiveClass: ActiveClass<Schema>,
   scoped: { schema: Schema }
 ): void => {
@@ -26,7 +26,7 @@ const addActiveClassInstances = <Schema extends RecordSchema>(
     }
   }
 
-  ActiveClass.prototype.reload = async function (): Promise<ObjectFromRecord<Schema>> {
+  ActiveClass.prototype.reload = async function (): Promise<ObjectFromDocument<Schema>> {
     if (!this._id) throw new Error(`Can't reload a ${this.constructor.name} from the database without it having an id`)
     const snapshot = await this.ref().once('value')
     const vals = snapshot.val()
@@ -35,13 +35,13 @@ const addActiveClassInstances = <Schema extends RecordSchema>(
   };
 
   ActiveClass.prototype.ref = function(path?: string): firebase.database.Reference {
-    const recordRef = this.constructor.ref(this.getId())
+    const documentRef = this.constructor.ref(this.getId())
     return path
-      ? recordRef.child(path)
-      : recordRef
+      ? documentRef.child(path)
+      : documentRef
   }
 
-  ActiveClass.prototype.save = async function(): Promise<ObjectFromRecord<Schema>> {
+  ActiveClass.prototype.save = async function(): Promise<ObjectFromDocument<Schema>> {
     const valsToSet = this.toObject()
     try {
       await this.ref().set(valsToSet)
@@ -51,18 +51,18 @@ const addActiveClassInstances = <Schema extends RecordSchema>(
     }
   };
 
-  ActiveClass.prototype.saveAndSync = async function(syncOpts?: SyncOpts): Promise<ObjectFromRecord<Schema>> {
+  ActiveClass.prototype.saveAndSync = async function(syncOpts?: SyncOpts): Promise<ObjectFromDocument<Schema>> {
     this.syncOpts({ fromDb: true, toDb: true, ...syncOpts })
     const setVals = await this.save()
     return setVals
   };
 
-  ActiveClass.prototype.toObject = function(): ObjectFromRecord<Schema> {
+  ActiveClass.prototype.toObject = function(): ObjectFromDocument<Schema> {
     return [...Object.keys(scoped.schema), "_id"].reduce((acc, key) => {
       // @ts-ignore
       if (typeof this[key] !== 'undefined') acc[key] = this[key]
       return acc
-    }, {}) as ObjectFromRecord<Schema>
+    }, {}) as ObjectFromDocument<Schema>
   }
 }
 
