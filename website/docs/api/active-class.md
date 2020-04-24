@@ -191,3 +191,73 @@ person.age // => 95
 </TabItem>
 </JsTsTabs>
 
+### Extending: static methods
+Since we are just creating an ES6 class, you can also add your own static / class methods that you would with a typical ES6 class.
+
+<JsTsTabs>
+<TabItem value='js'>
+
+```js
+import { Schema, ActiveClass, initialize } from 'fireactive'
+
+const personSchema = {
+  firstName: Schema.string,
+  lastName: Schema.string,
+  age: Schema.number
+}
+
+class Person extends ActiveClass(personSchema) {
+  static newBirth(surname) {
+    return this.create({
+      firstName: 'Baby',
+      lastName: surname,
+      age: 0
+    })
+  }
+}
+
+// initialize a database connection 
+initialize({ databaseURL: 'https://your-project.firebase.io' })
+
+const baby = await Person.newBirth('Simpson')
+
+baby.firstName // => 'Baby'
+baby.lastName // => 'Simpson'
+baby.age // => 0
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```ts
+import { Schema, ActiveClass, initialize } from 'fireactive'
+
+const personSchema = {
+  firstName: Schema.string,
+  lastName: Schema.string,
+  age: Schema.number
+}
+
+class Person extends ActiveClass(personSchema) {
+  static newBirth(surname: string): Promise<Person> {
+    return this.create({
+      firstName: 'Baby',
+      lastName: surname,
+      age: 0
+    })
+  }
+}
+
+// initialize a database connection 
+initialize({ databaseURL: 'https://your-project.firebase.io' })
+
+const baby = await Person.newBirth('Simpson')
+
+baby.firstName // => 'Baby'
+baby.lastName // => 'Simpson'
+baby.age // => 0
+```
+
+</TabItem>
+</JsTsTabs>
+

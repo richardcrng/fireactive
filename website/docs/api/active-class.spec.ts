@@ -61,3 +61,30 @@ describe('Extending: prototype / instance methods', () => {
     done()
   })
 })
+
+describe('Extending: static methods', () => {
+  const personSchema = {
+    firstName: Schema.string,
+    lastName: Schema.string,
+    age: Schema.number
+  }
+
+  class Person extends ActiveClass(personSchema) {
+    static newBirth(surname: string): Promise<Person> {
+      return this.create({
+        firstName: 'Baby',
+        lastName: surname,
+        age: 0
+      })
+    }
+  }
+
+  test('Creation', async (done) => {
+    const baby = await Person.newBirth('Simpson')
+    expect(baby.firstName).toBe('Baby')
+    expect(baby.lastName).toBe('Simpson')
+    expect(baby.age).toBe(0)
+    done()
+  })
+})
+
