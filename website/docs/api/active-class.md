@@ -15,8 +15,6 @@ In Fireactive, 'ActiveClass' can refer both to:
 1. an ES6 Class that is used to interact with a particular store of entities; and
 2. the library export, `ActiveClass` that is used in the creation of these ActiveClasses.
 
-
-
 More concretely:
 
 <JsTsTabs>
