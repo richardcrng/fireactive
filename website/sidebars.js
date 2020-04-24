@@ -20,7 +20,8 @@ module.exports = {
         "ActiveClass": [
           'api/active-class',
           'api/active-class/creating',
-          'api/active-class/methods'
+          'api/active-class/methods/static',
+          'api/active-class/methods/prototype'
         ]
       },
       {
