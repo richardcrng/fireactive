@@ -6,7 +6,7 @@ export interface FieldOptions<T> {
 
 /**
  * @template T - field core type, e.g. string
- * @template R - is field required on the record?
+ * @template R - is field required on the document?
  * @template D - does the field initialise with a default value?
  */
 export interface IndexedFieldDefinition<T = any> {
@@ -18,7 +18,7 @@ export interface IndexedFieldDefinition<T = any> {
 
 /**
  * @template T - field core type, e.g. string
- * @template R - is field required on the record?
+ * @template R - is field required on the document?
  * @template D - does the field initialise with a default value?
  */
 export type FieldDefinition<T = any, R extends boolean = boolean, D extends boolean = boolean> =
@@ -75,9 +75,9 @@ export type TypeFromIdentifier<T, U = unknown> =
   : unknown
 
 /**
- * Converts a FieldDefinition to a value that the record holds
+ * Converts a FieldDefinition to a value that the document holds
  */
-export type RecordField<FD> =
+export type DocumentField<FD> =
   // handle indexed cases
   FD extends { _fieldIdentfier: FieldIdentifier.indexed, indexed: infer I }
     ? I extends { _fieldIdentifier: infer C, vals: infer E }
@@ -109,13 +109,13 @@ export type RecordField<FD> =
     : FD extends { _fieldIdentifier: infer C, required: false } ? TypeFromIdentifier<C> | undefined | null
     // else if it has `_fieldIdentifier`, then it is a necessary primitive field
     : FD extends { _fieldIdentifier: infer C } ? TypeFromIdentifier<C>
-    // else it is an object of RecordFields, some of which might be optional
-    : FD extends {} ? UndefinedToOptional<{ [K in keyof FD]: RecordField<FD[K]> }>
+    // else it is an object of DocumentFields, some of which might be optional
+    : FD extends {} ? UndefinedToOptional<{ [K in keyof FD]: DocumentField<FD[K]> }>
     // 🤷
     : unknown
 
 /**
- * Converts a FieldDefinition to a value taken by the record on initialisation
+ * Converts a FieldDefinition to a value taken by the document on initialisation
  */
 export type CreateField<FD> =
   /* UNUSUAL CASES */

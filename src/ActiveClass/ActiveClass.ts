@@ -1,21 +1,21 @@
 import { ActiveClass } from "../types/class.types";
-import { RecordSchema } from '../types/schema.types';
+import { DocumentSchema } from '../types/schema.types';
 import makeActiveClassConstructor from './constructor/makeActiveClassConstructor';
 import addActiveClassStatics from './statics/addActiveClassStatics';
 import addActiveClassInstances from './instances/addActiveClassInstances';
 import addActiveClassCache from './statics/addActiveClassCache';
 
 /**
- * Create a `ActiveClass<Schema>`, where `Schema` is an Active `RecordSchema`.
+ * Create a `ActiveClass<Schema>`, where `Schema` is an Active `DocumentSchema`.
  * 
- * @param schema - The `RecordSchema` for an `ActiveRecord` of the resultant class
+ * @param schema - The `DocumentSchema` for an `ActiveDocument` of the resultant class
  * @param className - The name used as a basis for the Firebase RTD table
  * 
  * @returns The `ActiveClass<S>`.
- * @template Schema - A `RecordSchema`
+ * @template Schema - A `DocumentSchema`
  */
-function ActiveClass<Schema extends RecordSchema>(schema: Schema, className?: string) {
-  // our JavaScript `Record` variable, with a constructor type
+function ActiveClass<Schema extends DocumentSchema>(schema: Schema, className?: string) {
+  // our JavaScript `Document` variable, with a constructor type
   let ActiveClass: ActiveClass<Schema>;
 
   const readonlySchema = Object.freeze(schema)
