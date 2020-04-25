@@ -169,7 +169,7 @@ const orwell = await Author.create({
 
 
 /**
- * Note that an ActiveRecord's _id has type of
+ * Note that an ActiveDocument's _id has type of
  *  string | undefined, because it is sometimes
  *  undefined (e.g. if you use the `new` operator
  *  and haven't yet saved it to the database).

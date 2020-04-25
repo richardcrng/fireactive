@@ -120,7 +120,7 @@ describe('ActiveClass: with server connection', () => {
       describe('simple data', () => {
         const createData = { name: 'Jorge', age: 42 }
 
-        it('returns the created record', async (done) => {
+        it('returns the created document', async (done) => {
           player = await Player.create(createData)
           expect(player.name).toBe('Jorge')
           expect(player.age).toBe(42)
@@ -157,7 +157,7 @@ describe('ActiveClass: with server connection', () => {
       })
 
       describe('nested, data', () => {
-        it('can create a record with properties that are empty objects', async (done) => {
+        it('can create a document with properties that are empty objects', async (done) => {
           superHero = await SuperHero.create({ allies: { marvel: {}, dc: {} }, powers: {}, collectibles: {} })
           expect(superHero.allies).toEqual({ marvel: {}, dc: {} })
           expect(superHero.powers).toEqual({})
@@ -265,14 +265,14 @@ describe('ActiveClass: with server connection', () => {
         done()
       })
 
-      it('returns an array of records matching the props passed in', async (done) => {
+      it('returns an array of documents matching the props passed in', async (done) => {
         const players = await Player.find({ name: 'Alfred' })
         expect(players[0].name).toBe(createData.name)
         expect(players[0].age).toBe(createData.age)
         done()
       })
 
-      it('returns an empty array if no records match', async (done) => {
+      it('returns an empty array if no documents match', async (done) => {
         const players = await Player.find({ name: 'Alfred', age: 40 })
         expect(players).toEqual([])
         done()
@@ -311,7 +311,7 @@ describe('ActiveClass: with server connection', () => {
         done()
       })
 
-      it('finds a record that matches the id', async (done) => {
+      it('finds a document that matches the id', async (done) => {
         const player = await Player.findById(id) as InstanceType<typeof Player>
         expect(player._id).toBe(id)
         expect(player.name).toBe(createData.name)
@@ -319,7 +319,7 @@ describe('ActiveClass: with server connection', () => {
         done()
       })
 
-      it('returns null if there is no matching record', async (done) => {
+      it('returns null if there is no matching document', async (done) => {
         const player = await Player.findById('this is definitely not a valid id, as if')
         expect(player).toBeNull()
         done()
@@ -334,7 +334,7 @@ describe('ActiveClass: with server connection', () => {
         done()
       })
 
-      it('finds a record that matches the id', async (done) => {
+      it('finds a document that matches the id', async (done) => {
         const player = await Player.findById(id) as InstanceType<typeof Player>
         expect(player._id).toBe(id)
         expect(player.name).toBe(createData.name)
@@ -342,7 +342,7 @@ describe('ActiveClass: with server connection', () => {
         done()
       })
 
-      it('throws an error if there is no matching record', async (done) => {
+      it('throws an error if there is no matching document', async (done) => {
         expect.assertions(2)
         try {
           await Player.findByIdOrFail('this is definitely not a valid id, as if')
@@ -365,14 +365,14 @@ describe('ActiveClass: with server connection', () => {
         done()
       })
 
-      it('finds the first record that matches the data', async (done) => {
+      it('finds the first document that matches the data', async (done) => {
         playerOne = await Player.findOne({ age: 29 }) as Player
         expect(playerOne.name).toBe(createDataOne.name)
         expect(playerOne.name).not.toBe(createDataTwo.name)
         done()
       })
 
-      it('returns null if there is no matching record', async (done) => {
+      it('returns null if there is no matching document', async (done) => {
         const player = await Player.findOne({ age: 30 })
         expect(player).toBeNull()
         done()
@@ -415,7 +415,7 @@ describe('ActiveClass: with server connection', () => {
         done()
       })
 
-      it('returns an array of records that are updated', async (done) => {
+      it('returns an array of documents that are updated', async (done) => {
         expect(res).toHaveLength(2)
         expect(idOne).not.toBe(idThree)
         expect(res[0]._id).toBe(idOne)
@@ -437,7 +437,7 @@ describe('ActiveClass: with server connection', () => {
         done()
       })
 
-      it('returns an empty array if no records match', async (done) => {
+      it('returns an empty array if no documents match', async (done) => {
         const players = await Player.update({ name: 'mickey', age: 39 }, { age: 10 })
         expect(players).toEqual([])
         done()
@@ -456,7 +456,7 @@ describe('ActiveClass: with server connection', () => {
         done()
       })
 
-      it('returns the updated record', async (done) => {
+      it('returns the updated document', async (done) => {
         expect(res && res._id).toBe(idOne)
         expect(res && res._id).not.toBe(idThree)
         expect(res).toMatchObject({ name: 'Alfred', age: 40 })
@@ -475,7 +475,7 @@ describe('ActiveClass: with server connection', () => {
         done()
       })
 
-      it('returns null if no records match', async (done) => {
+      it('returns null if no documents match', async (done) => {
         const players = await Player.updateOne({ name: 'mickey', age: 39 }, { age: 10 })
         expect(players).toBeNull()
         done()
@@ -535,11 +535,11 @@ describe('ActiveClass: with server connection', () => {
         done()
       })
 
-      it('returns the ref for the record when no argument is supplied', () => {
+      it('returns the ref for the document when no argument is supplied', () => {
         expect(player.ref()).toEqual(Player.ref().child(player.getId()))  
       })
 
-      it('returns the ref for a child of the record when an argument is supplied', () => {
+      it('returns the ref for a child of the document when an argument is supplied', () => {
         expect(player.ref('name')).toEqual(Player.ref().child(player.getId()).child('name'))
       })
     })
@@ -587,13 +587,13 @@ describe('ActiveClass: with server connection', () => {
           expect(player.syncOpts()).toMatchObject({ fromDb: true, toDb: true })
         })
 
-        it('means the `ActiveRecord` syncs changes from the database', async (done) => {
+        it('means the `ActiveDocument` syncs changes from the database', async (done) => {
           await playerRef.update({ name: 'Muriel again' })
           expect(player.name).toBe('Muriel again')
           done()
         })
 
-        it('means the `ActiveRecord` syncs changes to the database', async (done) => {
+        it('means the `ActiveDocument` syncs changes to the database', async (done) => {
           player.name = 'No longer Muriel'
           await player.pendingSetters()
           const playerInDb = await server.getValue(Player.ref().child(player.getId()))
@@ -684,7 +684,7 @@ describe('ActiveClass: with server connection', () => {
       })
 
       describe('.syncOpts().fromDb', () => {
-        it('when true, means db changes sync to the record', async (done) => {
+        it('when true, means db changes sync to the document', async (done) => {
           const player = await Player.create({ name: 'Bob', age: 2 })
           expect(player.syncOpts().fromDb).toBe(true)
           expect(player.name).toBe('Bob')
@@ -693,7 +693,7 @@ describe('ActiveClass: with server connection', () => {
           done()
         })
 
-        it('when false, means db changes do not sync to the record', async (done) => {
+        it('when false, means db changes do not sync to the document', async (done) => {
           const player = await Player.create({ name: 'Bob', age: 2 })
           expect(player.syncOpts({ fromDb: false }).fromDb).toBe(false)
           expect(player.name).toBe('Bob')
@@ -704,7 +704,7 @@ describe('ActiveClass: with server connection', () => {
       })
 
       describe('.syncOpts().toDb', () => {
-        it('when true, means record changes sync to the db', async (done) => {
+        it('when true, means document changes sync to the db', async (done) => {
           const player = await Player.create({ name: 'Bob', age: 2 })
           expect(player.syncOpts().toDb).toBe(true)
           expect(player.name).toBe('Bob')
@@ -726,7 +726,7 @@ describe('ActiveClass: with server connection', () => {
           done()
         })
 
-        it('when false, means record changes do not sync to thedb', async (done) => {
+        it('when false, means document changes do not sync to thedb', async (done) => {
           const player = await Player.create({ name: 'Bob', age: 2 })
           expect(player.syncOpts({ toDb: false }).toDb).toBe(false)
           expect(player.name).toBe('Bob')

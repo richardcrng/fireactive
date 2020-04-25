@@ -46,7 +46,7 @@ initialize({
 
 ### Saving data with `.save`
 
-Now you have made a connection to your Firebase Realtime Database, you can save a given ActiveRecord without [throwing the error we saw before](active-class-101.md#protip-remember-to-initialize):
+Now you have made a connection to your Firebase Realtime Database, you can save a given ActiveDocument without [throwing the error we saw before](active-class-101.md#protip-remember-to-initialize):
 
 <JsTsTabs>
 <TabItem value="js">
@@ -83,7 +83,7 @@ richard._id // => "-JhLeOlGIEjaIOFHR0xd" (or similar)
 
 ### Inserting data with `.create`
 
-Rather than using the `new` operator to instantiate an ActiveRecord and then separately calling `.save`, you can use `.create` to achieve both in one line:
+Rather than using the `new` operator to instantiate an ActiveDocument and then separately calling `.save`, you can use `.create` to achieve both in one line:
 
 <JsTsTabs>
 <TabItem value="js">
@@ -149,9 +149,9 @@ admins[1].name // => 'Chuck Norris'
 </TabItem>
 </JsTsTabs>
 
-There are also static methods `.findOne` or `.findById`, which return a single ActiveRecord.
+There are also static methods `.findOne` or `.findById`, which return a single ActiveDocument.
 
 ## Realtime syncing to and from the database
-By default, ActiveRecords created through static ActiveClass methods (like `.create`, `.find`, `.findOne`...) sync realtime changes both *to* and *from* the Firebase Realtime Database.
+By default, ActiveDocuments created through static ActiveClass methods (like `.create`, `.find`, `.findOne`...) sync realtime changes both *to* and *from* the Firebase Realtime Database.
 
 <img alt="Fireactive Realtime Syncing" src={useBaseUrl('img/fireactive-syncing.gif')} />
