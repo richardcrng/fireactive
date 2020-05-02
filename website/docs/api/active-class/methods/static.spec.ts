@@ -71,5 +71,27 @@ describe('Basic CRUD methods', () => {
       done()
     })
   })
+
+  describe('#deleteOne', () => {
+    beforeAll(async (done) => {
+      await Person.delete({})
+      done()
+    })
+
+    test('Happy path', async (done) => {
+      await Person.create({ name: 'Harry', age: 40 })
+      await Person.create({ name: 'Hermione', age: 41 })
+
+      const deleteHarry = await Person.deleteOne({ name: 'Harry' })
+      expect(deleteHarry).toBe(true)
+
+      const deleteRon = await Person.deleteOne({ name: 'Ron' })
+      expect(deleteRon).toBe(false)
+
+      const delete40 = await Person.deleteOne({ age: 40 })
+      expect(delete40).toBe(false)
+      done()
+    })
+  })
 })
 

@@ -160,6 +160,46 @@ await Person.delete({}) // => 1
 </JsTsTabs>
 
 ### `deleteOne`
+Deletes the first document that partially matches the passed in object.
+
+**Parameters:**
+- `props`: an object of properties that is consistent with the ActiveClass's <Link to='/docs/api/schema'>Schema</Link> (but needn't include all properties)
+
+**Returns:** `Promise<boolean>`, a promise that resolves with whether or not a document was deleted
+
+#### Example
+<JsTsTabs>
+<TabItem value='js'>
+
+```js
+// assuming we're starting with a fresh database
+
+await Person.create({ name: 'Harry', age: 40 })
+await Person.create({ name: 'Hermione', age: 41 })
+
+await Person.delete({ name: 'Harry' }) // => true
+await Person.delete({ name: 'Ron' }) // => false
+await Person.delete({ age: 40 }) // => false (Harry is already deleted, so nothing to delete)
+
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```ts
+// assuming we're starting with a fresh database
+
+await Person.create({ name: 'Harry', age: 40 })
+await Person.create({ name: 'Hermione', age: 41 })
+
+await Person.delete({ name: 'Harry' }) // => true
+await Person.delete({ name: 'Ron' }) // => false
+await Person.delete({ age: 40 }) // => false (Harry is already deleted, so nothing to delete)
+
+```
+
+</TabItem>
+</JsTsTabs>
 
 ### `find`
 
