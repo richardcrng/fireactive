@@ -1,4 +1,4 @@
-import { Schema, ActiveClass } from "../../../../../src"
+import { Schema, ActiveClass } from "../../../../src"
 
 
 const schema = {

@@ -1,7 +1,7 @@
-import { ActiveClass, Schema, initialize } from '../../../../../src'
-import { testDatabase } from '../../../../../src/utils/setupTestServer'
-import testExpectError from '../../../../../src/utils/testExpectError';
-import ActiveClassError from '../../../../../src/ActiveClass/Error';
+import { ActiveClass, Schema, initialize } from '../../../../src'
+import { testDatabase } from '../../../../src/utils/setupTestServer'
+import testExpectError from '../../../../src/utils/testExpectError';
+import ActiveClassError from '../../../../src/ActiveClass/Error';
 
 const { databaseURL, server } = testDatabase()
 
@@ -42,5 +42,20 @@ describe('After initializing', () => {
     done()
   })
 
+  describe('.getId', () => {
+    it("generates an id when one doesn't exist", () => {
+      const ariana = new Person({ name: 'Ariana', age: 24 })
+      expect(ariana._id).toBeUndefined()
+      expect(typeof ariana.getId()).toBe('string')
+      expect(ariana._id).toBe(ariana.getId())
+    })
+
+    it("returns the _id when it does exist", async (done) => {
+      const taylor = await Person.create({ name: 'Taylor', age: 29 })
+      expect(typeof taylor._id).toBe('string')
+      expect(taylor._id).toBe(taylor.getId())
+      done()
+    })
+  })
 })
 

@@ -1,11 +1,11 @@
 ---
-id: static
+id: methods
 title: ActiveClass Methods
 sidebar_label: Methods
 ---
 
 import Link from '@docusaurus/Link';
-import JsTsTabs, { JsTab, TsTab } from '../../../../src/lib/atoms/JsTsTabs'
+import JsTsTabs, { JsTab, TsTab } from '../../../src/lib/atoms/JsTsTabs'
 import TabItem from '@theme/TabItem';
 
 All <Link to='/docs/api/active-document'>ActiveDocuments</Link> - that is, all instances of ES6 classes that extend `ActiveClass` - come with some default methods, used for interacting with your Firebase Realtime Database.
@@ -68,16 +68,32 @@ None
 <TabItem value='js'>
 
 ```js
-const helen = await Person.create({ name: 'Helen', age: 27 })
-helen.name // => 'Helen'
-helen.age // => 27
+const ariana = new Person({ name: 'Ariana', age: 24 })
+ariana._id // => undefined
+ariana.getId() // => '-M6L2H0...'
+ariana._id // => '-M6L2H0...'
 
-await Person.create({ name: 'Helen' })
-// ActiveClassError: Could not create Person. The required property 'age' is missing
-
-await Person.create({ name: 'Helen', age: '27' })
-// ActiveClassError: Could not create Person. The property 'age' is of the wrong type
+const taylor = await Person.create({ name: 'Taylor', age: 29 })
+taylor._id // => '-M7K4IP...'
+taylor.getId() // => '-M7K4IP...'
 ```
+
+</TabItem>
+<TabItem value='ts'>
+
+```ts
+const ariana = new Person({ name: 'Ariana', age: 24 })
+ariana._id // => undefined
+ariana.getId() // => '-M6L2H0...'
+ariana._id // => '-M6L2H0...'
+
+const taylor = await Person.create({ name: 'Taylor', age: 29 })
+taylor._id // => '-M7K4IP...'
+taylor.getId() // => '-M7K4IP...'
+```
+
+</TabItem>
+</JsTsTabs>
 
 ## `reload`
 
