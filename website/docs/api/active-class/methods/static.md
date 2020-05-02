@@ -52,7 +52,7 @@ await Person.create({ name: 'Helen', age: 27 }) // runs
 ## Basic CRUD methods
 
 ### `create`
-Create a new model and save it to the database.
+Creates a new model from an object and saves it to the database.
 
 **Parameters:**
 - `props`: an object of properties that conforms to the ActiveClass's <Link to='/docs/api/schema'>Schema</Link>
@@ -94,6 +94,70 @@ await Person.create({ name: 'Helen', age: '27' })
 </JsTsTabs>
 
 ### `delete`
+Deletes all matching documents that partially match the passed in object.
+
+**Parameters:**
+- `props`: an object of properties that is consistent with the ActiveClass's <Link to='/docs/api/schema'>Schema</Link> (but needn't include all properties)
+
+**Returns:** `Promise<number>`, a promise that resolves with the count of matched documents deleted
+
+#### Example
+<JsTsTabs>
+<TabItem value='js'>
+
+```js
+await Person.delete({})
+// this will delete all entries in the database,
+//  since all properties of an empty object match
+//  any other entry
+
+// let's create three Persons
+await Person.create({ name: 'Harry', age: 40 })
+await Person.create({ name: 'Hermione', age: 41 })
+await Person.create({ name: 'Ron', age: 40 })
+
+// delete all Persons with age of 40
+await Person.delete({ age: 40 }) // => 2
+
+// delete all Persons with a name of 'Harry'
+//  this should resolve to 0, since Harry has
+//  already been deleted by the above #delete
+await Person.delete({ name: 'Harry' }) // => 0
+
+// let's finish up by deleting our one remaining
+//  Person, Hermione (aged 41), with a delete all
+await Person.delete({}) // => 1
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```ts
+await Person.delete({})
+// this will delete all entries in the database,
+//  since all properties of an empty object match
+//  any other entry
+
+// let's create three Persons
+await Person.create({ name: 'Harry', age: 40 })
+await Person.create({ name: 'Hermione', age: 41 })
+await Person.create({ name: 'Ron', age: 40 })
+
+// delete all Persons with age of 40
+await Person.delete({ age: 40 }) // => 2
+
+// delete all Persons with a name of 'Harry'
+//  this should resolve to 0, since Harry has
+//  already been deleted by the above #delete
+await Person.delete({ name: 'Harry' }) // => 0
+
+// let's finish up by deleting our one remaining
+//  Person, Hermione (aged 41), with a delete all
+await Person.delete({}) // => 1
+```
+
+</TabItem>
+</JsTsTabs>
 
 ### `deleteOne`
 

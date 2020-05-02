@@ -27,7 +27,7 @@ test('Basic functions', () => {
 })
 
 describe('Basic CRUD methods', () => {
-  describe('create', () => {
+  describe('#create', () => {
     test('Happy path', async (done) => {
       const helen = await Person.create({ name: 'Helen', age: 27 })
       expect(helen.name).toBe('Helen')
@@ -49,6 +49,26 @@ describe('Basic CRUD methods', () => {
     }, {
         message: `Could not create Person. The property 'age' is of the wrong type`,
         constructor: ActiveClassError
+    })
+  })
+
+  describe('#delete', () => {
+    beforeAll(async (done) => {
+      await Person.delete({})
+      await Person.create({ name: 'Harry', age: 40 })
+      await Person.create({ name: 'Hermione', age: 41 })
+      await Person.create({ name: 'Ron', age: 40 })
+      done()
+    })
+
+    test('Happy path', async (done) => {
+      const delete40 = await Person.delete({ age: 40 })
+      expect(delete40).toBe(2)
+      const deleteHarry = await Person.delete({ name: 'Harry' })
+      expect(deleteHarry).toBe(0)
+      const deleteRest = await Person.delete({})
+      expect(deleteRest).toBe(1)
+      done()
     })
   })
 })

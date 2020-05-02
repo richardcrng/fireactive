@@ -8,6 +8,7 @@ const DEFAULT_VALUES = [
 ]
 
 function JsTsTabs({ children, values = DEFAULT_VALUES }) {
+
   return (
     <Tabs
       groupId='js-ts-tabs'
