@@ -504,8 +504,36 @@ updatedHarry.age // => 50
 ### `getDb`
 
 ### `ref`
+Returns a Firebase Realtime Database [Reference](https://firebase.google.com/docs/reference/js/firebase.database.Reference) for the ActiveClass 'table', or a specified child reference within it.
 
-### `value`
+**Parameters:**
+- `path` (string, optional): if specified, retrieves the [Reference](https://firebase.google.com/docs/reference/js/firebase.database.Reference) following this `path` from the root of the ActiveClass's Reference
 
-### `values`
+**Returns:** `Reference`, a Firebase Realtime Database [Reference](https://firebase.google.com/docs/reference/js/firebase.database.Reference) to the ActiveClass 'table', following the (optionally) specified child `path`
+
+#### Example
+<JsTsTabs>
+<TabItem value='js'>
+
+```js
+Person.ref().toString()
+// => 'https://your-database.firebase.io/People'
+
+Person.ref('some/arbitrary/path').toString()
+// => 'https://your-database.firebase.io/People/some/arbitrary/path'
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```ts
+Person.ref().toString()
+// => 'https://your-database.firebase.io/People'
+
+Person.ref('some/arbitrary/path').toString()
+// => 'https://your-database.firebase.io/People/some/arbitrary/path'
+```
+
+</TabItem>
+</JsTsTabs>
 

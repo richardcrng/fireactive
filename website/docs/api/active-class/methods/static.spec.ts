@@ -3,7 +3,7 @@ import { testDatabase } from '../../../../../src/utils/setupTestServer'
 import testExpectError from '../../../../../src/utils/testExpectError';
 import ActiveClassError from '../../../../../src/ActiveClass/Error';
 
-const { databaseURL } = testDatabase()
+const { databaseURL, server } = testDatabase()
 
 const app = initialize({ databaseURL })
 
@@ -221,7 +221,14 @@ describe('Basic CRUD methods', () => {
       done()
     })
   })
+})
 
-  
+describe('Other methods', () => {
+  describe('#ref', () => {
+    test('Happy path', () => {
+      expect(Person.ref().toString()).toBe(`http://localhost:${server.getPort()}/People`)
+      expect(Person.ref('some/arbitrary/path').toString()).toBe(`http://localhost:${server.getPort()}/People/some/arbitrary/path`)
+    })
+  })
 })
 
