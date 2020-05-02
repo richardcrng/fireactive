@@ -69,6 +69,21 @@ helen.name // => 'Helen'
 helen.age // => 27
 
 await Person.create({ name: 'Helen' })
+// (ts 2332) Property 'age' is missing in type '{ name: string; }' but required in type
+
+await Person.create({ name: 'Helen', age: '27' })
+// (ts 2332) Type 'string' is not assignable to type 'number'
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```js
+const helen = await Person.create({ name: 'Helen', age: 27 })
+helen.name // => 'Helen'
+helen.age // => 27
+
+await Person.create({ name: 'Helen' })
 // ActiveClassError: Could not create Person. The required property 'age' is missing
 
 await Person.create({ name: 'Helen', age: '27' })
