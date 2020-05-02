@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 All <Link to='/docs/api/active-class'>ActiveClasses</Link> - that is, all ES6 classes that extend `ActiveClass` - come with some default methods, used for interacting with your Firebase Realtime Database.
 
 ```js
-import { ActiveClass, Schema, initialize } from 'fireactive'
+import { ActiveClass, Schema } from 'fireactive'
 
 const schema = {
   name: Schema.string,
