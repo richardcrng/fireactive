@@ -23,11 +23,13 @@ More concretely:
 ```js
 import { Schema, ActiveClass } from 'fireactive'
 
+// define a schema for the ActiveClass
 const animalSchema = {
   name: Schema.string,
   age: Schema.number
 }
 
+// create an ActiveClass
 class Animal extends ActiveClass(animalSchema) {}
 ```
 
@@ -37,11 +39,13 @@ class Animal extends ActiveClass(animalSchema) {}
 ```ts
 import { Schema, ActiveClass } from 'fireactive'
 
+// define a schema for the ActiveClass
 const animalSchema = {
   name: Schema.string,
   age: Schema.number
 }
 
+// create an ActiveClass
 class Animal extends ActiveClass(animalSchema) {}
 ```
 
