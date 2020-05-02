@@ -455,6 +455,45 @@ aged50[1].age // => 50
 </JsTsTabs>
 
 ### `updateOne`
+Updates the first document that partially matches an object using the properties of a second object.
+
+**Parameters:**
+- `matchProps`: an object of properties that is consistent with the ActiveClass's <Link to='/docs/api/schema'>Schema</Link> (but needn't include all properties), used to find a document to update
+- `updateProps`: an object of properties that is consistent with the ActiveClass's <Link to='/docs/api/schema'>Schema</Link> (but needn't include all properties), used to update the first matching document
+
+**Returns:** `Promise<ActiveDocument | null>`, a promise that resolves with the updated <Link to='/docs/api/active-document'>ActiveDocument</Link> if it exists, or `null` otherwise
+
+#### Example
+<JsTsTabs>
+<TabItem value='js'>
+
+```js
+// assuming we're starting with a fresh database
+
+await Person.create({ name: 'Harry', age: 40 })
+await Person.create({ name: 'Ron', age: 40 })
+
+const updatedHarry = await Person.update({ age: 40 }, { age: 50 })
+updatedHarry.name // => 'Harry'
+updatedHarry.age // => 50
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```ts
+// assuming we're starting with a fresh database
+
+await Person.create({ name: 'Harry', age: 40 })
+await Person.create({ name: 'Ron', age: 40 })
+
+const updatedHarry = await Person.update({ age: 40 }, { age: 50 })
+updatedHarry.name // => 'Harry'
+updatedHarry.age // => 50
+```
+
+</TabItem>
+</JsTsTabs>
 
 ## Other methods
 
