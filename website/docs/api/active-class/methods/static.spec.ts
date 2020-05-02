@@ -184,5 +184,25 @@ describe('Basic CRUD methods', () => {
       done()
     })
   })
+
+  describe('#update', () => {
+    beforeAll(async (done) => {
+      await Person.delete({})
+      done()
+    })
+
+    test('Happy path', async (done) => {
+      await Person.create({ name: 'Harry', age: 40 })
+      await Person.create({ name: 'Hermione', age: 41 })
+      await Person.create({ name: 'Ron', age: 40 })
+
+      const updatedPersons = await Person.update({ age: 40 }, { age: 50 })
+      expect(updatedPersons[0].name).toBe('Harry')
+      expect(updatedPersons[0].age).toBe(50)
+      expect(updatedPersons[1].name).toBe('Ron')
+      expect(updatedPersons[1].age).toBe(50)
+      done()
+    })
+  })
 })
 
