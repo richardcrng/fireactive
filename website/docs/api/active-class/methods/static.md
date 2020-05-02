@@ -497,12 +497,6 @@ updatedHarry.age // => 50
 
 ## Other methods
 
-### `cache`
-
-### `from`
-
-### `getDb`
-
 ### `ref`
 Returns a Firebase Realtime Database [Reference](https://firebase.google.com/docs/reference/js/firebase.database.Reference) for the ActiveClass 'table', or a specified child reference within it.
 
