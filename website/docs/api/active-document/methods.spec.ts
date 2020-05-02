@@ -57,5 +57,20 @@ describe('After initializing', () => {
       done()
     })
   })
+
+  describe('.reload', () => {
+    it("refreshes properties from the database", async (done) => {
+      const ariana = await Person.create({ name: 'Ariana', age: 24 })
+      ariana.syncOpts({ fromDb: false })
+
+      await ariana.ref().update({ age: 25 })
+      expect(ariana.age).toBe(24)
+
+      const reloaded = await ariana.reload()
+      expect(reloaded).toMatchObject({ name: 'Ariana', age: 25 })
+      expect(ariana.age).toBe(25)
+      done()
+    })
+  })
 })
 

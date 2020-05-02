@@ -96,6 +96,53 @@ taylor.getId() // => '-M7K4IP...'
 </JsTsTabs>
 
 ## `reload`
+Refreshes the ActiveDocument's properties based on the current database values.
+
+**Parameters:**
+None
+
+**Returns:** `object` reloaded from the database
+
+#### Example
+<JsTsTabs>
+<TabItem value='js'>
+
+```js
+// create document in db
+const ariana = await Person.create({ name: 'Ariana', age: 24 })
+
+// turn off automatic syncing from db
+ariana.syncOpts({ fromDb: false })
+
+// write to db using Firebase api
+await ariana.ref().update({ age: 25 })
+
+ariana.age // => 24
+await ariana.reload() // => { name: 'Ariana', age: 25 }
+ariana.age // => 25
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```ts
+// create document in db
+const ariana = await Person.create({ name: 'Ariana', age: 24 })
+
+// turn off automatic syncing from db
+ariana.syncOpts({ fromDb: false })
+
+// write to db using Firebase api
+await ariana.ref().update({ age: 25 })
+
+ariana.age // => 24
+await ariana.reload()
+// => { _id: '-M6L56...' name: 'Ariana', age: 25 }
+ariana.age // => 25
+```
+
+</TabItem>
+</JsTsTabs>
 
 ## `ref`
 
