@@ -39,7 +39,7 @@ const addActiveClassStatics = <Schema extends DocumentSchema, ThisClass extends 
   }
 
   ActiveClass.values = async function (props?): Promise<ObjectFromDocument<Schema>[]> {
-    const cache = await this.cache()
+    const cache = await this.cache({ fetchNow: true })
     const array = Object.values(cache)
     return props
       ? array.filter(document => whereEq(props, document))

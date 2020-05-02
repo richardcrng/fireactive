@@ -119,12 +119,15 @@ export type ActiveClass<S extends DocumentSchema = DocumentSchema> = {
   /**
    * Caches the current table value
    * 
-   * @param {boolean} [listenForUpdates = true] whether the cache should
+   * @param {boolean} [opts.fetchNow] whether to force a refresh of the
+   *  cache from the database immediately
+   * 
+   * @param {boolean} [opts.listenForUpdates] whether the cache should
    *  listen and automatically update to table changes
    * 
    * @returns the cached object table for the class
    */
-  cache(listenForUpdates?: boolean): Promise<FirebaseTable<S>>,
+  cache(opts?: { fetchNow?: boolean, listenForUpdates?: boolean }): Promise<FirebaseTable<S>>,
 
   /**
    * The currently cached object table for the class

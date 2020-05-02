@@ -50,7 +50,7 @@ describe('ActiveClass: with server connection', () => {
 
         it('returns the object representing the table', async (done) => {
           const playerTable = await server.getValue(Player.ref())
-          const cachedPlayers = await Player.cache(true)
+          const cachedPlayers = await Player.cache({ listenForUpdates: true })
           expect(cachedPlayers).toEqual(playerTable)
           expect(Player.cached).toBe(cachedPlayers)
           expect(cachedPlayers[playerOne.getId()]).toEqual(playerOne.toObject())
@@ -78,7 +78,7 @@ describe('ActiveClass: with server connection', () => {
 
         it('returns the object representing the table', async (done) => {
           const playerTable = await server.getValue(Player.ref())
-          const cachedPlayers = await Player.cache(false)
+          const cachedPlayers = await Player.cache({ listenForUpdates: false })
           expect(cachedPlayers).toEqual(playerTable)
           expect(Player.cached).toBe(cachedPlayers)
           expect(cachedPlayers[playerOne.getId()]).toEqual(playerOne.toObject())
