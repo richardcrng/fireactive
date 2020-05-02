@@ -298,6 +298,68 @@ matchThree // => null
 </JsTsTabs>
 
 ### `findByIdOrFail`
+Instantiates an ActiveDocument for a document with the passed in id, throwing an error if no document matches.
+
+**Parameters:**
+- `id`: string
+
+**Returns:** `Promise<ActiveDocument>`, a promise that resolves with the matching <Link to='/api/docs/active-document'>ActiveDocument</Link>, or otherwise throws an error
+
+#### Example
+<JsTsTabs>
+<TabItem value='js'>
+
+```js
+// assuming we're starting with a fresh database
+
+const harry = await Person.create({ name: 'Harry', age: 40 })
+const hermione = await Person.create({ name: 'Hermione', age: 41 })
+
+harry._id // => '-at293f...'
+hermione.getId() // => '-au492p...'
+
+const matchOne = await Person.findByIdOrFail(harry._id)
+const matchTwo = await Person.findByIdOrFail(hermione.getId())
+
+matchOne.name // => 'Harry'
+matchTwo.name // => 'Hermione'
+
+await Person.findByIdOrFail('this is a really implausible id')
+/*
+ * Could not find a Person with that id.
+ * No Person with that id exists in the
+ * connected Firebase Realtime Database
+ */
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```ts
+// assuming we're starting with a fresh database
+
+const harry = await Person.create({ name: 'Harry', age: 40 })
+const hermione = await Person.create({ name: 'Hermione', age: 41 })
+
+harry._id // => '-at293f...'
+hermione.getId() // => '-au492p...'
+
+const matchOne = await Person.findByIdOrFail(harry._id as string) // _id is typed as string | null
+const matchTwo = await Person.findByIdOrFail(hermione.getId()) // getId() returns a string or throws
+
+matchOne.name // => 'Harry'
+matchTwo.name // => 'Hermione'
+
+await Person.findByIdOrFail('this is a really implausible id')
+/*
+ * Could not find a Person with that id.
+ * No Person with that id exists in the
+ * connected Firebase Realtime Database
+ */
+```
+
+</TabItem>
+</JsTsTabs>
 
 ### `findOne`
 

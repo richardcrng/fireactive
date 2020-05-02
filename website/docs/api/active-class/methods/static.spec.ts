@@ -113,23 +113,53 @@ describe('Basic CRUD methods', () => {
   })
 
   describe('#findById', () => {
+    let harry: Person
+    let hermione: Person
     beforeAll(async (done) => {
       await Person.delete({})
+      harry = await Person.create({ name: 'Harry', age: 40 })
+      hermione = await Person.create({ name: 'Hermione', age: 41 })
       done()
     })
 
     test('Happy path', async (done) => {
-      const harry = await Person.create({ name: 'Harry', age: 40 })
-      const hermione = await Person.create({ name: 'Hermione', age: 41 })
-
       const matchOne = await Person.findById(harry._id as string)
       const matchTwo = await Person.findById(hermione.getId())
       expect(matchOne && matchOne.name).toBe('Harry')
       expect(matchTwo && matchTwo.name).toBe('Hermione')
+      done()
+    })
 
+    test('Null when no match', async (done) => {
       const matchThree = await Person.findById('this is a really implausible id')
       expect(matchThree).toBeNull()
       done()
+    })
+  })
+
+  describe('#findByIdOrFail', () => {
+    let harry: Person
+    let hermione: Person
+    beforeAll(async (done) => {
+      await Person.delete({})
+      harry = await Person.create({ name: 'Harry', age: 40 })
+      hermione = await Person.create({ name: 'Hermione', age: 41 })
+      done()
+    })
+
+    test('Happy path', async (done) => {
+      const matchOne = await Person.findByIdOrFail(harry._id as string)
+      const matchTwo = await Person.findByIdOrFail(hermione.getId())
+      expect(matchOne.name).toBe('Harry')
+      expect(matchTwo.name).toBe('Hermione')
+      done()
+    })
+
+    testExpectError('Throws error when no match', async () => {
+      await Person.findByIdOrFail('this is a really implausible id')
+    }, {
+      message: `Could not find a Person with that id. No Person with that id exists in the connected Firebase Realtime Database`,
+      constructor: ActiveClassError
     })
   })
 })
