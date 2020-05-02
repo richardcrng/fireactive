@@ -57,7 +57,7 @@ Create a new model and save it to the database.
 **Parameters:**
 - `props`: an object of properties that conforms to the ActiveClass's <Link to='/docs/api/schema'>Schema</Link>
 
-**Returns:** `Promise<ActiveDocument>`
+**Returns:** `Promise<ActiveDocument>`, a promise that resolves into the <Link to='/docs/api/active-document'>ActiveDocument</Link> that has been created
 
 #### Example
 <JsTsTabs>
@@ -69,10 +69,10 @@ helen.name // => 'Helen'
 helen.age // => 27
 
 await Person.create({ name: 'Helen' })
-// (ts 2332) Property 'age' is missing in type '{ name: string; }' but required in type
+// ActiveClassError: Could not create Person. The required property 'age' is missing
 
 await Person.create({ name: 'Helen', age: '27' })
-// (ts 2332) Type 'string' is not assignable to type 'number'
+// ActiveClassError: Could not create Person. The property 'age' is of the wrong type
 ```
 
 </TabItem>
@@ -84,10 +84,10 @@ helen.name // => 'Helen'
 helen.age // => 27
 
 await Person.create({ name: 'Helen' })
-// ActiveClassError: Could not create Person. The required property 'age' is missing
+// (ts 2332) Property 'age' is missing in type '{ name: string; }' but required in type...
 
 await Person.create({ name: 'Helen', age: '27' })
-// ActiveClassError: Could not create Person. The property 'age' is of the wrong type
+// (ts 2332) Type 'string' is not assignable to type 'number'
 ```
 
 </TabItem>
