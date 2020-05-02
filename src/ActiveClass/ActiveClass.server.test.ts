@@ -37,7 +37,7 @@ describe('ActiveClass: with server connection', () => {
 
   describe('class methods/properties', () => {
     describe('#cache', () => {
-      describe('no argument provided', () => {
+      describe('argument of `true` provided', () => {
         let playerOne: typeof player
         let playerTwo: typeof player
 
@@ -50,7 +50,7 @@ describe('ActiveClass: with server connection', () => {
 
         it('returns the object representing the table', async (done) => {
           const playerTable = await server.getValue(Player.ref())
-          const cachedPlayers = await Player.cache()
+          const cachedPlayers = await Player.cache(true)
           expect(cachedPlayers).toEqual(playerTable)
           expect(Player.cached).toBe(cachedPlayers)
           expect(cachedPlayers[playerOne.getId()]).toEqual(playerOne.toObject())

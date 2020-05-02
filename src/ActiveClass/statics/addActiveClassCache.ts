@@ -2,7 +2,7 @@ import { ActiveClass } from "../../types/class.types";
 import { DocumentSchema, FirebaseTable } from "../../types/schema.types";
 
 /**
- * Adds default class methods and properties onto the `ActiveClass`
+ * Adds cache method onto the `ActiveClass`
  */
 const addActiveClassCache = <Schema extends DocumentSchema>(
   ActiveClass: ActiveClass<Schema>
@@ -11,11 +11,14 @@ const addActiveClassCache = <Schema extends DocumentSchema>(
     ActiveClass.cached = snapshot.val() || {} as FirebaseTable<Schema>
   }
 
-  ActiveClass.cache = async function (listenForUpdates = true): Promise<FirebaseTable<Schema>> {
-    this.ref().off('value', updateCacheFromSnapshot)
+  ActiveClass.cache = async function (listenForUpdates?: boolean): Promise<FirebaseTable<Schema>> {
     await this.ref().once('value', updateCacheFromSnapshot)
-    if (listenForUpdates) {
+    if (listenForUpdates === true) {
+      // turn off to make sure we never double up listeners
+      this.ref().off('value', updateCacheFromSnapshot)
       this.ref().on('value', updateCacheFromSnapshot)
+    } else if (listenForUpdates === false) {
+      this.ref().off('value', updateCacheFromSnapshot)
     }
     return this.cached
   }
