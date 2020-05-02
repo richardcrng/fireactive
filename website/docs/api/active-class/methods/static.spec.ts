@@ -162,5 +162,27 @@ describe('Basic CRUD methods', () => {
       constructor: ActiveClassError
     })
   })
+
+  describe('#findOne', () => {
+    beforeAll(async (done) => {
+      await Person.delete({})
+      await Person.create({ name: 'Harry', age: 40 })
+      await Person.create({ name: 'Hermione', age: 41 })
+      await Person.create({ name: 'Ron', age: 40 })
+      done()
+    })
+
+    it('retrieves first match', async (done) => {
+      const aged40 = await Person.findOne({ age: 40 })
+      expect(aged40 && aged40.name).toBe('Harry')
+      done()
+    })
+
+    it('returns null when no match', async (done) => {
+      const aged50 = await Person.findOne({ age: 50 })
+      expect(aged50).toBeNull()
+      done()
+    })
+  })
 })
 

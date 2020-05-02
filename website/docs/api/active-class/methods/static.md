@@ -362,6 +362,50 @@ await Person.findByIdOrFail('this is a really implausible id')
 </JsTsTabs>
 
 ### `findOne`
+Instantiates an ActiveDocument for the first document in the database that partially matches the passed in object.
+
+**Parameters:**
+- `props`: an object of properties that is consistent with the ActiveClass's <Link to='/docs/api/schema'>Schema</Link> (but needn't include all properties)
+
+**Returns:** `Promise<ActiveDocument | null>`, a promise that resolves with the first matching <Link to='/api/docs/active-document'>ActiveDocument</Link> if any exists, and `null` otherwise
+
+#### Example
+<JsTsTabs>
+<TabItem value='js'>
+
+```js
+// assuming we're starting with a fresh database
+
+await Person.create({ name: 'Harry', age: 40 })
+await Person.create({ name: 'Hermione', age: 41 })
+await Person.create({ name: 'Ron', age: 40 })
+
+const aged40 = await Person.findOne({ age: 40 })
+aged40?.name // => 'Harry'
+
+const aged50 = await Person.findOne({ age: 50 })
+aged50 // => null
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```ts
+// assuming we're starting with a fresh database
+
+await Person.create({ name: 'Harry', age: 40 })
+await Person.create({ name: 'Hermione', age: 41 })
+await Person.create({ name: 'Ron', age: 40 })
+
+const aged40 = await Person.findOne({ age: 40 })
+aged40?.name // => 'Harry'
+
+const aged50 = await Person.findOne({ age: 50 })
+aged50 // => null
+```
+
+</TabItem>
+</JsTsTabs>
 
 ### `update`
 
