@@ -93,5 +93,23 @@ describe('Basic CRUD methods', () => {
       done()
     })
   })
+
+  describe('#find', () => {
+    beforeAll(async (done) => {
+      await Person.delete({})
+      done()
+    })
+
+    test('Happy path', async (done) => {
+      await Person.create({ name: 'Harry', age: 40 })
+      await Person.create({ name: 'Hermione', age: 41 })
+      await Person.create({ name: 'Ron', age: 40 })
+
+      const aged40 = await Person.find({ age: 40 })
+      expect(aged40[0].name).toBe('Harry')
+      expect(aged40[1].name).toBe('Ron')
+      done()
+    })
+  })
 })
 

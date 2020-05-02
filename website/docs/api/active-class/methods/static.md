@@ -180,7 +180,6 @@ await Person.create({ name: 'Hermione', age: 41 })
 await Person.delete({ name: 'Harry' }) // => true
 await Person.delete({ name: 'Ron' }) // => false
 await Person.delete({ age: 40 }) // => false (Harry is already deleted, so nothing to delete)
-
 ```
 
 </TabItem>
@@ -195,13 +194,52 @@ await Person.create({ name: 'Hermione', age: 41 })
 await Person.delete({ name: 'Harry' }) // => true
 await Person.delete({ name: 'Ron' }) // => false
 await Person.delete({ age: 40 }) // => false (Harry is already deleted, so nothing to delete)
-
 ```
 
 </TabItem>
 </JsTsTabs>
 
 ### `find`
+Instantiates an ActiveDocument for every document in the database that partially matches the passed in object.
+
+**Parameters:**
+- `props`: an object of properties that is consistent with the ActiveClass's <Link to='/docs/api/schema'>Schema</Link> (but needn't include all properties)
+
+**Returns:** `Promise<ActiveDocument[]>`, a promise that resolves with an array of <Link to='/docs/api/active-document'>ActiveDocuments</Link>
+
+#### Example
+<JsTsTabs>
+<TabItem value='js'>
+
+```js
+// assuming we're starting with a fresh database
+
+await Person.create({ name: 'Harry', age: 40 })
+await Person.create({ name: 'Hermione', age: 41 })
+await Person.create({ name: 'Ron', age: 40 })
+
+const aged40 = await Person.find({ age: 40 })
+aged40[0].name // => 'Harry'
+aged40[1].name // => 'Ron'
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```ts
+// assuming we're starting with a fresh database
+
+await Person.create({ name: 'Harry', age: 40 })
+await Person.create({ name: 'Hermione', age: 41 })
+await Person.create({ name: 'Ron', age: 40 })
+
+const aged40 = await Person.find({ age: 40 })
+aged40[0].name // => 'Harry'
+aged40[1].name // => 'Ron'
+```
+
+</TabItem>
+</JsTsTabs>
 
 ### `findById`
 
