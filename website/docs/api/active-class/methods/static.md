@@ -411,7 +411,8 @@ aged50 // => null
 Updates documents that partially match a first object using the properties of a second object.
 
 **Parameters:**
-- `matchProps`: an object of properties that is consistent with the ActiveClass's <Link to='/docs/api/schema'>Schema</Link> (but needn't include all properties)
+- `matchProps`: an object of properties that is consistent with the ActiveClass's <Link to='/docs/api/schema'>Schema</Link> (but needn't include all properties), used to match documents to update
+- `updateProps`: an object of properties that is consistent with the ActiveClass's <Link to='/docs/api/schema'>Schema</Link> (but needn't include all properties), used to update all matched documents
 
 **Returns:** `Promise<ActiveDocument[]>`, a promise that resolves with an array of updated <Link to='/docs/api/active-document'>ActiveDocuments</Link>
 
