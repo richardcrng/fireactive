@@ -39,7 +39,7 @@ const addActiveClassStatics = <Schema extends DocumentSchema, ThisClass extends 
   }
 
   ActiveClass.values = async function (props?): Promise<ObjectFromDocument<Schema>[]> {
-    const cache = await this.cache()
+    const cache = await this.cache({ fetchNow: true })
     const array = Object.values(cache)
     return props
       ? array.filter(document => whereEq(props, document))
@@ -135,8 +135,8 @@ const addActiveClassStatics = <Schema extends DocumentSchema, ThisClass extends 
   }
 
   // @ts-ignore : inheritance
-  ActiveClass.update = async function(props, newProps): Promise<ActiveDocument<Schema>[]> {
-    const matchingVals = await this.values(props)
+  ActiveClass.update = async function(matchProps, newProps): Promise<ActiveDocument<Schema>[]> {
+    const matchingVals = await this.values(matchProps)
     const updatedVals = matchingVals.map(val => ({ ...val, ...newProps }))
     await Promise.all(updatedVals.map(async (val) => {
       if (val._id) await this.ref(val._id).update(newProps)
@@ -148,8 +148,8 @@ const addActiveClassStatics = <Schema extends DocumentSchema, ThisClass extends 
   }
 
   // @ts-ignore : inheritance
-  ActiveClass.updateOne = async function (props, newProps): Promise<ActiveDocument<Schema> | null> {
-    const firstMatch = await this.value(props)
+  ActiveClass.updateOne = async function (matchProps, newProps): Promise<ActiveDocument<Schema> | null> {
+    const firstMatch = await this.value(matchProps)
     if (!firstMatch) return null
     const updatedMatch = { ...firstMatch, ...newProps }
     if (firstMatch && firstMatch._id) await this.ref(firstMatch._id).update(newProps)

@@ -119,12 +119,15 @@ export type ActiveClass<S extends DocumentSchema = DocumentSchema> = {
   /**
    * Caches the current table value
    * 
-   * @param {boolean} [listenForUpdates = true] whether the cache should
+   * @param {boolean} [opts.fetchNow] whether to force a refresh of the
+   *  cache from the database immediately
+   * 
+   * @param {boolean} [opts.listenForUpdates] whether the cache should
    *  listen and automatically update to table changes
    * 
    * @returns the cached object table for the class
    */
-  cache(listenForUpdates?: boolean): Promise<FirebaseTable<S>>,
+  cache(opts?: { fetchNow?: boolean, listenForUpdates?: boolean }): Promise<FirebaseTable<S>>,
 
   /**
    * The currently cached object table for the class
@@ -223,23 +226,24 @@ export type ActiveClass<S extends DocumentSchema = DocumentSchema> = {
 
   /**
    * Updates all `ActiveDocument`s from the database that
-   *  match the passed in `props` with `updateProps`
+   *  match the passed in `matchProps` with `updateProps`
    * 
-   * @param props - props to match by
+   * @param matchProps - props to match by
    * @param updateProps - props to update
    * @returns an array of `ActiveDocument<S>` that were updated
    */
-  update<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromDocument<S>>, updateProps: Partial<DocumentProps<S>>): Promise<InstanceType<ThisClass>[]>
+  update<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, matchProps: Partial<ObjectFromDocument<S>>, updateProps: Partial<DocumentProps<S>>): Promise<InstanceType<ThisClass>[]>
 
   /**
    * Update a single ActiveDocument in the database by
-   *  retrieving the first that matches the passed in `props`
+   *  retrieving the first that matches the passed in `matchProps`
    *  and updating it using `updateProps`
    * 
-   * @param props 
+   * @param matchProps - props to match by
+   * @param updateProps - props to update
    * @returns the updated `ActiveDocument` if there is one, or `null` otherwise
    */
-  updateOne<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: Partial<ObjectFromDocument<S>>, updateProps: Partial<DocumentProps<S>>): Promise<InstanceType<ThisClass> | null>,
+  updateOne<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, matchProps: Partial<ObjectFromDocument<S>>, updateProps: Partial<DocumentProps<S>>): Promise<InstanceType<ThisClass> | null>,
 
 
   value(props: Partial<ObjectFromDocument<S>>): Promise<ObjectFromDocument<S> | null>
