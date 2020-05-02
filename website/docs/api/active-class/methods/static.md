@@ -242,6 +242,60 @@ aged40[1].name // => 'Ron'
 </JsTsTabs>
 
 ### `findById`
+Instantiates an ActiveDocument for a document with the passed in id.
+
+**Parameters:**
+- `id`: string
+
+**Returns:** `Promise<ActiveDocument | null>`, a promise that resolves with the matching <Link to='/api/docs/active-document'>ActiveDocument</Link> if it exists, and `null` otherwise
+
+#### Example
+<JsTsTabs>
+<TabItem value='js'>
+
+```js
+// assuming we're starting with a fresh database
+
+const harry = await Person.create({ name: 'Harry', age: 40 })
+const hermione = await Person.create({ name: 'Hermione', age: 41 })
+
+harry._id // => '-at293f...'
+hermione.getId() // => '-au492p...'
+
+const matchOne = await Person.findById(harry._id)
+const matchTwo = await Person.findById(hermione.getId())
+
+matchOne.name // => 'Harry'
+matchTwo.name // => 'Hermione'
+
+const matchThree = await Person.findById('this is a really implausible id')
+matchThree // => null
+```
+
+</TabItem>
+<TabItem value='ts'>
+
+```ts
+// assuming we're starting with a fresh database
+
+const harry = await Person.create({ name: 'Harry', age: 40 })
+const hermione = await Person.create({ name: 'Hermione', age: 41 })
+
+harry._id // => '-at293f...'
+hermione.getId() // => '-au492p...'
+
+const matchOne = await Person.findById(harry._id as string) // _id is typed as string | null
+const matchTwo = await Person.findById(hermione.getId()) // getId() returns a string or throws
+
+matchOne?.name // => 'Harry'
+matchTwo?.name // => 'Hermione'
+
+const matchThree = await Person.findById('this is a really implausible id')
+matchThree // => null
+```
+
+</TabItem>
+</JsTsTabs>
 
 ### `findByIdOrFail`
 

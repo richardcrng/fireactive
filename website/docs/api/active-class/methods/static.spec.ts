@@ -111,5 +111,26 @@ describe('Basic CRUD methods', () => {
       done()
     })
   })
+
+  describe('#findById', () => {
+    beforeAll(async (done) => {
+      await Person.delete({})
+      done()
+    })
+
+    test('Happy path', async (done) => {
+      const harry = await Person.create({ name: 'Harry', age: 40 })
+      const hermione = await Person.create({ name: 'Hermione', age: 41 })
+
+      const matchOne = await Person.findById(harry._id as string)
+      const matchTwo = await Person.findById(hermione.getId())
+      expect(matchOne && matchOne.name).toBe('Harry')
+      expect(matchTwo && matchTwo.name).toBe('Hermione')
+
+      const matchThree = await Person.findById('this is a really implausible id')
+      expect(matchThree).toBeNull()
+      done()
+    })
+  })
 })
 
