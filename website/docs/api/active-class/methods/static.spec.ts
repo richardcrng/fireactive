@@ -226,8 +226,11 @@ describe('Basic CRUD methods', () => {
 describe('Other methods', () => {
   describe('#ref', () => {
     test('Happy path', () => {
-      expect(Person.ref().toString()).toBe(`http://localhost:${server.getPort()}/People`)
-      expect(Person.ref('some/arbitrary/path').toString()).toBe(`http://localhost:${server.getPort()}/People/some/arbitrary/path`)
+      const baseUrl = `http://localhost:${server.getPort()}`
+
+      expect(Person.ref().toString()).toBe(`${baseUrl}/People`)
+      expect(Person.ref('some/arbitrary/path').toString()).toBe(`${baseUrl}/People/some/arbitrary/path`)
+      expect(Person.ref().child('chained').child('path').toString()).toBe(`${baseUrl}/People/chained/path`)
     })
   })
 })

@@ -521,6 +521,9 @@ Person.ref().toString()
 
 Person.ref('some/arbitrary/path').toString()
 // => 'https://your-database.firebase.io/People/some/arbitrary/path'
+
+Person.ref().child('chained').child('path').toString()
+// => 'https://your-database.firebase.io/People/chained/path'
 ```
 
 </TabItem>
