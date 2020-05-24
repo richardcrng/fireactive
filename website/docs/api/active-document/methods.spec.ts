@@ -73,6 +73,20 @@ describe('After initializing', () => {
     })
   })
 
+  describe('ref', () => {
+    it('returns the ActiveDocument refence when no argument is provided', async (done) => {
+      const ariana = await Person.create({ name: 'Ariana', age: 24 })
+      expect(ariana.ref().toString()).toBe(`http://localhost:${server.getPort()}/${ariana.constructor.key}/${ariana._id}`)
+      done()
+    })
+
+    it('returns the ActiveDocument child refence when a path is provided', async (done) => {
+      const ariana = await Person.create({ name: 'Ariana', age: 24 })
+      expect(ariana.ref('age').toString()).toBe(`http://localhost:${server.getPort()}/${ariana.constructor.key}/${ariana._id}/age`)
+      done()
+    })
+  })
+
   describe('.syncOpts', () => {
     describe('default settings', () => {
       describe(".create", () => {

@@ -145,6 +145,22 @@ ariana.age // => 25
 </JsTsTabs>
 
 ## `ref`
+Return the [Firebase database Reference](https://firebase.google.com/docs/reference/js/firebase.database.Reference) for the ActiveDocument or a specified child path.
+
+**Parameters:**
+- `path` : `string` (optional), the path to locate the reference for starting from the root of the ActiveDocument
+
+**Returns:** a [`firebase.database.Reference`](https://firebase.google.com/docs/reference/js/firebase.database.Reference) for the ActiveDocument or a specified child path
+
+```js
+const ariana = await Person.create({ name: "Ariana", age: 24 })
+ariana.ref().toString()
+// => 'https://your-database.firebase.io/People/-M86Z9...'
+
+ariana.ref('age').toString()
+// => 'https://your-database.firebase.io/People/-M86Z9.../age'
+
+```
 
 ## `save`
 
@@ -154,7 +170,7 @@ ariana.age // => 25
 Returns (and optionally updates) the current sync settings for the ActiveDocument
 
 **Parameters:**
-- `opts` : `{ toDb?: boolean, fromDb?: boolean }`, optional)
+- `opts` : `{ toDb?: boolean, fromDb?: boolean }`, optional
   - `opts.toDb` : `boolean`, should changes to the document's properties automatically sync to the database automatically (without calling `.save`)?
   - `opts.fromDb` : `boolean`, should changes from the database automatically sync to the document (without calling `reload`)?
 
