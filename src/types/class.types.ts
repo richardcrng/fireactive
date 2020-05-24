@@ -67,6 +67,15 @@ export type ActiveDocument<S extends DocumentSchema = DocumentSchema> = ObjectFr
   pendingSetters({ array }: { array: true }): Promise<any>[],
 
   /**
+   * The number of pending setter promises to
+   *  the database
+   * 
+   * @returns the number of all pending setter promises
+   *  to the database
+   */
+  pendingSetters({ count }: { count: true }): number,
+
+  /**
    * Returns the current syncing options for the `ActiveDocument`
    */
   syncOpts(): SyncOpts

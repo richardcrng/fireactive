@@ -58,6 +58,25 @@ describe('After initializing', () => {
     })
   })
 
+  describe('.pendingSetters', () => {
+    it('returns an array of setter promises pending for the database', async (done) => {
+      const ariana = await Person.create({ name: 'Ariana', age: 24 })
+      expect(ariana.pendingSetters({ count: true })).toBe(0)
+      ariana.age = 25
+      ariana.name = 'Ms Grande'
+      expect(ariana.age).toBe(25)
+      expect(ariana.name).toBe('Ms Grande')
+
+      expect(ariana.pendingSetters({ count: true })).toBe(2)
+      await ariana.pendingSetters()
+      expect(ariana.pendingSetters({ count: true })).toBe(0)
+      const snapshot = await ariana.ref().once('value')
+      expect(snapshot.val().name).toBe('Ms Grande')
+      expect(snapshot.val().age).toBe(25)
+      done()
+    })
+  })
+
   describe('.reload', () => {
     it("refreshes properties from the database", async (done) => {
       const ariana = await Person.create({ name: 'Ariana', age: 24 })
@@ -73,7 +92,7 @@ describe('After initializing', () => {
     })
   })
 
-  describe('ref', () => {
+  describe('.ref', () => {
     it('returns the ActiveDocument refence when no argument is provided', async (done) => {
       const ariana = await Person.create({ name: 'Ariana', age: 24 })
       expect(ariana.ref().toString()).toBe(`http://localhost:${server.getPort()}/${ariana.constructor.key}/${ariana._id}`)

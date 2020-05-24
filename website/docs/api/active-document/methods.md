@@ -175,8 +175,28 @@ dbSnapshot.val().name // => 'Ariana'
 dbSnapshot.val().age // => 25
 ```
 
-
 ## `pendingSetters`
+Returns a promise that resolves when all setter promises have resolved to the database.
+
+```js
+const ariana = await Person.create({ name: 'Ariana', age: 24 })
+ariana.pendingSetters({ count: true }) // => 0
+ariana.age = 25
+ariana.age // => 25
+ariana.name = 'Ms Grande'
+ariana.age // => 'Ms Grande'
+
+// there are now two pending setters
+ariana.pendingSetters({ count: true }) // => 2
+// wait for them to resolve
+await ariana.pendingSetters()
+ariana.pendingSetters({ count: true }) // => 0
+
+// db will now have correct values
+const snapshot = await ariana.ref().once('value')
+snapshot.val().name // => 'Ms Grande'
+snapshot.val().age // => 25
+```
 
 ## `syncOpts`
 Returns (and optionally updates) the current sync settings for the ActiveDocument
