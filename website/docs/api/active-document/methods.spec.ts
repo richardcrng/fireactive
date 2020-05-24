@@ -134,18 +134,32 @@ describe('After initializing', () => {
       })
     })
 
+    describe("updating settings", () => {
+      describe('turning syncing off from db after a create', () => {
+        let ariana: Person
 
-    it("refreshes properties from the database", async (done) => {
-      const ariana = await Person.create({ name: 'Ariana', age: 24 })
-      ariana.syncOpts({ fromDb: false })
+        beforeAll(async (done) => {
+          ariana = await Person.create({ name: "Ariana", age: 24 })
+          done()
+        })
 
-      await ariana.ref().update({ age: 25 })
-      expect(ariana.age).toBe(24)
+        it("returns the updated settings when turning syncing off fromDb", () => {
+          expect(ariana.syncOpts()).toEqual({ toDb: true, fromDb: true })
+          expect(ariana.syncOpts({ fromDb: false })).toEqual({ toDb: true, fromDb: false })
+        })
 
-      const reloaded = await ariana.reload()
-      expect(reloaded).toMatchObject({ name: 'Ariana', age: 25 })
-      expect(ariana.age).toBe(25)
-      done()
+        it("actually stops syncing fromDb", async (done) => {
+          await ariana.ref().update({ age: 25 })
+          expect(ariana.age).toBe(24)
+          done()
+        })
+
+        it("can fetch updates using reload", async (done) => {
+          await ariana.reload()
+          expect(ariana.age).toBe(25)
+          done()
+        })
+      })
     })
   })
 })
