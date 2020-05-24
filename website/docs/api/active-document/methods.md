@@ -101,7 +101,7 @@ Refreshes the ActiveDocument's properties based on the current database values.
 **Parameters:**
 None
 
-**Returns:** `object` reloaded from the database
+**Returns:** `Promise<object>`, a promise that resolves into the object reloaded from the database
 
 #### Example
 <JsTsTabs>
@@ -151,3 +151,74 @@ ariana.age // => 25
 ## `pendingSetters`
 
 ## `syncOpts`
+Returns (and optionally updates) the current sync settings for the ActiveDocument
+
+**Parameters:**
+- `opts` : `{ toDb?: boolean, fromDb?: boolean }`, optional)
+  - `opts.toDb` : `boolean`, should changes to the document's properties automatically sync to the database automatically (without calling `.save`)?
+  - `opts.fromDb` : `boolean`, should changes from the database automatically sync to the document (without calling `reload`)?
+
+**Returns:** `{ fromDb: boolean, toDb: boolean }`, an object representing the current sync settings for the ActiveDocument
+
+### Default settings
+#### `create`
+Active Documents created via the `create` method have `toDb` and `fromDb` syncing *on* by default.
+* `toDb: true` means that, when you set a property on the ActiveDocument, it automatically syncs to the Firebase Realtime Database;
+* `fromDb: true` means that, when the Firebase Realtime Database is updated, it automatically syncs back to the ActiveDocument
+```js
+let ariana = await Person.create({ name: 'Ariana', age: 24 })
+ariana.syncOpts() // => { fromDb: true, toDb: true }
+
+// so changes sync TO database
+ariana.age = 25
+// await the promise with the update for the database
+await ariana.pendingSetters()
+const snapshot = await ariana.ref().once('value')
+snapshot.val().age // => 25
+// (has synced to db)
+
+// and changes sync FROM database
+await ariana.ref().update({ name: "Ms Grande" })
+ariana.name // => "Ms Grande"
+// (has synced from db)
+```
+
+#### `new`
+Active Documents created via the `new` constructor have `toDb` and `fromDb` syncing *off* by default.
+* `toDb: false` means that, when you set a property on the ActiveDocument, it doesn't automatically sync to the Firebase Realtime Database;
+* `fromDb: false` means that, when the Firebase Realtime Database is updated, it doesn't automatically sync back to the ActiveDocument
+```js
+let ariana = new Person({ name: 'Ariana', age: 24 })
+// save to database
+ariana.syncOpts() // => { fromDb: false, toDb: false }
+await ariana.save()
+
+// so changes don't sync TO database
+ariana.age = 25
+const snapshot = await ariana.ref().once('value')
+snapshot.val().age // => 24
+// (hasn't synced to db)
+
+// and changes don't sync FROM database
+await ariana.ref().update({ name: "Ms Grande" })
+ariana.name // => "Ariana"
+// (hasn't synced from db)
+```
+
+### `toDb`
+```js
+// create document in db
+const ariana = await Person.create({ name: 'Ariana', age: 24 })
+
+// turn off automatic syncing from db
+ariana.syncOpts({ fromDb: false })
+
+// write to db using Firebase api
+await ariana.ref().update({ age: 25 })
+
+ariana.age // => 24 (syncing is off)
+await ariana.reload()
+// => { _id: '-M6L56...' name: 'Ariana', age: 25 }
+ariana.age // => 25
+```
+

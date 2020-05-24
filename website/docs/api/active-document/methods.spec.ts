@@ -72,5 +72,81 @@ describe('After initializing', () => {
       done()
     })
   })
+
+  describe('.syncOpts', () => {
+    describe('default settings', () => {
+      describe(".create", () => {
+        let ariana: Person
+        beforeAll(async (done) => {
+          ariana = await Person.create({ name: 'Ariana', age: 24 })
+          done()
+        })
+
+        it("has both syncing to and from database on by default", () => {
+          expect(ariana.name).toBe("Ariana")
+          expect(ariana.age).toBe(24)
+          expect(ariana.syncOpts()).toEqual({ fromDb: true, toDb: true })
+        })
+
+        it("successfully syncs changes TO database", async (done) => {
+          ariana.age = 25
+          await ariana.pendingSetters()
+          const snapshot = await ariana.ref().once('value')
+          expect(snapshot.val().age).toBe(25)
+          done()
+        })
+
+        it("successfully syncs changes FROM database", async (done) => {
+          await ariana.ref().update({ name: "Ms Grande" })
+          expect(ariana.name).toBe("Ms Grande")
+          done()
+        })
+      })
+
+      describe("new", () => {
+        let ariana: Person
+        beforeAll(() => {
+          ariana = new Person({ name: "Ariana", age: 24 })
+        })
+
+        it("has both syncing to and from database off by default", async (done) => {
+          expect(ariana.name).toBe("Ariana")
+          expect(ariana.age).toBe(24)
+          expect(ariana.syncOpts()).toEqual({ fromDb: false, toDb: false })
+          await ariana.save()
+          expect(ariana.syncOpts()).toEqual({ fromDb: false, toDb: false })
+          done()
+        })
+
+        it("does not sync changes TO database", async (done) => {
+          ariana.age = 25
+          await ariana.pendingSetters()
+          const snapshot = await ariana.ref().once('value')
+          expect(snapshot.val().age).toBe(24)
+          done()
+        })
+
+        it("does not sync changes FROM database", async (done) => {
+          await ariana.ref().update({ name: "Ms Grande" })
+          expect(ariana.name).toBe("Ariana")
+          done()
+        })
+      })
+    })
+
+
+    it("refreshes properties from the database", async (done) => {
+      const ariana = await Person.create({ name: 'Ariana', age: 24 })
+      ariana.syncOpts({ fromDb: false })
+
+      await ariana.ref().update({ age: 25 })
+      expect(ariana.age).toBe(24)
+
+      const reloaded = await ariana.reload()
+      expect(reloaded).toMatchObject({ name: 'Ariana', age: 25 })
+      expect(ariana.age).toBe(25)
+      done()
+    })
+  })
 })
 
