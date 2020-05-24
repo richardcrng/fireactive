@@ -6,6 +6,7 @@ sidebar_label: Overview
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import Link from '@docusaurus/Link';
 
 `Schema` is one of the main exports from Fireactive.
 
@@ -112,7 +113,7 @@ new User({
 </Tabs>
 
 ### Simple configuration
-Schema fields are required (and therefore must always exist on a record) unless configured otherwise.
+Schema fields are required (and therefore must always exist on a related <Link to='/docs/api/active-document'>ActiveDocument</Link>) unless configured otherwise.
 
 Suppose we want to tweak our schema in the following way therefore:
 

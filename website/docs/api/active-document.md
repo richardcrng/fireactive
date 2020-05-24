@@ -26,10 +26,10 @@ const animalSchema = {
   age: Schema.number
 }
 
-// create the ActiveClass
+// create the ActiveClass, Animal
 class Animal extends ActiveClass(animalSchema) {}
 
-// instantiate the ActiveClass for an ActiveRecord
+// instantiate an ActiveDocument from the ActiveClass
 const mog = new Animal({ name: 'Mog', age: 4 })
 ```
 
@@ -45,10 +45,10 @@ const animalSchema = {
   age: Schema.number
 }
 
-// create the ActiveClass
+// create the ActiveClass, Animal
 class Animal extends ActiveClass(animalSchema) {}
 
-// instantiate the ActiveClass for an ActiveRecord
+// instantiate an ActiveDocument from the ActiveClass
 const mog = new Animal({ name: 'Mog', age: 4 })
 ```
 

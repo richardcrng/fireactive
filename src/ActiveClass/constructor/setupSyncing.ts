@@ -16,9 +16,14 @@ function setupSyncing<Schema extends DocumentSchema>({
   let syncCount: number = 0
 
   let pendingSetters: Promise<any>[] = []
-  document.pendingSetters = (opts?: { array: true }): any => {
-    return opts && opts.array
-      ? [...pendingSetters] // stop users mutating the underlying array
+  document.pendingSetters = (opts?: { array?: true, count?: true }): any => {
+    return opts
+      ? opts.count
+        ? pendingSetters.length
+        : opts.array
+          // stop users mutating the underlying array
+          ? [...pendingSetters]
+          : Promise.all(pendingSetters)
       : Promise.all(pendingSetters)
   }
 

@@ -516,15 +516,15 @@ describe('ActiveClass: with server connection', () => {
       let res: any
       beforeAll(async (done) => {
         player = await Player.create({ name: 'Muriel', age: 7 })
+        player.syncOpts({ fromDb: false, toDb: false })
         await Player.ref().child(player._id as string).set({ name: 'Jerry', age: 12 })
         res = await player.reload()
         done()
       })
 
-      it('reloads the player from the database', async (done) => {
+      it('reloads the player from the database', () => {
         expect(res).toMatchObject({ name: 'Jerry', age: 12 })
         expect(player).toMatchObject({ name: 'Jerry', age: 12 })
-        done()
       })
     })
 
