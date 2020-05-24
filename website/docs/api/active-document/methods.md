@@ -163,6 +163,18 @@ ariana.ref('age').toString()
 ```
 
 ## `save`
+Saves an ActiveDocument and its current properties to the database
+
+```js
+const ariana = new Person({ name: "Ariana", age: 24 })
+
+ariana.age = 25
+await ariana.save()
+const dbSnapshot = await ariana.ref().once('value')
+dbSnapshot.val().name // => 'Ariana'
+dbSnapshot.val().age // => 25
+```
+
 
 ## `pendingSetters`
 

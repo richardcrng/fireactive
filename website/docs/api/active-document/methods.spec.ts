@@ -87,6 +87,18 @@ describe('After initializing', () => {
     })
   })
 
+  describe('save', () => {
+    it('saves an activeDocument and its current properties to the database', async (done) => {
+      const ariana = new Person({ name: "Ariana", age: 24 })
+      ariana.age = 25
+      await ariana.save()
+      const dbSnapshot = await ariana.ref().once('value')
+      expect(dbSnapshot.val().name).toBe("Ariana")
+      expect(dbSnapshot.val().age).toBe(25)
+      done()
+    })
+  })
+
   describe('.syncOpts', () => {
     describe('default settings', () => {
       describe(".create", () => {
