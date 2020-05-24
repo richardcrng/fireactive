@@ -190,6 +190,7 @@ ariana.age // => 'Ms Grande'
 ariana.pendingSetters({ count: true }) // => 2
 // wait for them to resolve
 await ariana.pendingSetters()
+// there will be no more pending setters left
 ariana.pendingSetters({ count: true }) // => 0
 
 // db will now have correct values
