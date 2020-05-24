@@ -4,6 +4,7 @@ title: Creating an ActiveClass
 sidebar_label: Creating an ActiveClass
 ---
 
+import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import TabItem from '@theme/TabItem';
 import JsTsTabs from '../../src/lib/atoms/JsTsTabs';
@@ -12,11 +13,11 @@ import JsTsTabs from '../../src/lib/atoms/JsTsTabs';
 
 A Fireactive ActiveClass comes with lots of convenient prototype and static methods to make it easy to create, update and sync data to and from your Firebase Realtime Database.
 
-:::info ActiveClass? ActiveRecord?
+:::info ActiveClass? ActiveDocument?
 This documentation distinguishes between:
 
 1. An *ActiveClass*, which is an ES6 Class that extends `ActiveClass(someSchema)`; and
-2. An *ActiveRecord*, which is *instance* of some ActiveClass.
+2. An *ActiveDocument*, which is *instance* of some ActiveClass.
 :::
 
 ## ES6 Classes with `ActiveClass`
@@ -25,7 +26,7 @@ This documentation distinguishes between:
 
 To create an `ActiveClass`, you should declare an [ES6 Class](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes) that extends `ActiveClass(someSchema)`.
 
-In the below example, we'll be using the [user `Schema` defined previously](schema-101.md).
+In the below example, we'll be using the <Link to='/docs/quick-start/schema-101'>user `Schema` defined previously</Link>.
 
 <JsTsTabs>
 <TabItem value="js">
@@ -152,4 +153,4 @@ await user.save()
 </TabItem>
 </JsTsTabs>
 
-So, let's try following the error and doing just that: [initializing a connection via `Fireactive.initialize`](connecting-101.md)!
+So, let's try following the error and doing just that: <Link to='/docs/quick-start/connecting-101'>initializing a connection via `Fireactive.initialize`</Link>!

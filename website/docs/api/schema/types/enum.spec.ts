@@ -1,6 +1,6 @@
-import { ActiveClass, Schema } from '../../../src'
-import testExpectError from '../../../src/utils/testExpectError';
-import ActiveClassError from '../../../src/ActiveClass/Error';
+import { ActiveClass, Schema } from '../../../../../src'
+import testExpectError from '../../../../../src/utils/testExpectError';
+import ActiveClassError from '../../../../../src/ActiveClass/Error';
 
 describe('Basic example', () => {
   const coffeeOrderSchema = {

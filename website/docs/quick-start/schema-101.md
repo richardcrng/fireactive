@@ -7,11 +7,11 @@ sidebar_label: Creating a Schema
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import TabItem from '@theme/TabItem';
 import JsTsTabs from '../../src/lib/atoms/JsTsTabs';
-
+import Link from '@docusaurus/Link'
 
 ## Why use a `Schema`?
 
-Schemas are the key to providing predictable data, autocomplete and type-checking in your [ActiveClasses](active-class-101.md).
+Schemas are the key to providing predictable data, autocomplete and type-checking in your <Link to='/docs/quick-start/active-class-101'>ActiveClasses</Link>.
 
 <img alt="VS Code Autocomplete with Fireactive" src={useBaseUrl('img/fireactive-autocomplete.png')} />
 

@@ -17,13 +17,29 @@ module.exports = {
     ],
     "API": [
       {
+        "ActiveClass": [
+          'api/active-class',
+          'api/active-class/methods/static',
+          // 'api/active-class/methods/prototype'
+        ],
+        "ActiveDocument": [
+          'api/active-document',
+          'api/active-document/methods'
+        ]
+      },
+      {
         "Schema": [
-          'schema/overview',
-          'schema/boolean',
-          'schema/enum',
-          'schema/indexed',
-          'schema/number',
-          'schema/string'
+          'api/schema',
+          'api/schema/nested',
+          {
+            "Types": [
+              'api/schema/types/boolean',
+              'api/schema/types/enum',
+              'api/schema/types/indexed',
+              'api/schema/types/number',
+              'api/schema/types/string'
+            ]
+          }
         ]
       }
     ] 

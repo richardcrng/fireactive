@@ -32,7 +32,7 @@ afterAll(async (done) => {
 describe('CRUD', () => {
   let player: Player
   describe('Creating an entry', () => {
-    test('Instantiating a valid `ActiveRecord`', async (done) => {
+    test('Instantiating a valid `ActiveDocument`', async (done) => {
       player = await Player.create({ name: 'Pedro', age: 3, isCool: true })
       expect(player.name).toBe('Pedro')
       expect(player.age).toBe(3)
@@ -43,7 +43,7 @@ describe('CRUD', () => {
       done()
     })
 
-    test('Checking the `ActiveRecord` against the database', async (done) => {
+    test('Checking the `ActiveDocument` against the database', async (done) => {
       const playerSnapshot = await player.ref().once('value')
       const playerInDb = playerSnapshot.val()
       expect(playerInDb.name).toBe('Pedro')
