@@ -205,18 +205,28 @@ ariana.name // => "Ariana"
 // (hasn't synced from db)
 ```
 
-### `toDb`
+### Updating settings
+You can update the sync options for a given ActiveDocument by passing in an object of new settings.
+
+For example, suppose we wanted to turn *off* automatic syncing from the database for an ActiveDocument instantiated using `create` (which has syncing *on* by default)"
+
 ```js
 // create document in db
 const ariana = await Person.create({ name: 'Ariana', age: 24 })
 
+// syncing from database is on by default with `create`
+ariana.syncOpts()
+// => { fromDb: true, toDb: true }
+
 // turn off automatic syncing from db
 ariana.syncOpts({ fromDb: false })
+// => { fromDb: false, toDb: true }
 
 // write to db using Firebase api
 await ariana.ref().update({ age: 25 })
 
 ariana.age // => 24 (syncing is off)
+// manually sync from db using reload
 await ariana.reload()
 // => { _id: '-M6L56...' name: 'Ariana', age: 25 }
 ariana.age // => 25
