@@ -1,14 +1,14 @@
 module.exports = {
   title: 'Fireactive',
   tagline: "Realtime, strongly-typed ODM for Firebase Realtime Database",
-  url: 'https://your-docusaurus-test-site.com',
+  url: 'https://fireactive.now.sh',
   baseUrl: '/',
   favicon: 'img/favicon.ico',
   organizationName: 'richardcrng', // Usually your GitHub org/user name.
   projectName: 'fireactive', // Usually your repo name.
   themeConfig: {
     navbar: {
-      title: 'My Site',
+      title: 'Fireactive',
       logo: {
         alt: 'My Site Logo',
         src: 'img/logo.svg',
@@ -65,7 +65,7 @@ module.exports = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/rihardcrng/fireactive',
+              href: 'https://github.com/richardcrng/fireactive',
             },
             {
               label: 'Twitter',
