@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
-    "firebase": "^7.12.0",
+    "firebase": "7.24.0",
     "lodash": "^4.17.15",
     "on-change": "^1.8.1",
     "pluralize": "^8.0.0",
