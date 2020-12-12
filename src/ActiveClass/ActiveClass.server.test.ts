@@ -513,6 +513,12 @@ describe('ActiveClass: with server connection', () => {
         await jayZ.ref().child('age').set(42)
         expect(mockFn).toBeCalledTimes(4)
       })
+
+      test('.off removes all listeners', async () => {
+        jayZ.off()
+        await jayZ.ref().child('age').set(42)
+        expect(mockFn).toBeCalledTimes(0)
+      })
     })
 
     describe('.pendingSetters', () => {
