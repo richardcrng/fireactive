@@ -69,7 +69,7 @@ describe('After initializing', () => {
     describe('#createMany', () => {
       test('Happy path', async (done) => {
         const [heidi, june] = await Person.createMany({ name: 'Heidi', age: 27 }, { name: 'June', age: 4 })
-        expect(heidi.name).toBe('Helen')
+        expect(heidi.name).toBe('Heidi')
         expect(heidi.age).toBe(27)
         expect(june.name).toBe('June')
         expect(june.age).toBe(4)
