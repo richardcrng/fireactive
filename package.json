@@ -25,7 +25,7 @@
     "@types/ramda": "^0.26.43",
     "@types/ws": "^7.2.3",
     "dts-jest": "^23.0.0",
-    "firebase-server": "https://github.com/richardcrng/firebase-server/tarball/851c47cfbb556b2707a0fac17f55277c5679c12f",
+    "firebase-server": "https://github.com/richardcrng/firebase-server/tarball/aac37ca645f61d4fa85f10975a488bd9cfcad9b8",
     "jest": "^25.1.0",
     "ts-jest": "^25.2.1",
     "typescript": "^3.5.3",
