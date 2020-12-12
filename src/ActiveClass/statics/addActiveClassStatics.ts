@@ -12,6 +12,7 @@ const addActiveClassStatics = <Schema extends DocumentSchema, ThisClass extends 
 ): void => {
 
   // utilities
+  // @ts-ignore
   ActiveClass.from = function(props) {
     // @ts-ignore
     const document = new this(props)
@@ -66,6 +67,14 @@ const addActiveClassStatics = <Schema extends DocumentSchema, ThisClass extends 
         what: `Could not create ${this.name}`
       })
     }
+  }
+
+  // @ts-ignore : inheritance
+  ActiveClass.createMany = async function(...docs): Promise<ActiveDocument<Schema>[]> {
+    const promises = docs.map(doc => (
+      this.create(doc)
+    ))
+    return await Promise.all(promises)
   }
 
   ActiveClass.delete = async function(props): Promise<number> {

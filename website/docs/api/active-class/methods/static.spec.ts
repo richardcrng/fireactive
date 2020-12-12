@@ -66,6 +66,33 @@ describe('After initializing', () => {
       })
     })
 
+    describe('#createMany', () => {
+      test('Happy path', async (done) => {
+        const [heidi, june] = await Person.createMany({ name: 'Heidi', age: 27 }, { name: 'June', age: 4 })
+        expect(heidi.name).toBe('Helen')
+        expect(heidi.age).toBe(27)
+        expect(june.name).toBe('June')
+        expect(june.age).toBe(4)
+        done()
+      })
+
+      testExpectError('Missing property', async () => {
+        // @ts-ignore
+        await Person.create({ name: 'Helen' })
+      }, {
+        message: `Could not create Person. The required property 'age' is missing`,
+        constructor: ActiveClassError
+      })
+
+      testExpectError('Wrong property type', async () => {
+        // @ts-ignore
+        await Person.create({ name: 'Helen', age: '27' })
+      }, {
+        message: `Could not create Person. The property 'age' is of the wrong type`,
+        constructor: ActiveClassError
+      })
+    })
+
     describe('#delete', () => {
       beforeAll(async (done) => {
         await Person.delete({})

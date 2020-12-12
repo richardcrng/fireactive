@@ -152,6 +152,14 @@ export type ActiveClass<S extends DocumentSchema = DocumentSchema> = {
   create<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, props: ToCreateDocument<S> & { _id?: string }): Promise<InstanceType<ThisClass>>,
 
   /**
+   * Create many new models and save each to the database
+   * 
+   * @param docs Array of properties to create documents with
+   * @returns a `Promise` that resolves into the created document
+   */
+  createMany<ThisClass extends ActiveClass<S> = ActiveClass<S>>(this: ThisClass, ...docs: (ToCreateDocument<S> & { _id?: string })[]): Promise<InstanceType<ThisClass>[]>,
+
+  /**
    * Delete all `ActiveDocument`s from the database that
    *  match the passed in `props`
    * 
