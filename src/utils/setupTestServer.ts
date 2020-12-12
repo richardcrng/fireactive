@@ -11,7 +11,7 @@ export const testDatabase = () => {
   return { server, databaseURL }
 }
 
-function setupTestServer() {
+export function setupTestServer() {
   const { server, databaseURL } = testDatabase()
   const firebaseConfig = { databaseURL }
   const app = initialize(firebaseConfig)
