@@ -27,11 +27,11 @@ const addActiveClassInstances = <Schema extends DocumentSchema>(
   }
 
   ActiveClass.prototype.off = function(eventType, callback) {
-    return this.off(eventType, callback)
+    return this.ref().off(eventType, callback)
   }
 
   ActiveClass.prototype.on = function(eventType, callback) {
-    return this.on(eventType, callback)
+    return this.ref().on(eventType, callback)
   }
 
   ActiveClass.prototype.reload = async function (): Promise<ObjectFromDocument<Schema>> {

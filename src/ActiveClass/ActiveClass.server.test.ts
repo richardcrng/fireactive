@@ -484,6 +484,37 @@ describe('ActiveClass: with server connection', () => {
   })
 
   describe('instance methods', () => {
+    describe('.on and .off', () => {
+      let jayZ: Player
+      const mockFn = jest.fn()
+
+      beforeAll(async () => {
+        jayZ = await Player.create({ name: 'Jay-Z', age: 40 })
+        await jayZ.save()
+      })
+
+
+      test('.on attaches a listener that runs every time the document changes', async () => {
+        jayZ.on('value', mockFn)
+        expect(mockFn).toBeCalledTimes(1)
+
+        jayZ.age = 41
+        await jayZ.pendingSetters()
+        expect(mockFn).toBeCalledTimes(2)
+
+        await jayZ.ref().child('name').set('JAY-Z')
+        expect(mockFn).toBeCalledTimes(3)
+
+        expect(jayZ.age).toBe(41)
+        expect(jayZ.name).toBe('JAY-Z')
+
+        jayZ.syncOpts({ toDb: false, fromDb: false })
+
+        await jayZ.ref().child('age').set(42)
+        expect(mockFn).toBeCalledTimes(4)
+      })
+    })
+
     describe('.pendingSetters', () => {
       let mary: InstanceType<typeof Player>
       beforeAll(async (done) => {
