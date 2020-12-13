@@ -1896,9 +1896,9 @@ firebase-json@^0.1.0:
   dependencies:
     pegjs "^0.10.0"
 
-"firebase-server@https://github.com/richardcrng/firebase-server/tarball/aac37ca645f61d4fa85f10975a488bd9cfcad9b8":
+"firebase-server@https://github.com/richardcrng/firebase-server/tarball/df54d1bc09d081acac827de160bceefd0b08820e":
   version "1.1.0"
-  resolved "https://github.com/richardcrng/firebase-server/tarball/aac37ca645f61d4fa85f10975a488bd9cfcad9b8#43abda22f21d6394da2a3702ace4742aff1592da"
+  resolved "https://github.com/richardcrng/firebase-server/tarball/df54d1bc09d081acac827de160bceefd0b08820e#2ad97f762c77b1edad9d6550a33b8dd5ff9e0960"
   dependencies:
     "@types/node" "^9.3.0"
     cli "^1.0.1"
