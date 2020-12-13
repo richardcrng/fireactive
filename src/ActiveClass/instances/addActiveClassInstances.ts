@@ -26,6 +26,14 @@ const addActiveClassInstances = <Schema extends DocumentSchema>(
     }
   }
 
+  ActiveClass.prototype.off = function(eventType, callback) {
+    return this.ref().off(eventType, callback)
+  }
+
+  ActiveClass.prototype.on = function(eventType, callback) {
+    return this.ref().on(eventType, callback)
+  }
+
   ActiveClass.prototype.reload = async function (): Promise<ObjectFromDocument<Schema>> {
     if (!this._id) throw new Error(`Can't reload a ${this.constructor.name} from the database without it having an id`)
     const snapshot = await this.ref().once('value')
