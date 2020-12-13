@@ -1,6 +1,6 @@
 {
   "name": "fireactive",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "Realtime, strongly-typed ODM for Firebase Realtime Database",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -25,7 +25,7 @@
     "@types/ramda": "^0.26.43",
     "@types/ws": "^7.2.3",
     "dts-jest": "^23.0.0",
-    "firebase-server": "https://github.com/richardcrng/firebase-server/tarball/aac37ca645f61d4fa85f10975a488bd9cfcad9b8",
+    "firebase-server": "https://github.com/richardcrng/firebase-server/tarball/df54d1bc09d081acac827de160bceefd0b08820e",
     "jest": "^25.1.0",
     "ts-jest": "^25.2.1",
     "typescript": "^4.1.3",
