@@ -1,4 +1,4 @@
-import firebase from 'firebase'
+import * as firebase from 'firebase/app'
 
 async function pushWithId(ref: firebase.database.Reference, data: object, idKey = '_id'): Promise<string> {
   const childRef = ref.push()
