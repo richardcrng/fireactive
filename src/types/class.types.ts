@@ -18,6 +18,24 @@ export type ActiveDocument<S extends DocumentSchema = DocumentSchema> = ObjectFr
    */
   getId(): string,
 
+
+  /**
+   * Detaches a callback previously attached with on().
+   * 
+   * Note that if on() was called multiple times with the same eventType and callback, the callback will be called multiple times for each event, and off() must be called multiple times to remove the callback. Calling off() on a parent listener will not automatically remove listeners registered on child nodes, off() must also be called on any child listeners to remove the callback.
+   * 
+   * If a callback is not specified, all callbacks for the specified eventType will be removed. Similarly, if no eventType is specified, all callbacks for the Reference will be removed.
+   */
+  off: firebase.database.Reference['off']
+
+  /**
+   * Listens for data changes on the document.
+   * 
+   * @param eventType One of the following strings: "value", "child_added", "child_changed", "child_removed", or "child_moved."
+   * @param callback A callback that fires when the specified event occurs. The callback will be passed a DataSnapshot. For ordering purposes, "child_added", "child_changed", and "child_moved" will also be passed a string containing the key of the previous child, by sort order, or null if it is the first child.
+   */
+  on: firebase.database.Reference['on'] 
+
   /**
    * Reloads the instance's properties from the Firebase database
    * 
