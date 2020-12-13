@@ -1,4 +1,4 @@
-import firebase from 'firebase/app'
+import * as firebase from 'firebase/app'
 import { ActiveClass, Schema, initialize } from '../../../src/'
 import { testDatabase } from '../../../src/utils/setupTestServer'
 
